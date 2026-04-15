@@ -1,86 +1,102 @@
 # 工作成果总结
 
-> 统计区间：2026-04-10 ~ 2026-04-13 | 共 **6** 个 PR（已合并 5，待合并 1）
-> 最后更新：2026-04-14
+> 统计区间：2026-04-10 ~ 2026-04-15 | 共 **8 个 PR**（已合并 7 个，待审核 1 个）
+> 最后更新：2026-04-15
 
 ---
 
 ## Bug 修复
 
-### [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) — 修复反馈记录中 bot_name 始终为 "nanobot" 的问题
+### [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) fix(shadow): 修复 shadow-done 回调跨队列合并时 trace_id 丢失导致对话卡片永久卡死
 
-- **合并日期**：2026-04-11
-- **问题**：所有 `agent_feedback` 记录的 `bot_name` 均写入硬编码字符串 `"nanobot"`，无法区分 george-ai、zane-ai 等各舰队 bot。
-- **根因**：各 bot 的 docker-compose 文件均设置了 `AGENT_NAME`，但未设置 `BOT_NAME`；代码直接回落到硬编码默认值。
-- **修复方案**：将取值逻辑改为 `os.environ.get("BOT_NAME") or os.environ.get("AGENT_NAME", "nanobot")`，优先使用 `BOT_NAME`，其次回落 `AGENT_NAME`，无需修改任何 docker-compose 文件。
-- **成果**：反馈记录准确携带各 bot 真实名称，数据可按 bot 维度正常聚合分析。
-
----
-
-### [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) — 修复旧 Lark 卡片回调仍写入 "nanobot" 的问题（#1969 后续）
-
-- **合并日期**：2026-04-11
-- **问题**：#1969 修复了新卡片，但用户点击旧卡片的反馈按钮时，回调 payload 中已烙印 `bot_name="nanobot"`；`handle_card_action` 优先读取 `value.get("bot_name")`，导致旧数据污染持续。
-- **根因**：`handle_card_action` 信任 payload 中的 `bot_name` 字段，而旧卡片 payload 在生成时已写入错误值。
-- **修复方案**：从回退链中移除 `value.get("bot_name")`，统一改为只读环境变量（`BOT_NAME` → `AGENT_NAME`）；安全性有保障，因 Lark 反馈回调始终路由至原始 bot 实例。
-- **成果**：彻底堵住历史旧卡片产生的 bot_name 污染，数据一致性完全修复。
+- **日期**：2026-04-15 | **状态**：已合并 ✅
+- **问题**：Amy nanobot 正在处理消息时，后续 shadow 请求被放入 `ConversationState.pending` 队列，入队时未携带原始 `x-trace-id`。队列排空时生成全新 UUID，导致 `/shadow-done/<trace_id>` 回调指向一个 nanobot 从未记录的 trace，主卡片永久停留在 `shadow=processing` 状态。
+- **根因**：`QueuedMessage` 数据类未保存 `trace_id` / `is_shadow` 字段，`_drain_pending` 合并批次时丢失了所有原始调用方的 trace 信息。
+- **修复方案**：`QueuedMessage` 新增 `trace_id` + `is_shadow` 字段，在入队前从请求头填充；`_drain_pending` 收集所有待处理消息的 trace，写入 `MessageInput.source_trace_ids`；shadow-done POST 向每条原始 trace 逐一回调，所有合并调用方的卡片同步解除卡死。
+- **成果**：连续快速发送 3 条消息时，所有对话卡片均能正常完成并显示 Shadow 面板，无遗漏。
 
 ---
 
-### [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) — 修复 nanobot 上下文窗口与最大输出 token 配置偏差
+### [#2140](https://github.com/Vispie-AI/VisPie_backend/pull/2140) fix(shadow): shadow 回复展示上限 1500 → 4000 字符，修复可见截断
 
-- **合并日期**：2026-04-11
-- **问题**：影子 nanobot 在 A/B 对比中持续慢于 OpenClaw 主线，初步排查 TTFT 偏高 5–10 秒、生成速度偏慢 1–5 秒。
-- **根因**：nanobot 配置与 openclaw.json 存在两处关键不对齐——`CONTEXT_WINDOW` 为 618K（OpenClaw 200K），`max_tokens` 为 64K（OpenClaw 16,384）；3× 上下文窗口导致 LLM 加载过多历史，4× 输出长度导致生成时间虚高。
-- **修复方案**：将 `CONTEXT_WINDOW` 从 618K 调整为 200K，`max_tokens` 从 64K 调整为 16,384，与 OpenClaw 配置对齐。
-- **成果**：消除 A/B 对比中最主要的两处系统性偏差，影子模型延迟指标回归合理基线。
-
----
-
-### [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) — 修复 vizzy-lark 耗时统计口径不一致导致 A/B 判定失真
-
-- **合并日期**：2026-04-11
-- **问题**：A/B 评判中影子 nanobot 始终显示更慢，即便 LLM 推理速度完全一致。
-- **根因**：OpenClaw 的 `elapsed_sec` 从 `streamStartTime`（模型首字符输出）开始计时，**不含**会话加载、prompt 组装、上下文路由；而 nanobot 从 `start_time`（handler 入口）开始，**含全流程**。两者统计口径不同，使 OpenClaw 天然显得更快。
-- **修复方案**：将 OpenClaw 计时起点改为 `routeMessage()` 入口（`routeStartTime`），与 nanobot `start_time` 覆盖范围一致。
-- **成果**：A/B 对比计时口径统一，评判结果真实反映两侧 LLM 推理性能，排除系统性测量偏差。
+- **日期**：2026-04-15 | **状态**：已合并 ✅
+- **问题**：`shadow-judge.ts` 中 `shadow.response.slice(0, 1500)` 硬限制导致 Shadow 面板内回复被截断，而 Primary 回复无上限，用户可直观感知不对等。
+- **根因**：早期为控制 Lark 卡片 payload 大小设置的保守阈值，未随实际使用场景调整。
+- **修复方案**：将截断上限从 1500 提升至 4000 字符，覆盖典型 Claude 输出，同时远低于 Lark 卡片 payload 上限（~30KB）。Judge prompt 截断为独立调用路径，本次不做改动。
+- **成果**：Shadow 面板完整展示回复内容，与 Primary 体验对齐，消除用户可见截断。
 
 ---
 
-## 文档建设
+### [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) fix(vizzy-lark): 统一 elapsed_sec 计时起点，消除 shadow A/B 对比偏差
 
-### [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) — 新增 auto-amy 架构双语系统地图
+- **日期**：2026-04-11 | **状态**：已合并 ✅
+- **问题**：OpenClaw 的 `elapsed_sec` 从 `streamStartTime`（模型首次输出）开始计算，不含 session 加载、prompt 组装、上下文路由等开销；nanobot 从 `start_time`（handler 入口）开始，包含全部开销。计时基准不一致导致 shadow A/B judge 中 nanobot 始终"看起来"更慢。
+- **根因**：两套系统计时起点定义不同，非性能差异。
+- **修复方案**：将 OpenClaw 计时起点改为 `routeMessage()` 入口的 `routeStartTime`，与 nanobot `start_time` 作用域一致；涉及正常 finalize 路径和孤立卡片路径共 2 处。
+- **成果**：elapsed_sec 口径统一，A/B 对比结果更准确，可有效区分真实性能差异。
 
-- **合并日期**：2026-04-12
-- **内容**：为 auto-amy 系统补充完整架构文档，中英双语各一套，共 8 个文件，涵盖 4 个维度：
-  | 编号 | 文档 | 说明 |
-  |------|------|------|
-  | 01 | 模块地图 | 系统组成（7 个模块、优先级索引、文件树） |
-  | 02 | 数据流地图 | 数据流向（3 条管道：消息/记忆/响应，存储位置，数据生命周期） |
-  | 03 | 调用链地图 | 请求执行路径 |
-  | 04 | 状态机地图 | 系统状态与转换 |
-- **成果**：新成员可快速建立系统全局认知，降低入职与协作沟通成本。
+---
+
+### [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) fix(nanobot): 上下文窗口和最大输出 token 与 OpenClaw 对齐，消除 shadow 性能虚高
+
+- **日期**：2026-04-11 | **状态**：已合并 ✅
+- **问题**：shadow nanobot 在 A/B 对比中持续比 OpenClaw primary 慢 6~15s，误导判断认为 nanobot 性能差。
+- **根因**：`CONTEXT_WINDOW` 618K vs OpenClaw 200K（3 倍差距 → TTFT 多 5~10s）；`max_tokens` 64K vs OpenClaw 16384（4 倍差距 → 生成多 1~5s）。
+- **修复方案**：`nanobot_server.py`、`bedrock_provider.py`、两份 docker-compose 及 provisioner.py 中的默认值统一改为 200K / 16384，与 `openclaw.json` 配置对齐。
+- **成果**：nanobot shadow 响应时间降低约 6~15s，A/B judge 结果回归真实性能对比。
+
+---
+
+### [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) fix(nanobot): feedback 记录改用 env var 取 bot_name，消除旧卡片数据污染
+
+- **日期**：2026-04-11 | **状态**：已合并 ✅
+- **问题**：旧版 Lark 卡片的 action payload 中 `bot_name="nanobot"` 被硬编码；点击旧卡片反馈时，代码优先读取 payload 中的 `value.get("bot_name")`，导致 `agent_feedback` 表中仍然写入 `"nanobot"` 而非真实 agent 名。
+- **根因**：#1969 修复了新卡片路径，但未处理存量旧卡片的 payload 值优先级问题。
+- **修复方案**：在 `handle_card_action` 中移除 `value.get("bot_name")` 兜底链，统一只读取 env var（`BOT_NAME` → `AGENT_NAME`）。Lark 回调始终路由到原始 bot 容器，env var 天然权威。
+- **成果**：无论新旧卡片，点击反馈均记录正确的 bot 名称，历史数据污染问题彻底修复。
+
+---
+
+### [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) fix(nanobot): agent_feedback 中 bot_name 改用 AGENT_NAME 兜底，修复错误归因
+
+- **日期**：2026-04-10（合并 2026-04-11） | **状态**：已合并 ✅
+- **问题**：绝大多数 `agent_feedback` 记录的 `bot_name` 均为 `"nanobot"` 而非实际 agent 名（george-ai、zane-ai 等），无法区分各 bot 的用户反馈。
+- **根因**：所有 fleet bot docker-compose 均设置 `AGENT_NAME` 但未设置 `BOT_NAME`，代码直接 fallback 到硬编码字符串 `"nanobot"`。
+- **修复方案**：改为 `os.environ.get("BOT_NAME") or os.environ.get("AGENT_NAME", "nanobot")`，优先 `BOT_NAME`，其次 `AGENT_NAME`，无需修改任何 docker-compose 文件。`nanobot_server.py` 和 `server.py` 共 6 处同步修改。
+- **成果**：fleet bot 反馈记录中 bot_name 准确还原为各 agent 真实名称，数据可用性显著提升。
 
 ---
 
 ## 新功能开发
 
-### [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) — 为 SLA 探针新增 error_reason 结构化错误追踪 ⏳ 待合并
+### [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) feat(monitoring): SLA 探针新增 error_reason 结构化错误上下文
 
-- **创建日期**：2026-04-13 | **状态**：Open，审核中
-- **背景**：生产 SLA 页面仅显示可用率数值（如"Amy 24h: 87%"），无法定位 13% 失败的具体原因（HTTP 503 × 47 vs 超时 × 6 完全不同的处置方向）。
-- **方案**：在探针记录中写入结构化错误上下文，SLA 报告页面可展示失败原因分布，共 7 次提交，新增 322 行 / 删除 4 行，涵盖数据层、采集层、展示层。
-- **预期成果**：SLA 报告从"可用率数字"升级为"可诊断的可观测性面板"，快速定位可用性下降根因。
+- **日期**：2026-04-13 | **状态**：审核中 🔄
+- **问题**：SLA 报告页仅显示可用率百分比（如"Amy 24h: 87%"），无法知晓宕机原因，运维排障效率低。
+- **方案**：全链路新增结构化错误字段（error_reason / error_code / error_category），覆盖 DB ORM、Alembic 迁移、Pydantic 模型、探针写入、SLA 聚合查询、前端类型与 UI 共 7 层；错误分为 6 类（http_error / timeout / network / auth / internal / probe_error）；所有新字段 nullable，向后完全兼容。
+- **预期成果**：SLA 页面新增 Top Error 列，可展开查看错误分类占比，运维可直接定位失败原因（如"47× HTTP 503 vs 6× timeout"）。
+- **待完成**：生产 RDS 执行 Alembic 迁移后方可合并部署。
+
+---
+
+## 文档建设
+
+### [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) docs: 新增 auto-amy 架构双语系统地图
+
+- **日期**：2026-04-12 | **状态**：已合并 ✅
+- **成果**：新增中英双语架构文档各 4 篇（共 8 个文件），覆盖模块地图、数据流地图、调用链地图、变更约束地图，为团队提供可参考的系统全景文档，降低新成员上手和跨模块修改的认知成本。
 
 ---
 
 ## 总览
 
-| PR | 标题 | 分类 | 状态 | 日期 |
+| PR | 标题 | 类别 | 日期 | 状态 |
 |----|------|------|------|------|
-| [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | 修复 bot_name 硬编码为 "nanobot" | Bug 修复 | ✅ 已合并 | 2026-04-11 |
-| [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | 修复旧 Lark 卡片回调 bot_name 污染 | Bug 修复 | ✅ 已合并 | 2026-04-11 |
-| [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) | 对齐 nanobot 上下文窗口与输出 token | 性能/质量优化 | ✅ 已合并 | 2026-04-11 |
-| [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) | 修复 A/B 耗时统计口径不一致 | 性能/质量优化 | ✅ 已合并 | 2026-04-11 |
-| [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) | 新增 auto-amy 双语架构系统地图 | 文档建设 | ✅ 已合并 | 2026-04-12 |
-| [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) | SLA 探针新增 error_reason 追踪 | 新功能开发 | ⏳ 待合并 | 2026-04-13 |
+| [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) | fix(shadow): 保留 trace_id，修复 shadow-done fan-out 卡死 | Bug修复 | 2026-04-15 | ✅ 已合并 |
+| [#2140](https://github.com/Vispie-AI/VisPie_backend/pull/2140) | fix(shadow): shadow 展示上限 1500→4000 | Bug修复 | 2026-04-15 | ✅ 已合并 |
+| [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) | feat(monitoring): SLA 探针结构化 error_reason | 新功能 | 2026-04-13 | 🔄 审核中 |
+| [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) | docs: auto-amy 双语架构系统地图 | 文档建设 | 2026-04-12 | ✅ 已合并 |
+| [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) | fix(vizzy-lark): 统一 elapsed_sec 计时基准 | Bug修复 | 2026-04-11 | ✅ 已合并 |
+| [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) | fix(nanobot): 对齐上下文窗口和 max_tokens | 性能/质量优化 | 2026-04-11 | ✅ 已合并 |
+| [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | fix(nanobot): feedback bot_name 改用 env var | Bug修复 | 2026-04-11 | ✅ 已合并 |
+| [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | fix(nanobot): AGENT_NAME 兜底修复 bot_name 归因 | Bug修复 | 2026-04-10 | ✅ 已合并 |
