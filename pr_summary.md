@@ -1,11 +1,31 @@
 # 工作成果总结
 
-> 统计区间：2026-04-10 ~ 2026-04-15 | 共 **8 个 PR**（已合并 7 个，待审核 1 个）
-> 最后更新：2026-04-15
+> 统计区间：2026-04-10 ~ 2026-04-16 | 共 **12 个 PR**（已合并 11 个，待审核 1 个）
+> 最后更新：2026-04-16
 
 ---
 
 ## Bug 修复
+
+### [#2176](https://github.com/Vispie-AI/VisPie_backend/pull/2176) fix(migration): 修正 error_reason 迁移文件的 down_revision
+
+- **日期**：2026-04-16 | **状态**：已合并 ✅
+- **问题**：`down_revision` 使用了文件名字符串而非实际 revision ID，且 #2174 合并期间另一迁移抢先落地，导致 Alembic 无法解析迁移链，生产部署将被阻塞。
+- **根因**：Alembic 只识别 revision ID，不识别文件名；并发 PR 合并造成 DB head 偏移。
+- **修复方案**：将 `down_revision` 改为指向当前实际 DB head 的真实 revision ID。
+- **成果**：迁移链恢复一致，消除生产部署阻塞风险。
+
+---
+
+### [#2175](https://github.com/Vispie-AI/VisPie_backend/pull/2175) fix(shadow): 错误/取消路径补发 shadow-done 回调 + 延长 cardCache TTL
+
+- **日期**：2026-04-16 | **状态**：已合并 ✅
+- **问题**：shadow nanobot 在出错（Bedrock 超时、工具失败）或被取消（Hatchet 超时、用户 /stop）时，`/shadow-done` 回调从未发出，OpenClaw 卡片永久卡在 `shadow=processing` 状态。
+- **根因**：`_post_shadow_done()` 仅在成功路径调用，错误和取消路径均缺失。
+- **修复方案**：抽取 `_post_shadow_done()` 辅助函数，在成功、取消、错误三条路径上均调用；错误/取消响应携带 ⚠️ 消息供 OpenClaw 展示故障原因。
+- **成果**：消除卡片"永久 loading"问题，用户可及时获知 shadow 执行结果。
+
+---
 
 ### [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) fix(shadow): 修复 shadow-done 回调跨队列合并时 trace_id 丢失导致对话卡片永久卡死
 
@@ -69,6 +89,24 @@
 
 ## 新功能开发
 
+### [#2177](https://github.com/Vispie-AI/VisPie_backend/pull/2177) feat(alerter): Synthetic Health Alerter — 每 15 分钟 bot 可用性监控
+
+- **日期**：2026-04-16 | **状态**：已合并 ✅
+- **问题**：生产环境缺乏对 Amy/Eva 端到端可用性的主动监控，故障往往滞后发现，运维依赖用户反馈。
+- **方案**：新增 `flows/synthetic_health_alert/` 流程，读取 `monitoring_probe_results` 数据，按三条告警规则（连续超时 Critical、writer_dead Critical、高超时率 Warning）生成分级 Lark 告警卡片推送运维 webhook；告警静默窗口 30 分钟防抖。
+- **成果**：实现每 15 分钟一次合成健康探测，运维响应窗口从「用户反馈」缩短至分钟级。
+
+---
+
+### [#2174](https://github.com/Vispie-AI/VisPie_backend/pull/2174) feat(monitoring): 新增 error_reason 字段并删除废弃索引（PR #1）
+
+- **日期**：2026-04-16 | **状态**：已合并 ✅
+- **问题**：SLA 页面只能显示可用率数字，无法呈现故障根因；`monitoring_probe_results` 表存在两个从未被查询的冗余索引占用约 1 GB 磁盘空间。
+- **方案**：删除 `idx_mon_probe_agent_layer_time`（621 MB，0 scans）和 `idx_mon_probe_layer_time`（422 MB，0 scans）；新增可空字段 `error_reason TEXT`、`error_code INT`、`error_category VARCHAR(50)`，在 Schema 层及两个摄入端点同步透传。
+- **成果**：释放约 1 GB 索引空间，为后续 SLA 根因分析提供结构化数据基础，零停机迁移。
+
+---
+
 ### [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) feat(monitoring): SLA 探针新增 error_reason 结构化错误上下文
 
 - **日期**：2026-04-13 | **状态**：审核中 🔄
@@ -92,6 +130,10 @@
 
 | PR | 标题 | 类别 | 日期 | 状态 |
 |----|------|------|------|------|
+| [#2177](https://github.com/Vispie-AI/VisPie_backend/pull/2177) | feat(alerter): Synthetic Health Alerter 可用性监控 | 新功能 | 2026-04-16 | ✅ 已合并 |
+| [#2176](https://github.com/Vispie-AI/VisPie_backend/pull/2176) | fix(migration): 修正迁移文件 down_revision | Bug修复 | 2026-04-16 | ✅ 已合并 |
+| [#2175](https://github.com/Vispie-AI/VisPie_backend/pull/2175) | fix(shadow): 错误/取消路径补发 shadow-done 回调 | Bug修复 | 2026-04-16 | ✅ 已合并 |
+| [#2174](https://github.com/Vispie-AI/VisPie_backend/pull/2174) | feat(monitoring): 新增 error_reason 字段 + 删废弃索引 | 新功能 | 2026-04-16 | ✅ 已合并 |
 | [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) | fix(shadow): 保留 trace_id，修复 shadow-done fan-out 卡死 | Bug修复 | 2026-04-15 | ✅ 已合并 |
 | [#2140](https://github.com/Vispie-AI/VisPie_backend/pull/2140) | fix(shadow): shadow 展示上限 1500→4000 | Bug修复 | 2026-04-15 | ✅ 已合并 |
 | [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) | feat(monitoring): SLA 探针结构化 error_reason | 新功能 | 2026-04-13 | 🔄 审核中 |
