@@ -1,11 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-17 | 共 17 个 PR（已合并 15 · 关闭未合并 1 · 待合并 1）
-> 最后更新：2026-04-17
+> 统计周期：2026-04-10 ~ 2026-04-20 | 共 19 个 PR（已合并 16 · 关闭未合并 2 · 待合并 1）
+> 最后更新：2026-04-20
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#2282](https://github.com/Vispie-AI/VisPie_backend/pull/2282) fix(daily-report): Lark send_lark_card 在 HTTP 4xx 时重试一次
+- **日期**：2026-04-20 | **状态**：🚫 已关闭（未合并）
+- **问题**：2026-04-19 和 2026-04-20 连续两天定时日报在 01:00 UTC 发送失败，Lark POST 返回 HTTP 400，卡片未送达。
+- **根因**：`send_lark_card` 无重试机制；Lark 偶发瞬时 4xx（内容正确，10 分钟后重发即成功）直接导致当天日报丢失。
+- **修复**：仅对 HTTP 4xx 添加一次 30 秒后重试（4xx = Lark 未处理消息，重试安全）；5xx / 超时 / 连接错误维持不重试（避免重复发卡风险）。
+- **成果**：最小化改动，消除瞬时 4xx 导致日报丢失的场景；PR 关闭未合并，待后续决策。
 
 ### [#2228](https://github.com/Vispie-AI/VisPie_backend/pull/2228) fix(monitoring): liveness probe_type 缺失 + L2 进程检测修复
 - **日期**：2026-04-17 | **状态**：✅ 已合并
@@ -85,6 +92,13 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2241](https://github.com/Vispie-AI/VisPie_backend/pull/2241) feat(daily-report): 将 Amy Liveness 集成至 George AI 日报卡片
+- **日期**：2026-04-18 | **状态**：✅ 已合并
+- **问题**：日报卡片仅有应用层指标（技能调用、会话健康），无法反映 Amy 容器本身的存活状态，导致低流量误读。
+- **根因**：`amy-liveness.sh` 每 5 分钟探测一次，数据已入库，但日报渲染层未消费。
+- **修复**：新增独立模块 `infra_health.py`，查询 `monitoring_probe_results` 并在卡片顶部渲染 `🛡️ Infra` 块；健康时单行展示，发生故障时自动展开事件详情；通过环境变量 `REPORT_INFRA_HEALTH=1` 暗启动。加权可用率 `(healthy + 0.5×degraded) / total`，≥2 连续异常才判定事件。
+- **成果**：19 个单元测试全通过；日报卡片可一眼区分"业务平静"与"容器宕机"，信息误导率显著降低。
+
 ### [#2227](https://github.com/Vispie-AI/VisPie_backend/pull/2227) feat(monitoring): 基于 liveness 的告警器 + 持久化去重
 - **日期**：2026-04-17 | **状态**：✅ 已合并
 - **问题**：旧 e2e 合成探针设计缺陷导致 99.97% 误报（7002 次超时 / 2 次健康）；模块级 `_dedup` dict 在 Prefect 每次 tick 进程重启后清空，30 分钟冷却从未生效，每 15 分钟发 5 张告警卡片造成告警风暴。
@@ -127,6 +141,8 @@
 
 | PR | 标题摘要 | 类型 | 状态 | 日期 |
 |----|---------|------|------|------|
+| [#2282](https://github.com/Vispie-AI/VisPie_backend/pull/2282) | 日报 Lark 4xx 重试一次 | fix | 🚫 已关闭 | 2026-04-20 |
+| [#2241](https://github.com/Vispie-AI/VisPie_backend/pull/2241) | Amy Liveness 集成日报卡片 | feat | ✅ 已合并 | 2026-04-18 |
 | [#2228](https://github.com/Vispie-AI/VisPie_backend/pull/2228) | liveness probe_type + L2 进程检测修复 | fix | ✅ 已合并 | 2026-04-17 |
 | [#2227](https://github.com/Vispie-AI/VisPie_backend/pull/2227) | liveness 告警器 + 持久化去重 | feat | ✅ 已合并 | 2026-04-17 |
 | [#2226](https://github.com/Vispie-AI/VisPie_backend/pull/2226) | monitoring_alert_dedup 表迁移 | feat | ⚠️ 已关闭 | 2026-04-17 |
@@ -145,4 +161,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：17 个 PR | 已合并 15 | 关闭未合并 1 | 待合并 1**
+**合计：19 个 PR | 已合并 16 | 关闭未合并 2 | 待合并 1**
