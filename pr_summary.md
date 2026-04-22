@@ -1,12 +1,107 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-20 | 共 19 个 PR（已合并 16 · 关闭未合并 2 · 待合并 1）
-> 最后更新：2026-04-20
+> 统计周期：2026-04-10 ~ 2026-04-22 | 共 44 个 PR（已合并 40 · 关闭未合并 3 · 待合并 0）
+> 最后更新：2026-04-22
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2303](https://github.com/Vispie-AI/VisPie_backend/pull/2303) fix(shadow-judge): handle Lark v2 card schema
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Shadow Judge 模块无法处理 Lark v2 卡片 schema 格式。
+- **修复**：适配 Lark v2 卡片 schema，确保 shadow judge 正常解析。
+- **成果**：Shadow Judge 支持最新 Lark 卡片格式，评判功能正常。
+
+### [#2302](https://github.com/Vispie-AI/VisPie_backend/pull/2302) fix(mobile): align Profile niche to L1+L2 taxonomy (prevents data loss)
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：移动端 Profile 页面 niche 字段未对齐 L1+L2 分类体系，存在数据丢失风险。
+- **修复**：将 Profile niche 字段与 L1+L2 分类体系对齐，防止数据丢失。
+- **成果**：移动端用户档案分类数据完整，与后端分类体系保持一致。
+
+### [#2301](https://github.com/Vispie-AI/VisPie_backend/pull/2301) fix(tiktok-ads): improve pagination, security, and documentation
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：TikTok 广告接口分页逻辑有误，存在安全与文档缺失问题。
+- **修复**：改进分页处理逻辑，加强安全校验并补充接口文档。
+- **成果**：TikTok 广告数据拉取稳定、安全，接口文档完整。
+
+### [#2300](https://github.com/Vispie-AI/VisPie_backend/pull/2300) Codex/fanka top10 missing media followup
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Fanka TOP10 广告分析存在媒体数据缺失的后续问题。
+- **修复**：补充修复 Fanka TOP10 分析中媒体字段缺失的处理逻辑。
+- **成果**：Fanka TOP10 广告分析媒体数据完整，展示正确。
+
+### [#2298](https://github.com/Vispie-AI/VisPie_backend/pull/2298) fix(twilio-conversations): refresh inbox after sending message
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：发送消息后收件箱未自动刷新，显示状态滞后。
+- **修复**：发送消息成功后自动触发收件箱刷新操作。
+- **成果**：消息发送后收件箱即时更新，用户无需手动刷新。
+
+### [#2297](https://github.com/Vispie-AI/VisPie_backend/pull/2297) fix(twilio-conversations): sort inbox by last_message.at, not date_updated
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：会话收件箱按 date_updated 而非 last_message.at 排序，顺序有误。
+- **修复**：将收件箱排序字段改为 last_message.at 实现准确排序。
+- **成果**：收件箱消息顺序正确，与实际最新消息时间一致。
+
+### [#2295](https://github.com/Vispie-AI/VisPie_backend/pull/2295) fix(twilio-conversations): return newest 50 messages, not oldest 50
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Twilio 会话消息接口返回最早的 50 条而非最新的 50 条消息。
+- **修复**：调整消息查询逻辑，改为返回最新 50 条消息。
+- **成果**：用户查看会话时默认展示最新消息，交互体验更合理。
+
+### [#2294](https://github.com/Vispie-AI/VisPie_backend/pull/2294) Codex/fix ads analytics media fallback
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：广告分析媒体回退优先级逻辑有误，导致数据展示错误。
+- **修复**：调整媒体回退优先级顺序，确保正确选择媒体来源。
+- **成果**：广告分析页面媒体展示数据准确可靠。
+
+### [#2293](https://github.com/Vispie-AI/VisPie_backend/pull/2293) fix(deploy): prevent FastAPI gunicorn-not-found crash loop
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：部署时 FastAPI 因 gunicorn 未找到导致崩溃循环。
+- **修复**：修复 gunicorn 依赖检测逻辑，防止服务崩溃重启循环。
+- **成果**：部署稳定性提升，服务启动不再因依赖缺失而崩溃。
+
+### [#2292](https://github.com/Vispie-AI/VisPie_backend/pull/2292) Fix ads analytics media fallback priority
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：广告分析媒体回退优先级逻辑有误，导致数据展示错误。
+- **修复**：调整媒体回退优先级顺序，确保正确选择媒体来源。
+- **成果**：广告分析页面媒体展示数据准确可靠。
+
+### [#2291](https://github.com/Vispie-AI/VisPie_backend/pull/2291) fix(dashboard): auto-scrape on config save + reliable cache invalidation
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：仪表盘配置保存后未自动触发抓取，缓存失效不可靠。
+- **修复**：配置保存时自动触发数据抓取并确保缓存可靠失效。
+- **成果**：仪表盘数据实时刷新，配置生效无需手动干预。
+
+### [#2290](https://github.com/Vispie-AI/VisPie_backend/pull/2290) fix(lark): isolate SMS-notification creds from shared singleton (safer, backward-compatible)
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Lark SMS 通知凭证与共享单例混用，存在配置污染风险。
+- **修复**：将 SMS 通知凭证从共享单例中隔离，独立管理。
+- **成果**：Lark 短信通知更安全，向后兼容性保持完整。
+
+### [#2288](https://github.com/Vispie-AI/VisPie_backend/pull/2288) fix(cc-army): callback URL + create timeout
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army 回调 URL 配置错误，任务创建超时异常。
+- **修复**：修正回调 URL 地址并优化任务创建超时处理逻辑。
+- **成果**：cc-army 任务调度稳定，回调机制正常运作。
+
+### [#2287](https://github.com/Vispie-AI/VisPie_backend/pull/2287) fix(ads): TOP 10% per-ad by spend, not per-account
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：广告消耗 TOP 10% 计算范围错误，按账户而非按广告计算。
+- **修复**：将 TOP 10% 计算逻辑改为按单个广告的消耗额排名。
+- **成果**：广告消耗排名数据精确，分析结果更具参考价值。
+
+### [#2285](https://github.com/Vispie-AI/VisPie_backend/pull/2285) fix(twilio-conversations): sort conversation list by real last-message time
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：会话列表排序基于更新时间而非最后消息时间，顺序不正确。
+- **修复**：改用真实最后消息时间对会话列表进行排序。
+- **成果**：会话收件箱按最新消息时间正确排序，用户体验改善。
+
+### [#2283](https://github.com/Vispie-AI/VisPie_backend/pull/2283) Fix ads analytics media fallback priority
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：广告分析媒体回退优先级逻辑有误，导致数据展示错误。
+- **修复**：调整媒体回退优先级顺序，确保正确选择媒体来源。
+- **成果**：广告分析页面媒体展示数据准确可靠。
 ### [#2282](https://github.com/Vispie-AI/VisPie_backend/pull/2282) fix(daily-report): Lark send_lark_card 在 HTTP 4xx 时重试一次
 - **日期**：2026-04-20 | **状态**：🚫 已关闭（未合并）
 - **问题**：2026-04-19 和 2026-04-20 连续两天定时日报在 01:00 UTC 发送失败，Lark POST 返回 HTTP 400，卡片未送达。
@@ -92,6 +187,41 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2307](https://github.com/Vispie-AI/VisPie_backend/pull/2307) feat(cc-army): redirect all coding-task hints to Coder Army
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：编码任务提示未统一引导到 Coder Army 处理。
+- **修复**：将所有编码任务相关提示重定向至 Coder Army 统一处理。
+- **成果**：编码任务分发流程规范化，Coder Army 承接效率提升。
+
+### [#2306](https://github.com/Vispie-AI/VisPie_backend/pull/2306) feat(cc-army): two-column drawer layout + fix headless PTY resize
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army 抽屉布局单列展示内容拥挤，headless PTY resize 存在 bug。
+- **修复**：实现两列抽屉布局并修复 headless PTY resize 问题。
+- **成果**：cc-army 界面布局更清晰，PTY 终端尺寸自适应正常。
+
+### [#2305](https://github.com/Vispie-AI/VisPie_backend/pull/2305) perf(cc-army): skip reset if at HEAD + Kimi env + layout chmod
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army 在已是最新版本时仍执行不必要的 reset 操作，存在环境配置问题。
+- **修复**：在已是 HEAD 时跳过 reset，补充 Kimi 环境变量及目录权限设置。
+- **成果**：cc-army 启动流程更高效，环境配置完整可靠。
+
+### [#2304](https://github.com/Vispie-AI/VisPie_backend/pull/2304) perf(cc-army): reuse EFS worktree — 90s → 13s startup
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army EFS worktree 每次重新创建，启动耗时约 90 秒。
+- **修复**：复用已有 EFS worktree，避免重复初始化。
+- **成果**：启动时间从 90 秒缩短至 13 秒，效率大幅提升。
+
+### [#2286](https://github.com/Vispie-AI/VisPie_backend/pull/2286) feat(shadow-arena): PR-3 — vizzy-lark shadow mode + 50% auto-shadow
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：缺乏自动化的 vizzy-lark shadow 模式及流量分配机制。
+- **修复**：新增 vizzy-lark shadow 模式，实现 50% 流量自动 shadow 分配。
+- **成果**：Shadow Arena PR-3 上线，支持 vizzy-lark 影子测试与对比评估。
+
+### [#2284](https://github.com/Vispie-AI/VisPie_backend/pull/2284) feat(cc-army): session-aware callback — wake nanobot in correct chat
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army 回调无法在正确的对话中唤醒 nanobot。
+- **修复**：实现 session-aware 回调机制，确保在正确聊天中唤醒 nanobot。
+- **成果**：cc-army 多会话场景下消息路由准确，用户体验提升。
 ### [#2241](https://github.com/Vispie-AI/VisPie_backend/pull/2241) feat(daily-report): 将 Amy Liveness 集成至 George AI 日报卡片
 - **日期**：2026-04-18 | **状态**：✅ 已合并
 - **问题**：日报卡片仅有应用层指标（技能调用、会话健康），无法反映 Amy 容器本身的存活状态，导致低流量误读。
@@ -130,6 +260,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#2299](https://github.com/Vispie-AI/VisPie_backend/pull/2299) refactor(twilio-conversations): PG source of truth — Day 1-2 foundation
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Twilio 会话模块缺乏以 PG 为数据源的架构基础。
+- **修复**：完成 PG 数据源架构重构 Day 1-2 基础工作，建立可靠数据层。
+- **成果**：Twilio 会话以 PostgreSQL 为单一数据源，架构更清晰稳定。
+
+### [#2296](https://github.com/Vispie-AI/VisPie_backend/pull/2296) docs(twilio-conversations-refactor): core refactor plan — DO NOT MERGE YET
+- **日期**：2026-04-21 | **状态**：🚫 已关闭
+- **问题**：Twilio 会话模块需要核心重构但尚未完成，不可合并。
+- **修复**：起草核心重构计划文档，明确重构范围与实施步骤。
+- **成果**：重构计划清晰，为后续分步实施提供指导（仅文档，未合并）。
+
+### [#2289](https://github.com/Vispie-AI/VisPie_backend/pull/2289) docs(cc-army): delegate skill v2 — requester_context + auto-callback
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：cc-army delegate skill 文档缺少 requester_context 与自动回调说明。
+- **修复**：更新 delegate skill v2 文档，补充 requester_context 与自动回调配置说明。
+- **成果**：文档完整准确，开发者可快速接入 cc-army delegate 功能。
 ### [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) docs: 新增 auto-amy 架构双语系统地图
 - **日期**：2026-04-12 | **状态**：✅ 已合并
 - **内容**：新增 4 部分架构文档（英文 `docs/system-map/` + 中文 `docs/system-map-cn/`），共 8 个文件，涵盖模块地图、数据流图、调用链、部署拓扑。
@@ -161,4 +308,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 16 | 关闭未合并 2 | 待合并 1**
+**合计：19 个 PR | 已合并 40 | 关闭未合并 3 | 待合并 0**
