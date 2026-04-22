@@ -1,12 +1,101 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-22 | 共 44 个 PR（已合并 40 · 关闭未合并 3 · 待合并 0）
+> 统计周期：2026-04-10 ~ 2026-04-22 | 共 69 个 PR（已合并 64 · 关闭未合并 4 · 待合并 0）
 > 最后更新：2026-04-22
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2331](https://github.com/Vispie-AI/VisPie_backend/pull/2331) fix(ads-analytics): allow custom date ranges up to 365 days
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：广告分析日期选择器硬编码回溯上限为30天，与预设选项重叠导致自定义日期不可用。
+- **修复**：为 TimeRangeSelector 新增 maxDaysBack 属性，ads-analytics 页面设为365天，其余页面默认值不变。
+- **成果**：用户可在广告分析页面自由选取最多365天内的自定义日期范围。
+
+### [#2328](https://github.com/Vispie-AI/VisPie_backend/pull/2328) fix(twilio): CRITICAL — ::jsonb cast broke all webhook PG writes
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：SQLAlchemy text() 中的 ::jsonb 类型转换与参数绑定冲突，导致所有 Webhook PG 写入静默失败。
+- **修复**：将 ::jsonb 改为标准 SQL 的 CAST(:payload AS jsonb)，消除参数绑定冲突。
+- **成果**：Webhook PG 写入恢复正常，UI 可实时读取最新对话数据。
+
+### [#2326](https://github.com/Vispie-AI/VisPie_backend/pull/2326) fix(twilio): backfill updates conversation last_activity_at
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：回填脚本写入消息后未更新 last_activity_at，导致170条对话的收件箱排序和状态错误。
+- **修复**：回填后找到最新消息并单调更新对话记录，并一次性修复已受影响的170条历史数据。
+- **成果**：对话列表排序恢复正确，收件箱展示最新活动时间。
+
+### [#2325](https://github.com/Vispie-AI/VisPie_backend/pull/2325) fix(twilio): error handling — no more silent PG failures
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Twilio PG 写入失败仅记录 warning，Lark DLQ 失败完全静默，数据漂移难以发现。
+- **修复**：PG 写入失败升级为 error 级别日志，Lark DLQ 失败改为 warning/error 输出。
+- **成果**：PG 数据漂移和消息投递失败均可及时被日志告警捕获。
+
+### [#2324](https://github.com/Vispie-AI/VisPie_backend/pull/2324) fix(twilio): webhook PG write silently failing — form body + FK constraint
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：请求体被 FastAPI Form() 消耗后再次读取返回空值，新对话缺父行触发 FK 约束回滚，PG 写入整体静默失败。
+- **修复**：从已解析 Form 参数重建 raw_payload，写入前先调用 upsert_conversation() 保证父行存在。
+- **成果**：Twilio Webhook PG 写入恢复正常，twilio_inbound_events 数据正确落库。
+
+### [#2323](https://github.com/Vispie-AI/VisPie_backend/pull/2323) fix(review-ui): clickable links + dynamic AI progress card + remove Gemini label
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：AI 评审评论中链接无法点击，进度卡片未读取动态评审内容，且仍显示已废弃的 Gemini Vision 标签。
+- **修复**：链接添加样式可点击，进度卡片优先读取 Auto-Amy 动态评审，去除 Gemini Vision 页脚标签。
+- **成果**：评审界面链接可直接跳转，动态评审进度正确展示，品牌标识已更新。
+
+### [#2321](https://github.com/Vispie-AI/VisPie_backend/pull/2321) fix(rule-parser): Knowledge API as SSOT for video review rules
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：规则解析器从 git 仓库或文件路径读取规则，无法保证读到 Ops 在 /autopilot/memory UI 编辑的最新版本。
+- **修复**：改为从本地 Knowledge API 加载规则，与 /autopilot/memory UI 使用同一数据源。
+- **成果**：视频审核规则始终使用 Ops 最新编辑版本，陈旧文件和权限问题彻底解决。
+
+### [#2320](https://github.com/Vispie-AI/VisPie_backend/pull/2320) fix(auto-amy): read Ops workspace + human-readable AI review format
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：路径优先级错误导致读取 git 仓库版本（13条规则）而非 Ops 实际编辑版本（11条规则），评审以规则 ID 而非可读描述展示。
+- **修复**：调整路径优先级使 Ops workspace 排在首位，评审改用规则描述文字代替规则 ID。
+- **成果**：Auto-Amy 准确加载 Ops 维护的规则集，评审内容对用户更易读。
+
+### [#2319](https://github.com/Vispie-AI/VisPie_backend/pull/2319) fix(review-ui): deduplicate AI comments — always show latest
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：创作者重新提交后，动态评审与旧版 AI 评审同时显示，造成重复评论。
+- **修复**：当存在多条 AI 评论时，只展示最新一条。
+- **成果**：评审界面评论不再重复，始终展示最新 AI 评审结果。
+
+### [#2318](https://github.com/Vispie-AI/VisPie_backend/pull/2318) fix(review-ui): show dynamic AI review notes instead of overwriting with 4-rule format
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：buildTimelineEvents() 无条件用4条规则格式覆盖 action.notes，导致 Auto-Amy 动态13条规则评审内容丢失。
+- **修复**：仅在 action.notes 为空时才回退到 submission_ai_reviews，有内容时直接使用 notes。
+- **成果**：Manus 活动展示完整13条规则评审，其他活动保持4条规则格式，无需额外配置。
+
+### [#2317](https://github.com/Vispie-AI/VisPie_backend/pull/2317) fix(lark): resolve @_user_N mention placeholders to real names
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Lark 将 @提及 替换为 @_user_N 占位符，LLM 无法识别真实被提及用户，误判消息对象。
+- **修复**：利用消息 mentions 数组将占位符解析为真实姓名，机器人自身的提及直接去除。
+- **成果**：LLM 收到正确的用户真实姓名，群组消息中的 @提及 解析准确。
+
+### [#2315](https://github.com/Vispie-AI/VisPie_backend/pull/2315) fix(rule-parser): robust workspace path discovery for Amy EC2
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Amy EC2 未设置 WORKSPACE_PATH 环境变量，HOME 指向错误用户目录，规则文件路径解析失败。
+- **修复**：_find_workspace_file() 按优先级检查5个路径，优先匹配 EC2 主机 repo 挂载路径。
+- **成果**：Amy EC2 能正确找到 Ops 编辑的 video-preferences.md，动态规则加载生效。
+
+### [#2313](https://github.com/Vispie-AI/VisPie_backend/pull/2313) fix(shadow-judge): rebuild card instead of fetch-and-append for v2 compat
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：飞书卡片更新拼接 collapsible_panel 时类型不匹配触发 code=230099 错误，字段名不一致使所有 shadow 结果显示为"失败：未知"。
+- **修复**：改为通过 _shadow_card_state 缓存调用 build_final_card() 重建完整卡片，修正 status/elapsed 字段名并增加裁决渲染。
+- **成果**：Shadow judge 卡片更新成功，裁决结果（评分与理由）正常显示。
+
+### [#2310](https://github.com/Vispie-AI/VisPie_backend/pull/2310) fix(cc-army): chown guard prevents CI permission denied
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：SSM 写入产生的 root 属主文件在 CI 部署时引发权限拒绝错误，导致舰队部署失败。
+- **修复**：在技能目录操作前添加 chown 守卫检查，防止 root 属主文件残留。
+- **成果**：CI 舰队部署中 George 技能目录权限问题不再复现。
+
+### [#2309](https://github.com/Vispie-AI/VisPie_backend/pull/2309) fix(cc-army): setup-george-skills.sh → cc-army-delegate
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：claude-code 目录已删除但仍在 ACTIVE_SKILLS 中导致复制失败，SSM 写入产生 root 属主文件引发权限拒绝。
+- **修复**：将 setup-george-skills.sh 中的引用更新为 cc-army-delegate，修复路径与权限问题。
+- **成果**：CI 舰队部署恢复正常，技能安装步骤不再因路径缺失或权限问题失败。
 ### [#2303](https://github.com/Vispie-AI/VisPie_backend/pull/2303) fix(shadow-judge): handle Lark v2 card schema
 - **日期**：2026-04-20 | **状态**：✅ 已合并
 - **问题**：Shadow Judge 模块无法处理 Lark v2 卡片 schema 格式。
@@ -187,6 +276,29 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2322](https://github.com/Vispie-AI/VisPie_backend/pull/2322) feat(supabase): per-campaign toggle to disable legacy 4-rule AI review
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Manus 等活动同时运行 Auto-Amy 动态评审和旧版4条规则触发器，产生冗余评审。
+- **修复**：在活动 metadata 中新增 disable_legacy_ai_review 开关，Manus 首批启用，其他活动通过 SQL 按需开启。
+- **成果**：支持按活动级别灵活禁用旧版 AI 评审，动态评审独立运行无干扰。
+
+### [#2316](https://github.com/Vispie-AI/VisPie_backend/pull/2316) feat(twilio): enable PG source-of-truth flags on GCR
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Twilio PG 重构已完成全量验证，但 GCR 生产环境的两个特性开关尚未启用，仍走旧路径。
+- **修复**：在 .env.gcr 和 .env.dev 中将 TWILIO_USE_PG_WORKER 和 TWILIO_READ_FROM_PG 均设为 true。
+- **成果**：Twilio 收件箱和消息全面切换为 PG 读写，冷启动延迟从20秒降至7.5毫秒（降幅2667倍）。
+
+### [#2314](https://github.com/Vispie-AI/VisPie_backend/pull/2314) feat(auto-amy): dynamic video review rules from video-preferences.md
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Auto-Amy 视频审核规则硬编码在 Python 中（11条），与 video-preferences.md 中的13条规则不同步，Ops 编辑 md 文件不即时生效。
+- **修复**：新增 rule_parser.py 从 video-preferences.md 动态解析规则，每次调用实时读取，Python 常量仅作兜底。
+- **成果**：规则以 md 文件为单一数据源，Ops 编辑即时生效，恢复缺失的 C8 和 C9 规则。
+
+### [#2311](https://github.com/Vispie-AI/VisPie_backend/pull/2311) feat: add wearwow to default brand filter
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：性能监控看板默认品牌筛选中缺少 wearwow_v1.8_ai_digital_wardrobe_launch 品牌。
+- **修复**：将 wearwow_v1.8_ai_digital_wardrobe_launch 添加至性能监控页面的 DEFAULT_BRANDS 列表。
+- **成果**：wearwow 品牌默认显示在性能监控看板中，满足 Didi 的配置需求。
 ### [#2307](https://github.com/Vispie-AI/VisPie_backend/pull/2307) feat(cc-army): redirect all coding-task hints to Coder Army
 - **日期**：2026-04-20 | **状态**：✅ 已合并
 - **问题**：编码任务提示未统一引导到 Coder Army 处理。
@@ -260,6 +372,41 @@
 
 ## 三、文档建设（docs:）
 
+### [#2332](https://github.com/Vispie-AI/VisPie_backend/pull/2332) refactor(cc-army): token-based status detection — replaces agent-specific markers
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：状态检测依赖特定 Agent 标记，OpenCode 无标记导致状态永卡"运行中"，窗口大小变化引发翻转误判，dump-screen -f 标志在 fork zellij 中静默失效。
+- **修复**：改用 dump-screen token 提取进行通用状态检测，10秒 token 不变即判为完成，修复 zellij fork 兼容性和 PTY 尺寸问题。
+- **成果**：所有 Agent 类型状态检测统一准确，抗干扰能力显著提升，翻转问题消除。
+
+### [#2330](https://github.com/Vispie-AI/VisPie_backend/pull/2330) Allow links in dashboard messages
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Dashboard 消息输入框屏蔽了网址链接，导致运营无法在 /dashboard/messages 中发送 Google Docs 等链接。
+- **修复**：移除消息输入的链接拦截逻辑，保留邮箱和电话号码检测不变。
+- **成果**：运营人员可在 Dashboard 消息中正常发送任意网址链接。
+
+### [#2329](https://github.com/Vispie-AI/VisPie_backend/pull/2329) Fix stripe transfer
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Stripe 转账功能存在缺陷，导致付款流程异常。
+- **修复**：修复 Stripe 转账相关代码逻辑，涉及8个文件共7次提交。
+- **成果**：Stripe 转账功能恢复正常，支付流程可靠运行。
+
+### [#2327](https://github.com/Vispie-AI/VisPie_backend/pull/2327) Fix stripe transfer
+- **日期**：2026-04-21 | **状态**：🚫 已关闭
+- **问题**：Stripe 转账功能异常，需要修复相关代码逻辑。
+- **修复**：提交了初步修复方案但存在冲突未被合并，由后续 PR #2329 替代完成修复。
+- **成果**：此 PR 已关闭，相关修复通过 #2329 正式合并。
+
+### [#2312](https://github.com/Vispie-AI/VisPie_backend/pull/2312) perf-monitor: add wearwow_v1.8 to default brand filter
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：性能监控看板默认品牌筛选中缺少 wearwow_v1.8 品牌（与 #2311 并行提交）。
+- **修复**：将 wearwow_v1.8_ai_digital_wardrobe_launch 加入 DEFAULT_BRANDS 默认筛选列表。
+- **成果**：wearwow 品牌在性能监控看板中默认展示，满足 Didi 的配置需求。
+
+### [#2308](https://github.com/Vispie-AI/VisPie_backend/pull/2308) refactor(cc-army): generic screen-change status detection
+- **日期**：2026-04-20 | **状态**：✅ 已合并
+- **问题**：Agent 状态检测依赖特定标记，OpenCode 无标记永卡"运行中"，Claude 快速任务因 had_working 未设置而漏检。
+- **修复**：替换为基于 JSONL 数据变化的通用屏幕变化检测，5秒无活动→空闲，30秒→完成。
+- **成果**：适配所有 Agent 类型，净减少70行代码，状态检测准确可靠。
 ### [#2299](https://github.com/Vispie-AI/VisPie_backend/pull/2299) refactor(twilio-conversations): PG source of truth — Day 1-2 foundation
 - **日期**：2026-04-20 | **状态**：✅ 已合并
 - **问题**：Twilio 会话模块缺乏以 PG 为数据源的架构基础。
@@ -308,4 +455,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 40 | 关闭未合并 3 | 待合并 0**
+**合计：19 个 PR | 已合并 64 | 关闭未合并 4 | 待合并 0**
