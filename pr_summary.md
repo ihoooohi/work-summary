@@ -1,12 +1,89 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-22 | 共 69 个 PR（已合并 64 · 关闭未合并 4 · 待合并 0）
-> 最后更新：2026-04-22
+> 统计周期：2026-04-10 ~ 2026-04-23 | 共 94 个 PR（已合并 86 · 关闭未合并 6 · 待合并 1）
+> 最后更新：2026-04-23
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2356](https://github.com/Vispie-AI/VisPie_backend/pull/2356) fix(auto-amy): correct Bedrock pricing — Opus was 3x too high
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：usage.py 中 Bedrock 定价表沿用 Claude-3 旧费率，导致每日报告 Opus 成本虚高约 3 倍。
+- **修复**：按 2026-04-21 AWS Bedrock 官方定价更新 `_BEDROCK_PRICING` 中各型号费率。
+- **成果**：每日 API 成本报告数据准确，不再虚报使用费用。
+
+### [#2353](https://github.com/Vispie-AI/VisPie_backend/pull/2353) fix(auto-amy): hook streaming path + cache-aware pricing
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：#2351 上线后生产环境仍产生 0 条 usage_events，钩子挂载点错误且未区分缓存与非缓存价格。
+- **修复**：将 UsageMeter 挂入 `chat_stream_with_retry()` 流式路径，并按输入/缓存命中分段计价。
+- **成果**：Mitchell 生产环境 LLM 调用被正确记录，成本追踪管道正常运行。
+
+### [#2352](https://github.com/Vispie-AI/VisPie_backend/pull/2352) fix(auto-amy): hook streaming path + cache-aware pricing
+- **日期**：2026-04-21 | **状态**：🚫 已关闭
+- **问题**：#2351 上线后生产环境未记录任何 usage 事件，钩子挂载点和缓存计价均有误。
+- **修复**：尝试修复流式路径挂载与缓存感知定价，后被 #2353 替代并关闭。
+- **成果**：此 PR 已关闭，相关修复由 #2353 最终落地。
+
+### [#2350](https://github.com/Vispie-AI/VisPie_backend/pull/2350) fix(deploy): poll FastAPI healthcheck instead of racing 15s sleep
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：统一部署流程 FastAPI 验证步骤与 --force-recreate 存在竞态条件，近期 16 次中 11 次失败。
+- **修复**：将硬编码的 15s sleep 改为轮询 FastAPI /health 端点直到服务就绪。
+- **成果**：消除部署竞态条件，Unified Deployment CI 稳定通过。
+
+### [#2343](https://github.com/Vispie-AI/VisPie_backend/pull/2343) Fix ads analytics Meta OAuth flow and readiness UI
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：广告分析页面 Meta OAuth 授权流程存在缺陷，就绪状态 UI 显示不正确。
+- **修复**：修复 Meta OAuth 授权流程及就绪状态 UI 的展示逻辑。
+- **成果**：用户可正常完成 Meta 广告账号授权，就绪状态显示准确。
+
+### [#2342](https://github.com/Vispie-AI/VisPie_backend/pull/2342) fix(ads-analytics): restore date segment interactivity in TimeRangeSelector
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：广告分析日期选择器因 wrapper 的 readonly 模式添加了 pointer-events-none，导致日期分段点击无效。
+- **修复**：在只读模式下解除对 TimeRangeSelector 内部日期分段的指针事件屏蔽。
+- **成果**：广告分析页面日期输入交互恢复正常，用户可自由选择时间段。
+
+### [#2341](https://github.com/Vispie-AI/VisPie_backend/pull/2341) fix(twilio-conversations): ROOT CAUSE — poll merge instead of replace
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：15s 轮询仅拉取第一页并整体替换数组，用户通过"加载更多"查看的后续对话每 15s 丢失一次。
+- **修复**：轮询改为增量合并而非全量替换，保留用户已加载的全部对话条目。
+- **成果**：彻底消除 Load More 数据丢失，定位并解决前序补丁（#2335~#2339）未触及的真正根因。
+
+### [#2340](https://github.com/Vispie-AI/VisPie_backend/pull/2340) fix(twilio-conversations): ROOT CAUSE — poll merge instead of replace
+- **日期**：2026-04-22 | **状态**：🚫 已关闭
+- **问题**：15s 轮询整体替换对话列表，导致用户加载超出第一页的内容每 15s 消失。
+- **修复**：尝试改为增量合并轮询，最终被 #2341 替代后关闭。
+- **成果**：此 PR 已关闭，修复由 #2341 正式合并。
+
+### [#2339](https://github.com/Vispie-AI/VisPie_backend/pull/2339) fix(twilio-conversations): tags poll skip re-render when unchanged
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：标签轮询（每 2 分钟）无条件替换 availableTags 数组，即使标签未变也触发下拉框重渲染。
+- **修复**：用 JSON.stringify 对比新旧标签列表，只在实际变化时更新状态。
+- **成果**：标签无变化时不再触发重渲染，完成零多余重渲染系列优化。
+
+### [#2338](https://github.com/Vispie-AI/VisPie_backend/pull/2338) fix(twilio-conversations): detail poll skip re-render on metadata-only change
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：10s 详情轮询在仅有 metadata 变化（无新消息）时仍替换 conversationDetails，引发右侧面板重渲染。
+- **修复**：只在消息数量、最新 SID 或状态实际变化时才更新 conversationDetails。
+- **成果**：详情面板在无新消息时不再无效刷新，降低 UI 抖动频率。
+
+### [#2337](https://github.com/Vispie-AI/VisPie_backend/pull/2337) fix(twilio-conversations): preserve scroll + minimize re-renders on poll
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：后台轮询期间滚动位置被重置到顶部，对话卡片短暂闪烁，影响用户操作连续性。
+- **修复**：SID 变化时保留滚动位置，减少 Svelte 组件在轮询更新时的不必要重渲染。
+- **成果**：轮询期间滚动位置稳定，界面闪烁明显减少。
+
+### [#2335](https://github.com/Vispie-AI/VisPie_backend/pull/2335) fix(twilio-conversations): eliminate 15s poll UI flicker
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：每次 15s 对话列表轮询时显示约 200ms 的"Loading..."动画，导致明显 UI 抖动。
+- **修复**：轮询时不再无条件触发加载状态，改为后台静默更新对话列表数据。
+- **成果**：对话列表轮询完全无感知，用户工作流不再被 15s 闪屏打断。
+
+### [#2334](https://github.com/Vispie-AI/VisPie_backend/pull/2334) fix(cc-army): default callback URL to production gateway
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：CODER_ARMY_CALLBACK_URL 默认值为 localhost:4000，但 cc-army 运行在 web_dev 容器，该端口无监听者。
+- **修复**：将默认回调 URL 改为生产网关地址 https://amy.vispie-ai.com/coder-army/callback。
+- **成果**：cc-army 回调在未配置环境变量时自动指向生产网关，无需手动干预。
 ### [#2331](https://github.com/Vispie-AI/VisPie_backend/pull/2331) fix(ads-analytics): allow custom date ranges up to 365 days
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：广告分析日期选择器硬编码回溯上限为30天，与预设选项重叠导致自定义日期不可用。
@@ -276,6 +353,47 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2357](https://github.com/Vispie-AI/VisPie_backend/pull/2357) feat(revenue-tracker): persistent cron daemon for Campaign Pricing sync
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Campaign Pricing 同步任务依赖 nanobot 内存 cron，网关重启后任务丢失，导致表格连续 4 天未更新。
+- **修复**：新增持久化 cron-daemon.sh 脚本，在后台循环调度定价同步任务，与进程生命周期解耦。
+- **成果**：定价同步任务在网关重启后自动恢复，Campaign Pricing 数据持续按时更新。
+
+### [#2355](https://github.com/Vispie-AI/VisPie_backend/pull/2355) feat(auto-amy): daily API cost report → Lark webhook
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Amy 成本追踪管道已具备数据采集能力，但缺乏自动汇总与推送机制，团队无法及时感知 API 费用。
+- **修复**：新增定时任务聚合 usage_events 中过去 24h 及 7d 数据，渲染为 Lark 卡片并推送至运营 webhook。
+- **成果**：团队每日自动收到全舰队 API 成本报告，成本追踪反馈闭环正式形成。
+
+### [#2354](https://github.com/Vispie-AI/VisPie_backend/pull/2354) feat(auto-amy): extend UsageMeter to full fleet (13 agents + amy + eva)
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Mitchell 成本追踪验证通过后，其余 13 个 fleet agent 及 amy、eva 仍未接入 UsageMeter。
+- **修复**：将相同的 LLM 调用采集管道扩展至全部 fleet agent，统一上报至 usage_events 表。
+- **成果**：全舰队所有 LLM 调用均被记录，为每日成本报告提供完整数据来源。
+
+### [#2351](https://github.com/Vispie-AI/VisPie_backend/pull/2351) feat(auto-amy): wire Mitchell Bedrock calls into UsageMeter
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：UsageMeter、usage_events schema 及 POST 事件接口均已就绪，但 Mitchell 的 Bedrock 调用从未向其发送事件。
+- **修复**：在 Mitchell 的 Bedrock 调用路径中接入 UsageMeter，实现 LLM 用量事件的自动上报。
+- **成果**：Mitchell 生产环境 LLM 调用开始产生 usage_events 记录，成本追踪管道正式打通。
+
+### [#2345](https://github.com/Vispie-AI/VisPie_backend/pull/2345) feat(messages): fix campaign_agreements + regen types + rate limit
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：#2344 引用了不存在的 campaign_members 表，且缺少正确的类型定义和接口限流保护。
+- **修复**：改用正确的 campaign_agreements 表，重新生成 Supabase 类型，并为广播接口添加速率限制。
+- **成果**：广播后端可在生产环境正常运行，数据层引用正确，接口具备基础防刷保护。
+
+### [#2344](https://github.com/Vispie-AI/VisPie_backend/pull/2344) feat(messages): backend for New DM & Broadcasting (brand + admin)
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：品牌/管理员消息页面的新建私信与广播功能缺乏后端支撑，无法按角色发现创作者或批量发送消息。
+- **修复**：新增 POST /api/creators/search 创作者搜索端点及广播发送 API，支持品牌与管理员的角色隔离。
+- **成果**：新建私信与广播功能后端接口就绪，可支撑前端模态框流程的接入。
+
+### [#2336](https://github.com/Vispie-AI/VisPie_backend/pull/2336) feat: dashboard dynamic AI review + Supabase rules backup (P1+P2)
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Dashboard 客户页面无法动态感知 Auto-Amy AI 审核状态，视频审核规则缺乏数据库级持久化备份。
+- **修复**：P1 接入动态 AI 审核状态检测；P2 在每次 Step 4 运行时将规则备份至 campaigns.metadata。
+- **成果**：客户页面实时反映 AI 审核结果，规则文件同时在数据库中保有备份，避免单点丢失。
 ### [#2322](https://github.com/Vispie-AI/VisPie_backend/pull/2322) feat(supabase): per-campaign toggle to disable legacy 4-rule AI review
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：Manus 等活动同时运行 Auto-Amy 动态评审和旧版4条规则触发器，产生冗余评审。
@@ -372,6 +490,35 @@
 
 ## 三、文档建设（docs:）
 
+### [#2349](https://github.com/Vispie-AI/VisPie_backend/pull/2349) chore(ci): remove 4 dead/deprecated workflow files
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：仓库中存在 4 个超过 1 年未成功运行或已明确标记废弃的 GitHub Actions workflow 文件，增加维护负担。
+- **修复**：直接删除 deploy-dev_yluo.yml 等 4 个死亡/废弃 workflow，未触及任何活跃部署路径。
+- **成果**：CI 配置更整洁，减少误触发风险，仓库维护成本降低。
+
+### [#2348](https://github.com/Vispie-AI/VisPie_backend/pull/2348) Codex/ads analytics clients lite fix
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：广告分析客户端在 Codex 框架下存在若干影响数据展示或交互体验的轻量级缺陷。
+- **修复**：针对广告分析客户端的已知问题进行修复，恢复正常功能。
+- **成果**：广告分析客户端功能恢复正常，相关缺陷得到解决。
+
+### [#2347](https://github.com/Vispie-AI/VisPie_backend/pull/2347) chore(messages): sync ensure_conversation migration + regen types + drop rpc casts
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：#2344/#2345 版本的 ensure_conversation RPC 迁移文件在 Supabase 执行时报错，类型转换语法不兼容。
+- **修复**：同步迁移文件至实际在生产执行的版本，重新生成类型，移除不兼容的 RPC 类型转换语句。
+- **成果**：ensure_conversation 迁移与生产环境保持一致，类型生成正确，后续开发可顺利推进。
+
+### [#2346](https://github.com/Vispie-AI/VisPie_backend/pull/2346) Add local Nginx gateway for dev workflows
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：开发工作流中缺乏本地统一网关，各服务端口分散，开发与调试体验不一致。
+- **修复**：新增本地 Nginx 网关配置，为开发流程提供统一的请求入口。
+- **成果**：本地开发环境具备与生产一致的网关路由层，提升调试效率。
+
+### [#2333](https://github.com/Vispie-AI/VisPie_backend/pull/2333) Support document uploads in direct messages
+- **日期**：2026-04-21 | **状态**：🔀 待合并
+- **问题**：私信功能仅支持图片/视频附件，无法发送 PDF、Word、Excel 等常见文档格式。
+- **修复**：新增对 PDF、Word、Excel、PowerPoint、CSV、TXT、RTF 等文档类型的上传支持，分类为 file 媒体类型。
+- **成果**：私信附件类型更丰富，文档类附件以可下载文件形式在聊天中展示（待合并）。
 ### [#2332](https://github.com/Vispie-AI/VisPie_backend/pull/2332) refactor(cc-army): token-based status detection — replaces agent-specific markers
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：状态检测依赖特定 Agent 标记，OpenCode 无标记导致状态永卡"运行中"，窗口大小变化引发翻转误判，dump-screen -f 标志在 fork zellij 中静默失效。
@@ -455,4 +602,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 64 | 关闭未合并 4 | 待合并 0**
+**合计：19 个 PR | 已合并 86 | 关闭未合并 6 | 待合并 1**
