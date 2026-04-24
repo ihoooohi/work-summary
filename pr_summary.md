@@ -1,12 +1,71 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-23 | 共 94 个 PR（已合并 86 · 关闭未合并 6 · 待合并 1）
-> 最后更新：2026-04-23
+> 统计周期：2026-04-10 ~ 2026-04-24 | 共 119 个 PR（已合并 107 · 关闭未合并 6 · 待合并 5）
+> 最后更新：2026-04-24
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2382](https://github.com/Vispie-AI/VisPie_backend/pull/2382) fix(auto-amy): pre-analysis timeout + v3 test updates
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Gemini预分析超时600秒导致视频审核Step 4报错失败。
+- **修复**：将Gemini预分析超时从600秒调整至900秒，并更新v3架构对应的测试用例。
+- **成果**：视频审核流程超时问题得到解决，测试套件与最新OCR架构保持同步。
+
+### [#2381](https://github.com/Vispie-AI/VisPie_backend/pull/2381) fix(vio): allow file sharing in Slack via mediaLocalRoots
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Slack频道无法共享本地文件，AI缺乏文件路径引导规范。
+- **修复**：在openclaw.json中添加mediaLocalRoots配置，并在SOUL.md中补充文件共享规范。
+- **成果**：实现通过Slack渠道正常共享工作区和临时目录文件的能力。
+
+### [#2376](https://github.com/Vispie-AI/VisPie_backend/pull/2376) fix(auto-amy): apply 1.1x US inference-profile multiplier
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：AWS Bedrock实际费率比Anthropic直连高约10%，但费用追踪未作修正。
+- **修复**：在美区推理配置文件费用计算中统一加入1.1倍乘数系数。
+- **成果**：成本追踪数据与实际AWS账单对齐，提升计费准确性。
+
+### [#2373](https://github.com/Vispie-AI/VisPie_backend/pull/2373) fix(auto-amy): add ffmpeg + pyspellchecker to Mitchell Dockerfile for GLM-OCR
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Mitchell Docker镜像缺少ffmpeg和pyspellchecker，导致GLM-OCR帧提取和拼写检测失败。
+- **修复**：在Mitchell Dockerfile中添加ffmpeg系统包及pyspellchecker pip依赖。
+- **成果**：GLM-OCR所需的视频帧提取与英文拼写检查功能在容器内正常运行。
+
+### [#2372](https://github.com/Vispie-AI/VisPie_backend/pull/2372) fix(auto-amy): Python 3.14 async test compat — asyncio.run() migration
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Python 3.14已废弃asyncio.get_event_loop().run_until_complete()，导致5个测试失败。
+- **修复**：将2个测试文件中12处旧式调用全部迁移为asyncio.run()写法。
+- **成果**：测试套件在Python 3.14下全部通过，异步兼容性问题得以消除。
+
+### [#2370](https://github.com/Vispie-AI/VisPie_backend/pull/2370) fix(messages): image attachments clickable (open in new tab)
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：品牌/管理员聊天面板中发送和接收的图片无法点击查看，视频和文件已正常处理但图片除外。
+- **修复**：为图片元素添加可点击链接，点击后在新标签页中打开原图。
+- **成果**：管理员聊天中图片附件支持点击查看，交互体验与视频附件保持一致。
+
+### [#2363](https://github.com/Vispie-AI/VisPie_backend/pull/2363) fix(claude-md): add Think Before Coding, strengthen Evidence First
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：CLAUDE.md中缺少"先思考后编码"原则，以证为先原则表述不够清晰有力。
+- **修复**：新增"Think Before Coding"为第一原则，强化以证为先表述，原则数由5条增至6条。
+- **成果**：AI协作规范更加完善，开发流程中的思考优先和证据驱动文化得到强化。
+
+### [#2361](https://github.com/Vispie-AI/VisPie_backend/pull/2361) fix(shadow): resolve model name from runtime config
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：Shadow回调因OpenClaw容器未设置DEFAULT_MODEL环境变量，始终上报model="unknown"。
+- **修复**：改为从运行时配置api.config.agents.defaults.model动态读取模型名称。
+- **成果**：Shadow回调准确上报实际使用的模型名称，监控数据可信度提升。
+
+### [#2360](https://github.com/Vispie-AI/VisPie_backend/pull/2360) fix(creator-tracker): one row per creator×campaign instead of per-creator
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：原同步逻辑将每个创作者的所有活动合并为一行多选标签，不符合业务需求。
+- **修复**：改为每个创作者×活动组合生成独立一行，每行仅对应单个活动。
+- **成果**：Lark Bitable数据结构符合要求，便于按活动维度筛选和分析创作者数据。
+
+### [#2359](https://github.com/Vispie-AI/VisPie_backend/pull/2359) fix(creator-tracker): filter active campaigns + multi-select format
+- **日期**：2026-04-21 | **状态**：🔀 待合并
+- **问题**：同步脚本拉取全部38个活动（含已结束），且活动字段格式不符合多选要求。
+- **修复**：增加status=active过滤条件（仅13个活动），活动和分类字段改为数组格式写入。
+- **成果**：仅同步进行中活动，多选字段格式正确，数据质量显著提升。
 ### [#2356](https://github.com/Vispie-AI/VisPie_backend/pull/2356) fix(auto-amy): correct Bedrock pricing — Opus was 3x too high
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：usage.py 中 Bedrock 定价表沿用 Claude-3 旧费率，导致每日报告 Opus 成本虚高约 3 倍。
@@ -353,6 +412,53 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2379](https://github.com/Vispie-AI/VisPie_backend/pull/2379) feat(auto-amy): track Gemini + Nova Micro + embedding costs
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Bedrock已追踪费用，但Gemini、Nova Micro、嵌入模型三条调用路径的成本未统计。
+- **修复**：为Gemini视频分析、Nova Micro视频理解及Titan嵌入模型分别接入费用追踪。
+- **成果**：LLM全链路成本实现完整监控，不再存在未追踪的模型调用盲区。
+
+### [#2374](https://github.com/Vispie-AI/VisPie_backend/pull/2374) feat(auto-amy): OCR kill switch + concurrency limit + algorithm versioning
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：OCR并发ffmpeg进程过多导致768MB容器OOM，且无法在不重新部署的情况下关闭OCR功能。
+- **修复**：新增OCR_ENABLED开关、OCR_MAX_CONCURRENT并发上限及OCR_ALGO算法版本控制环境变量。
+- **成果**：OCR功能可热切换，并发资源消耗可控，算法版本可追溯管理。
+
+### [#2371](https://github.com/Vispie-AI/VisPie_backend/pull/2371) feat(mobile-app-web): design draft — messages2 + broadcast modal
+- **日期**：2026-04-22 | **状态**：🔀 待合并
+- **问题**：管理员消息页面需要重新设计，并增加向创作者群发消息的功能入口。
+- **修复**：在/admin/messages2路由下构建沙盒页面，新增群发创作者弹窗草稿（仅Demo壳）。
+- **成果**：消息页面改版设计稿上线沙盒路由，为后续正式开发提供视觉参考。
+
+### [#2367](https://github.com/Vispie-AI/VisPie_backend/pull/2367) feat(auto-amy): GLM-OCR dual-signal C7 arbitration for video review
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：GLM-OCR错字检测结果作为文本提示注入但未影响最终审核判定结论。
+- **修复**：将OCR信号整合进C7仲裁决策逻辑，实现双信号驱动的视频审核裁决。
+- **成果**：OCR检测结果正式参与审核裁决，视频合规判定准确性得到提升。
+
+### [#2366](https://github.com/Vispie-AI/VisPie_backend/pull/2366) feat(video-gen): Seedance 2.0 skill + ARK_API_KEY deploy
+- **日期**：2026-04-22 | **状态**：🔀 待合并
+- **问题**：Amy和George缺少通过火山引擎Ark API调用Seedance 2.0生成视频的共享技能规范。
+- **修复**：新增project_amy/shared/skills/video-gen/SKILL.md，涵盖文生视频和图生视频场景。
+- **成果**：Amy和George均可使用Seedance 2.0/2.0 Fast进行视频生成，技能文档统一管理。
+
+### [#2365](https://github.com/Vispie-AI/VisPie_backend/pull/2365) feat(scripts): Claude Code session analytics
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：团队在EC2上的Claude Code会话缺乏token用量、成本和工具使用的可视化分析能力。
+- **修复**：新增两个Python分析脚本，支持token消耗、成本明细、工具分布及每日活跃度统计。
+- **成果**：团队可快速洞察Claude Code使用情况，为资源优化和成本控制提供数据支撑。
+
+### [#2364](https://github.com/Vispie-AI/VisPie_backend/pull/2364) feat(cc-army): archive sessions before slot cleanup
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Agent槽位被复用或删除时历史会话数据丢失，无法追溯。
+- **修复**：新增cc_army_sessions归档表，delete_agent()在级联删除前自动调用archive_agent()保存历史。
+- **成果**：Agent会话历史得到持久化保存，槽位清理不再导致数据丢失。
+
+### [#2358](https://github.com/Vispie-AI/VisPie_backend/pull/2358) feat(creator-submission-tracker): implement daily sync to Lark Bitable
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：creator-submission-tracker仅有SKILL.md规范文档，缺少实际同步脚本实现。
+- **修复**：实现sync.js脚本，从数据库拉取所有创作者投稿数据并同步至Lark Bitable。
+- **成果**：创作者投稿数据每日自动同步至飞书多维表格，完成规范到实现的落地。
 ### [#2357](https://github.com/Vispie-AI/VisPie_backend/pull/2357) feat(revenue-tracker): persistent cron daemon for Campaign Pricing sync
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：Campaign Pricing 同步任务依赖 nanobot 内存 cron，网关重启后任务丢失，导致表格连续 4 天未更新。
@@ -490,6 +596,47 @@
 
 ## 三、文档建设（docs:）
 
+### [#2380](https://github.com/Vispie-AI/VisPie_backend/pull/2380) Codex/ads meta auto sync no data state
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：Meta广告自动同步在无数据时缺少对应的空状态展示处理。
+- **修复**：添加Meta广告自动同步无数据状态的前端空状态展示逻辑。
+- **成果**：Meta广告页面无数据时呈现友好提示，用户体验得到改善。
+
+### [#2378](https://github.com/Vispie-AI/VisPie_backend/pull/2378) refactor(auto-amy): OCR as ground truth for Gemini — eliminates 88% false positive rate
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：独立typo_detector与Gemini各自判断互不相关，导致高达88%的误判率。
+- **修复**：架构重构为OCR提取文字后注入Gemini提示词作为事实基准，由Gemini结合OCR证据综合判断。
+- **成果**：消除独立typo_detector模块，误报率大幅下降，视频审核精准度显著提升。
+
+### [#2377](https://github.com/Vispie-AI/VisPie_backend/pull/2377) perf(fastapi): fix async event loop blocking + add lint scanner
+- **日期**：2026-04-22 | **状态**：🔀 待合并
+- **问题**：QC路由在异步函数内使用同步ThreadPoolExecutor阻塞事件循环，影响并发性能。
+- **修复**：将相关路由改为asyncio.gather + run_in_executor模式，并新增异步阻塞lint扫描器。
+- **成果**：FastAPI路由异步性能得到改善，lint工具可主动发现潜在的事件循环阻塞问题。
+
+### [#2375](https://github.com/Vispie-AI/VisPie_backend/pull/2375) refactor(coder-army): unify naming — cc_army → coder_army
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：代码库中cc_army和coder_army命名混用，DB表名、Python类名、环境变量均不统一。
+- **修复**：全量重命名cc_army→coder_army，涵盖数据库表、Python类、环境变量及相关文件。
+- **成果**：命名体系统一为coder_army，代码一致性和可维护性显著提升。
+
+### [#2369](https://github.com/Vispie-AI/VisPie_backend/pull/2369) Reduce local dev analytics noise
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：本地开发环境产生大量无效埋点数据，干扰线上分析统计准确性。
+- **修复**：在本地开发环境中过滤或屏蔽分析埋点上报，减少噪声数据。
+- **成果**：线上分析数据质量提升，本地调试不再污染生产埋点统计。
+
+### [#2368](https://github.com/Vispie-AI/VisPie_backend/pull/2368) Codex/top performers rank badge safe corner
+- **日期**：2026-04-22 | **状态**：✅ 已合并
+- **问题**：顶级表现者排名徽章在某些布局下边角显示异常，存在视觉问题。
+- **修复**：调整排名徽章的边角安全区样式，确保在各种布局下正确显示。
+- **成果**：顶级表现者排名徽章在所有场景下边角显示正常，视觉一致性得到保证。
+
+### [#2362](https://github.com/Vispie-AI/VisPie_backend/pull/2362) refactor: slim CLAUDE.md from 355 to 57 lines
+- **日期**：2026-04-21 | **状态**：✅ 已合并
+- **问题**：CLAUDE.md文件过长（355行），内容冗余，AI行为引导效率低下。
+- **修复**：将文件精简至57行（削减84%），行为原则替代项目百科，领域详情迁移至.claude/rules/。
+- **成果**：AI协作文档极度精简，Andrej Karpathy风格+DAO融合原则直接指导AI行为。
 ### [#2349](https://github.com/Vispie-AI/VisPie_backend/pull/2349) chore(ci): remove 4 dead/deprecated workflow files
 - **日期**：2026-04-21 | **状态**：✅ 已合并
 - **问题**：仓库中存在 4 个超过 1 年未成功运行或已明确标记废弃的 GitHub Actions workflow 文件，增加维护负担。
@@ -602,4 +749,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 86 | 关闭未合并 6 | 待合并 1**
+**合计：19 个 PR | 已合并 107 | 关闭未合并 6 | 待合并 5**
