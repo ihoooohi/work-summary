@@ -1,12 +1,65 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-24 | 共 119 个 PR（已合并 107 · 关闭未合并 6 · 待合并 5）
-> 最后更新：2026-04-24
+> 统计周期：2026-04-10 ~ 2026-04-25 | 共 144 个 PR（已合并 125 · 关闭未合并 13 · 待合并 5）
+> 最后更新：2026-04-25
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2418](https://github.com/Vispie-AI/VisPie_backend/pull/2418) Fix profile logout redirect
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：用户退出登录后被跳转到错误页面，导致体验中断。
+- **修复**：修正退出登录后的跳转逻辑，确保重定向到正确目标页面。
+- **成果**：退出登录流程恢复正常，用户体验得到保障。
+
+### [#2416](https://github.com/Vispie-AI/VisPie_backend/pull/2416) fix(vio-ci): HOTFIX 'max expression length 21000' — extract bash helpers
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：PR #2415 修复 YAML 解析后，部署仍因 GitHub 表达式超过 21000 字符限制而持续失败。
+- **修复**：将超长 Bash 辅助函数提取到独立脚本，彻底消除超长 YAML 表达式问题。
+- **成果**：Vio 主分支部署流程完全恢复正常。
+
+### [#2415](https://github.com/Vispie-AI/VisPie_backend/pull/2415) fix(vio-ci): HOTFIX workflow YAML parse — extract Python to separate script
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：PR #2389 合并后，Vio 主分支每次部署均因工作流 YAML 解析错误而中断。
+- **修复**：将内嵌 Python 代码提取到独立脚本，修复 YAML 结构异常。
+- **成果**：Vio 部署流水线恢复可用，生产环境不再停滞在旧版镜像。
+
+### [#2414](https://github.com/Vispie-AI/VisPie_backend/pull/2414) fix(daily-agenda): use only calendar metadata — eliminate doc search hallucination
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：文档搜索返回不相关结果，Gemini 基于错误文档为会议编造行动项。
+- **修复**：摘要生成仅使用日历元数据，完全移除文档搜索步骤。
+- **成果**：日程摘要内容准确，幻觉式行动项问题彻底消除。
+
+### [#2412](https://github.com/Vispie-AI/VisPie_backend/pull/2412) fix(daily-agenda): per-meeting doc isolation to eliminate hallucination
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：多会议文档内容混合，导致 Gemini 将无关文档内容错误归入其他会议。
+- **修复**：为每个会议单独获取文档内容，实现严格的文档隔离处理。
+- **成果**：每次会议摘要仅包含本次会议相关文档，准确性显著提升。
+
+### [#2410](https://github.com/Vispie-AI/VisPie_backend/pull/2410) fix(coder-army): unique branch names + auto-push v2
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：多代理槽复用同一分支名导致推送冲突，并发任务无法正常执行。
+- **修复**：每次运行生成唯一分支名，同步优化自动推送逻辑。
+- **成果**：多代理并发执行不再产生分支冲突，工作流稳定性提升。
+
+### [#2399](https://github.com/Vispie-AI/VisPie_backend/pull/2399) fix(coder-army): agents must auto-push by default
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：无头代理完成任务后未自动推送代码，需人工介入处理。
+- **修复**：在 CLAUDE.md 中明确要求无头代理自动推送并创建 PR。
+- **成果**：代理任务完成后代码自动上传，减少人工操作步骤。
+
+### [#2398](https://github.com/Vispie-AI/VisPie_backend/pull/2398) fix(vio): Codex+Claude review followups + expand regression guard
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：PR #2389 代码审查发现 4 处问题，且回归测试覆盖不足。
+- **修复**：处理所有审查意见并扩展回归测试，防止 OpenClaw 配置漂移。
+- **成果**：Vio 监控模块代码质量提升，回归保障更加全面。
+
+### [#2396](https://github.com/Vispie-AI/VisPie_backend/pull/2396) fix(vio-liveness): match plain 'node index.js' for vio-gateway L2 check
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：L2 进程存活检测使用错误的 grep 关键词，无法匹配实际进程命令。
+- **修复**：将 L2 检测条件改为匹配 `node index.js`，与实际进程命令保持一致。
+- **成果**：vio-gateway 存活监控准确率恢复正常，误报问题消除。
 ### [#2382](https://github.com/Vispie-AI/VisPie_backend/pull/2382) fix(auto-amy): pre-analysis timeout + v3 test updates
 - **日期**：2026-04-22 | **状态**：✅ 已合并
 - **问题**：Gemini预分析超时600秒导致视频审核Step 4报错失败。
@@ -412,6 +465,53 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2417](https://github.com/Vispie-AI/VisPie_backend/pull/2417) feat(vio-ci): pre-merge regression coverage + size guard + SSOT docs
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：缺乏预合并回归测试和文件体积守护，难以在合并前拦截破坏性变更。
+- **修复**：新增预合并 CI 覆盖、体积守护和单一真实来源文档。
+- **成果**：Vio 部署前可自动检测回归问题，风险防控能力显著增强。
+
+### [#2409](https://github.com/Vispie-AI/VisPie_backend/pull/2409) feat/codex final test 20260424
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证 Codex 代理的网络访问和推送能力是否正常。
+- **修复**：添加最终验证文档及多项 Codex 能力测试用例。
+- **成果**：Codex 代理功能验证完成，网络访问和推送操作均正常。
+
+### [#2408](https://github.com/Vispie-AI/VisPie_backend/pull/2408) feat(george-ai): add GH_TOKEN for GitHub operations
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：George AI 容器缺少 GitHub Token，无法执行 PR 验证等 GitHub 操作。
+- **修复**：在 compose 配置中从 .env 文件读取 GH_TOKEN 和 GITHUB_TOKEN 环境变量。
+- **成果**：George AI 具备 GitHub 操作权限，Coder Army PR 验证流程完整。
+
+### [#2405](https://github.com/Vispie-AI/VisPie_backend/pull/2405) feat(daily-agenda): anti-hallucination + all groups + Slack digest
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：Gemini 在无文档时编造行动项，Lark 群组过滤导致部分群消息被遗漏。
+- **修复**：无文档时仅展示时间和标题，移除最小消息数过滤，优化 Slack 摘要格式。
+- **成果**：日程播报内容准确，所有 Lark 群组消息均被纳入，Slack 摘要完整呈现。
+
+### [#2404](https://github.com/Vispie-AI/VisPie_backend/pull/2404) feat(coder-army): system-level auto-push + PR after agent completes
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：代理完成任务后需手动执行推送和 PR 创建，自动化链路存在断点。
+- **修复**：在系统层新增 `_auto_push_and_pr()` 函数，任务完成后自动提交推送并创建 PR。
+- **成果**：三类代理均支持全自动推送，人工干预大幅减少。
+
+### [#2403](https://github.com/Vispie-AI/VisPie_backend/pull/2403) feat: Create file docs/coder-army-test/opencode-v3.md
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证 OpenCode 代理通过 Coder Army 自动创建文件的能力。
+- **修复**：通过 Coder Army 自动生成并提交 opencode-v3.md 测试文档。
+- **成果**：OpenCode 代理文件创建能力得到验证，自动化流程可行。
+
+### [#2402](https://github.com/Vispie-AI/VisPie_backend/pull/2402) feat: Create file docs/coder-army-test/claude-v3.md
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证 Claude 代理通过 Coder Army 自动创建文件的能力。
+- **修复**：通过 Coder Army 自动生成并提交 claude-v3.md 测试文档。
+- **成果**：Claude 代理文件创建能力得到验证，自动化流程可行性确认。
+
+### [#2395](https://github.com/Vispie-AI/VisPie_backend/pull/2395) feat(monitoring): extend liveness monitoring to Vio (dynamic + rollup)
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：存活监控仅覆盖 Amy 服务，Vio 多租户平台（22+ 容器）缺乏监控保障。
+- **修复**：将存活监控扩展至 Vio，新增 vio-gateway 及所有租户容器的动态检测。
+- **成果**：Amy 和 Vio 均纳入统一存活监控，多服务健康状态汇总可见。
 ### [#2379](https://github.com/Vispie-AI/VisPie_backend/pull/2379) feat(auto-amy): track Gemini + Nova Micro + embedding costs
 - **日期**：2026-04-22 | **状态**：✅ 已合并
 - **问题**：Bedrock已追踪费用，但Gemini、Nova Micro、嵌入模型三条调用路径的成本未统计。
@@ -596,6 +696,53 @@
 
 ## 三、文档建设（docs:）
 
+### [#2413](https://github.com/Vispie-AI/VisPie_backend/pull/2413) perf-monitor: complete CAMPAIGN_MAPPING with all Supabase UUIDs
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：多个活跃广告活动的 Supabase UUID 未录入映射表，导致统计数据缺失。
+- **修复**：新增 10 个 Supabase 活动 UUID 映射，覆盖所有当前活跃活动。
+- **成果**：所有活跃活动的已审批和已发布计数均可正确显示。
+
+### [#2411](https://github.com/Vispie-AI/VisPie_backend/pull/2411) perf-monitor: add missing Supabase campaign mappings (wearwow, genstore)
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：wearwow 和 genstore 活动因映射键名不匹配导致 Supabase 数据统计为零。
+- **修复**：在 CAMPAIGN_MAPPING 中补充 wearwow_v1.8 和 genstore 的完整映射条目。
+- **成果**：两个活动的审批和发布计数恢复正常显示。
+
+### [#2407](https://github.com/Vispie-AI/VisPie_backend/pull/2407) Add codex final test file
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证 Codex 代理最终测试文档的创建和推送能力。
+- **修复**：通过 Codex 代理添加 docs/coder-army-test/codex-final.md 测试文件。
+- **成果**：Codex 代理文档创建验证完成，最终测试通过。
+
+### [#2406](https://github.com/Vispie-AI/VisPie_backend/pull/2406) test(coder-army): opencode final verification test
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要对 OpenCode 代理进行最终端到端功能验证。
+- **修复**：提交 OpenCode 最终验证测试文件，覆盖核心操作路径。
+- **成果**：OpenCode 代理最终测试完成，功能验证通过。
+
+### [#2401](https://github.com/Vispie-AI/VisPie_backend/pull/2401) docs: add codex push test marker
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证 Codex 代理的推送工作流自动化是否正常运行。
+- **修复**：添加带时间戳的 docs/coder-army-test/codex-push-test.md 标记文件。
+- **成果**：Codex 推送工作流验证成功，自动化流程可用。
+
+### [#2400](https://github.com/Vispie-AI/VisPie_backend/pull/2400) test: push test marker file
+- **日期**：2026-04-23 | **状态**：🚫 已关闭
+- **问题**：需要验证推送工作流自动化是否正常运行。
+- **修复**：创建 docs/coder-army-test/opencode-push-test.md 并记录验证时间戳。
+- **成果**：推送自动化工作流验证完成，流程运行正常。
+
+### [#2397](https://github.com/Vispie-AI/VisPie_backend/pull/2397) chore: slim project .claude/settings.json to team-only rules
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：项目级配置包含大量应属于用户级的模型、权限等设置，职责不清晰。
+- **修复**：将模型/环境/权限/插件配置迁移至用户级，项目级仅保留团队规范钩子。
+- **成果**：配置职责分离明确，项目级配置精简为仅包含 enforce-respecv 钩子。
+
+### [#2394](https://github.com/Vispie-AI/VisPie_backend/pull/2394) Onboarding: Figma UI alignment polish + missing analytics fix
+- **日期**：2026-04-23 | **状态**：✅ 已合并
+- **问题**：引导流程与 Figma 设计稿存在像素级偏差，同时缺失部分埋点统计。
+- **修复**：对引导流程进行全面 UI 对齐打磨，并补充缺失的埋点分析事件。
+- **成果**：引导页面与设计稿像素级一致，埋点数据完整覆盖。
 ### [#2380](https://github.com/Vispie-AI/VisPie_backend/pull/2380) Codex/ads meta auto sync no data state
 - **日期**：2026-04-22 | **状态**：✅ 已合并
 - **问题**：Meta广告自动同步在无数据时缺少对应的空状态展示处理。
@@ -749,4 +896,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 107 | 关闭未合并 6 | 待合并 5**
+**合计：19 个 PR | 已合并 125 | 关闭未合并 13 | 待合并 5**
