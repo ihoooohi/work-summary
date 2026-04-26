@@ -1,12 +1,77 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-25 | 共 144 个 PR（已合并 125 · 关闭未合并 13 · 待合并 5）
-> 最后更新：2026-04-25
+> 统计周期：2026-04-10 ~ 2026-04-26 | 共 169 个 PR（已合并 144 · 关闭未合并 15 · 待合并 9）
+> 最后更新：2026-04-26
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2449](https://github.com/Vispie-AI/VisPie_backend/pull/2449) fix(gateway-prod): remove sidecar deploy, fix session-sync fallback
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：生产网关的 session-sync sidecar 部署引入额外复杂性并导致回退逻辑异常。
+- **修复**：移除 sidecar 部署方式，修复 session-sync 的回退处理逻辑。
+- **成果**：生产环境 session-sync 服务更加稳定可靠。
+
+### [#2448](https://github.com/Vispie-AI/VisPie_backend/pull/2448) fix(gateway-prod): session-sync sidecar deploy + default SESSION_SYNC_CHATS=*
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：生产网关缺少 SESSION_SYNC_CHATS 默认值导致会话同步范围不正确。
+- **修复**：部署 session-sync sidecar 并将 SESSION_SYNC_CHATS 默认值设为 *。
+- **成果**：所有会话均可被正确同步，生产网关稳定性提升。
+
+### [#2445](https://github.com/Vispie-AI/VisPie_backend/pull/2445) fix(nanobot): bound image-block token estimation to avoid 52K overcount
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：nanobot 对图片块的 token 估算存在严重过计，最高偏差达 52K。
+- **修复**：为图片块 token 估算增加上限约束，避免异常高值。
+- **成果**：token 计量更加准确，防止因过估导致的请求异常。
+
+### [#2440](https://github.com/Vispie-AI/VisPie_backend/pull/2440) fix: stabilize creator overview scraping sync
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：创作者概览数据抓取同步过程不稳定，存在竞争条件。
+- **修复**：稳定化创作者概览抓取的同步逻辑，消除竞态问题。
+- **成果**：创作者概览数据采集可靠性显著提高。
+
+### [#2438](https://github.com/Vispie-AI/VisPie_backend/pull/2438) Fix profile logout cookie clearing
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：用户退出登录时 cookie 未被正确清除，导致会话残留安全风险。
+- **修复**：修复退出登录接口中的 cookie 清除逻辑。
+- **成果**：用户注销后 cookie 被彻底清理，账户安全性增强。
+
+### [#2437](https://github.com/Vispie-AI/VisPie_backend/pull/2437) fix(coder-army): idle threshold 30s → 120s
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 闲置检测阈值过短（30s），导致正常任务被误判为空闲超时。
+- **修复**：将闲置检测阈值从 30 秒调整为 120 秒。
+- **成果**：减少对长时间运行任务的误判，提升 agent 稳定性。
+
+### [#2436](https://github.com/Vispie-AI/VisPie_backend/pull/2436) fix(coder-army): clean index.lock on kill too
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 被强制终止时未清理 git index.lock 文件，导致后续操作卡死。
+- **修复**：在 kill 操作时同步清理 git index.lock 文件。
+- **成果**：确保 agent 被终止后 git 仓库状态干净，不影响后续任务。
+
+### [#2435](https://github.com/Vispie-AI/VisPie_backend/pull/2435) fix(coder-army): clean stale git index.lock on create
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：创建新 coder-army 实例时，旧的 git index.lock 文件残留导致初始化失败。
+- **修复**：在 coder-army 创建阶段自动清理过期的 index.lock 文件。
+- **成果**：避免因残留锁文件导致初始化失败，提升创建成功率。
+
+### [#2431](https://github.com/Vispie-AI/VisPie_backend/pull/2431) fix(coder-army): remove send delay cap for long text
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 对长文本消息的发送存在延迟上限，导致大消息发送超时失败。
+- **修复**：移除长文本发送的延迟上限限制。
+- **成果**：长文本消息可正常发送，不再因延迟上限被截断或超时。
+
+### [#2429](https://github.com/Vispie-AI/VisPie_backend/pull/2429) Fix local frontend dev startup
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：本地前端开发环境无法正常启动，影响开发效率。
+- **修复**：修复本地前端开发环境启动配置问题。
+- **成果**：开发者可正常在本地启动前端服务，开发效率恢复正常。
+
+### [#2427](https://github.com/Vispie-AI/VisPie_backend/pull/2427) fix(coder-army): completed threshold 5s → 30s for DeepSeek thinking
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 使用 DeepSeek 思考模式时完成判断阈值过短（5s），导致误报完成。
+- **修复**：将 DeepSeek 思考模式的完成检测阈值从 5 秒提升至 30 秒。
+- **成果**：DeepSeek 思考任务完成判断更准确，误报率降低。
 ### [#2418](https://github.com/Vispie-AI/VisPie_backend/pull/2418) Fix profile logout redirect
 - **日期**：2026-04-24 | **状态**：✅ 已合并
 - **问题**：用户退出登录后被跳转到错误页面，导致体验中断。
@@ -465,6 +530,41 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2447](https://github.com/Vispie-AI/VisPie_backend/pull/2447) feat: DEEP RESEARCH: PostHog + Stripe Integration Technical Feasib
+- **日期**：2026-04-26 | **状态**：🚫 已关闭
+- **问题**：需要评估 PostHog 与 Stripe 集成的技术可行性以支持产品决策。
+- **修复**：开展深度研究，输出 PostHog + Stripe 集成技术可行性分析报告。
+- **成果**：为团队提供集成路径参考，本 PR 未正式合入代码库。
+
+### [#2434](https://github.com/Vispie-AI/VisPie_backend/pull/2434) feat: DEEP RESEARCH TASK — Do NOT modify any existing source code.
+- **日期**：2026-04-24 | **状态**：🔀 待合并
+- **问题**：需要进行深度研究任务，明确要求不涉及现有源代码修改。
+- **修复**：创建独立研究分支，仅新增研究文档，不改动任何现有代码。
+- **成果**：研究任务在隔离环境中进行，保证主干代码安全，待审核。
+
+### [#2433](https://github.com/Vispie-AI/VisPie_backend/pull/2433) feat(coder-army): rich summary in hooks + callback
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 的 hooks 和回调缺乏丰富的任务摘要信息，难以追踪执行状态。
+- **修复**：在 hooks 和 callback 中添加结构化的富文本摘要内容。
+- **成果**：任务执行后可获取详细摘要，便于监控和问题排查。
+
+### [#2432](https://github.com/Vispie-AI/VisPie_backend/pull/2432) feat(dm): Message Brand card + file attachments + URL linkification
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：私信功能缺少品牌卡片、文件附件展示及 URL 自动链接化支持。
+- **修复**：为 DM 模块新增 Brand 卡片展示、文件附件支持及 URL 自动转链功能。
+- **成果**：私信消息展示更丰富，用户体验显著提升。
+
+### [#2430](https://github.com/Vispie-AI/VisPie_backend/pull/2430) feat(coder-army): agent completion hooks — self-report done
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army agent 任务完成时缺乏主动上报机制，依赖外部轮询检测。
+- **修复**：为 agent 添加任务完成 hooks，实现自主上报完成状态。
+- **成果**：agent 任务完成后可及时通知系统，降低轮询开销，响应更及时。
+
+### [#2426](https://github.com/Vispie-AI/VisPie_backend/pull/2426) feat(coder-army): switch OpenCode to DeepSeek v4 Pro
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：coder-army 使用的 OpenCode 模型能力不足，需升级至更强推理模型。
+- **修复**：将 coder-army 的底层模型从 OpenCode 切换为 DeepSeek v4 Pro。
+- **成果**：编程辅助能力显著增强，任务处理质量和速度均有提升。
 ### [#2417](https://github.com/Vispie-AI/VisPie_backend/pull/2417) feat(vio-ci): pre-merge regression coverage + size guard + SSOT docs
 - **日期**：2026-04-24 | **状态**：✅ 已合并
 - **问题**：缺乏预合并回归测试和文件体积守护，难以在合并前拦截破坏性变更。
@@ -696,6 +796,53 @@
 
 ## 三、文档建设（docs:）
 
+### [#2446](https://github.com/Vispie-AI/VisPie_backend/pull/2446) docs(research): Multica deep analysis
+- **日期**：2026-04-24 | **状态**：🔀 待合并
+- **问题**：需要对 Multica 进行深度分析以支持产品或技术方向决策。
+- **修复**：完成 Multica 平台深度分析报告，覆盖核心功能与竞争力评估。
+- **成果**：研究成果可为产品方向提供参考依据，待正式审核合入。
+
+### [#2444](https://github.com/Vispie-AI/VisPie_backend/pull/2444) docs(bugs): SMS blast history gap — root cause & fix options
+- **日期**：2026-04-24 | **状态**：🔀 待合并
+- **问题**：SMS 群发历史记录存在数据缺口，原因不明影响用户查阅历史记录。
+- **修复**：分析 SMS 群发历史缺口的根本原因并提出多种可行修复方案。
+- **成果**：明确了问题根因并给出可操作的修复建议，等待评审实施。
+
+### [#2443](https://github.com/Vispie-AI/VisPie_backend/pull/2443) Codex/fix profile logout cookie
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：用户退出登录时 profile 相关 cookie 未被正确清除，存在安全隐患。
+- **修复**：通过 Codex 修复退出登录流程中的 profile cookie 清除逻辑。
+- **成果**：注销流程更加完整，消除了 cookie 残留的安全隐患。
+
+### [#2442](https://github.com/Vispie-AI/VisPie_backend/pull/2442) Add new DM and broadcast flows to messages
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：消息系统缺少对新私信（DM）和广播消息发送流程的支持。
+- **修复**：为消息模块新增私信和广播消息的完整业务流程。
+- **成果**：消息功能更加完善，支持更多业务场景的消息发送需求。
+
+### [#2441](https://github.com/Vispie-AI/VisPie_backend/pull/2441) Add ads media top10 recovery automation
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：广告媒体 top10 数据出现丢失时缺乏自动恢复机制，需人工介入。
+- **修复**：新增广告媒体 top10 数据的自动恢复自动化流程。
+- **成果**：top10 数据异常时可自动恢复，数据可靠性提升。
+
+### [#2439](https://github.com/Vispie-AI/VisPie_backend/pull/2439) docs: PostHog/Stripe/App Mafia deep research
+- **日期**：2026-04-24 | **状态**：🔀 待合并
+- **问题**：团队需要深入了解 PostHog、Stripe 及 App Mafia 的技术与商业模式。
+- **修复**：完成上述三个产品的深度研究报告并整理成文档。
+- **成果**：为产品集成和商业决策提供参考依据，待审核合入。
+
+### [#2428](https://github.com/Vispie-AI/VisPie_backend/pull/2428) docs(research): PostHog deep source analysis
+- **日期**：2026-04-24 | **状态**：🚫 已关闭
+- **问题**：需要对 PostHog 源码进行深度分析以评估与平台集成的可行性。
+- **修复**：完成 PostHog 源码深度分析，输出详细研究文档。
+- **成果**：分析结论未合入主干，PR 已关闭。
+
+### [#2425](https://github.com/Vispie-AI/VisPie_backend/pull/2425) Support document uploads in direct messages
+- **日期**：2026-04-24 | **状态**：✅ 已合并
+- **问题**：私信功能不支持用户上传文档附件，限制了内容共享能力。
+- **修复**：为私信模块添加文档上传支持功能。
+- **成果**：用户可在私信中发送文档附件，消息功能更加完整。
 ### [#2413](https://github.com/Vispie-AI/VisPie_backend/pull/2413) perf-monitor: complete CAMPAIGN_MAPPING with all Supabase UUIDs
 - **日期**：2026-04-23 | **状态**：✅ 已合并
 - **问题**：多个活跃广告活动的 Supabase UUID 未录入映射表，导致统计数据缺失。
@@ -896,4 +1043,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 125 | 关闭未合并 13 | 待合并 5**
+**合计：19 个 PR | 已合并 144 | 关闭未合并 15 | 待合并 9**
