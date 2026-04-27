@@ -1,12 +1,89 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-26 | 共 169 个 PR（已合并 144 · 关闭未合并 15 · 待合并 9）
-> 最后更新：2026-04-26
+> 统计周期：2026-04-10 ~ 2026-04-27 | 共 194 个 PR（已合并 167 · 关闭未合并 17 · 待合并 9）
+> 最后更新：2026-04-27
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2488](https://github.com/Vispie-AI/VisPie_backend/pull/2488) fix(ci): auto-rerun deploy workflows cancelled by GitHub concurrency
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：GitHub 并发策略导致多个部署工作流竞争时互相取消，无法自动恢复。
+- **修复**：新增调谐工作流，检测被取消的部署任务并自动重新触发。
+- **成果**：多工作流并发部署时不再因竞争导致部署永久失败。
+
+### [#2486](https://github.com/Vispie-AI/VisPie_backend/pull/2486) fix(hooks): mark lint-hook-paths.sh + pre-commit as executable
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：PR #2468 添加的脚本文件在 git 中缺少可执行权限，导致 pre-commit 钩子无法运行。
+- **修复**：将三个脚本文件权限从 100644 更新为 100755，使其可被 git 直接调用。
+- **成果**：pre-commit 钩子和路径检查脚本均可正常执行。
+
+### [#2485](https://github.com/Vispie-AI/VisPie_backend/pull/2485) fix(ci): split deploy-nanobot concurrency to job-level (Amy/Eva/Mitchell)
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：工作流级别并发配置导致同一次推送中多个 nanobot 部署工作流相互取消。
+- **修复**：将 Amy/Eva/Mitchell 并发控制从工作流级别拆分至 Job 级别，与 nanobot-fleet 模式一致。
+- **成果**：构建阶段可并行运行，部署阶段通过共享锁串行，消除无效取消。
+
+### [#2481](https://github.com/Vispie-AI/VisPie_backend/pull/2481) fix(dm): refresh creator list when switching campaign filter
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：新建私信弹窗中切换活动过滤器后，创作者列表未同步刷新，显示数据过时。
+- **修复**：监听活动过滤变化事件，重新触发创作者列表加载并确保数据与当前活动范围一致。
+- **成果**：切换活动过滤器后创作者列表实时刷新，"全选"功能与过滤结果保持一致。
+
+### [#2478](https://github.com/Vispie-AI/VisPie_backend/pull/2478) fix(amy): strip markdown for Lark doc comment replies
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：Amy 回复飞书云文档评论时，Markdown 格式符号以纯文本形式显示，严重影响可读性。
+- **修复**：在发送文档评论回复前对内容进行去 Markdown 处理，转换为纯文本格式。
+- **成果**：Amy 在云文档评论中的回复内容格式正确，不再出现原始 Markdown 符号。
+
+### [#2477](https://github.com/Vispie-AI/VisPie_backend/pull/2477) hotfix(amy): restore drive.notice.comment_add_v1 webhook routing
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：飞书云文档评论 Webhook 事件未匹配任何处理分支，静默返回 200 OK，Amy 完全无法感知 @-提及。
+- **修复**：修复 Webhook 入口分支判断逻辑，正确路由 drive.notice.comment_add_v1 事件。
+- **成果**：Amy 恢复响应飞书云文档 @-提及，Plan B 方案（#2476）功能正常生效。
+
+### [#2474](https://github.com/Vispie-AI/VisPie_backend/pull/2474) fix(dm): restore campaign dropdown scrolling in New DM modal
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：新建私信弹窗的活动筛选下拉列表在活动数量多时无法滚动，内容超出视图范围。
+- **修复**：为下拉列表添加内部滚动容器并限制最大高度，保持现有布局和选择逻辑不变。
+- **成果**：活动列表较长时下拉框可正常滚动，弹窗使用体验恢复正常。
+
+### [#2472](https://github.com/Vispie-AI/VisPie_backend/pull/2472) fix(nanobot): restore R3 group extraction + R4 MEMORY.md injection
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：#2465 的群组记忆提取（R3）和 MEMORY.md 注入（R4）在后续压缩合并中意外丢失。
+- **修复**：恢复 R3 通过 DeepSeek V4 Pro 提取群聊记忆并写入 Insforge，以及 R4 MEMORY.md 注入系统上下文。
+- **成果**：nanobot 群聊记忆提取和个人记忆注入功能全部恢复正常。
+
+### [#2471](https://github.com/Vispie-AI/VisPie_backend/pull/2471) fix(nanobot): /compact load session from disk not just cache
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：/compact 命令仅从内存缓存读取会话，容器重启后缓存为空，导致始终返回"会话过短"错误。
+- **修复**：将 _cache.get() 改为 get_or_create()，从磁盘 JSONL 文件加载历史会话。
+- **成果**：容器重启后 /compact 可正常加载历史会话并执行压缩操作。
+
+### [#2470](https://github.com/Vispie-AI/VisPie_backend/pull/2470) fix(auto-amy): inject INTERNAL_DEPLOYMENT=true into amy/eva nanobot workflows
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：使用独立部署工作流的 Amy/Eva 等 3 个 nanobot 未注入 INTERNAL_DEPLOYMENT=true，内部标识缺失。
+- **修复**：在 Amy/Eva nanobot 专用部署工作流中补充注入 INTERNAL_DEPLOYMENT=true 环境变量。
+- **成果**：全部 14 个 nanobot 均正确携带内部部署标识，内部流量识别完整。
+
+### [#2469](https://github.com/Vispie-AI/VisPie_backend/pull/2469) fix(nanobot): /compact reply_text NameError
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：/compact 命令因 reply_text 变量未定义而崩溃，触发 NameError 异常。
+- **修复**：将 reply_text 替换为 _real_add_done_reaction（完成表情）与 _real_send_card（卡片展示压缩结果）。
+- **成果**：/compact 命令执行正常，不再出现 NameError 异常崩溃。
+
+### [#2468](https://github.com/Vispie-AI/VisPie_backend/pull/2468) fix(hooks): use $CLAUDE_PROJECT_DIR for hook paths in settings.json
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：settings.json 中 Hook 使用相对路径，跨会话执行时频繁报"找不到脚本"警告。
+- **修复**：将 Hook 路径改为 $CLAUDE_PROJECT_DIR/.claude/hooks/X.sh 绝对环境变量路径。
+- **成果**：Hook 路径问题解决，不再出现脚本找不到的报错。
+
+### [#2464](https://github.com/Vispie-AI/VisPie_backend/pull/2464) fix(amy): allow add_reply notice_type for repeat @-mentions in same thread
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：Amy 仅响应同一评论线程中的首次 @-提及，后续重复 @-提及被过滤器拦截。
+- **修复**：在事件过滤逻辑中允许 add_reply 类型的 notice_type，使同线程重复 @-提及均能触发处理。
+- **成果**：Amy 可正常响应同一评论线程中的所有 @-提及，不再仅处理首条。
 ### [#2449](https://github.com/Vispie-AI/VisPie_backend/pull/2449) fix(gateway-prod): remove sidecar deploy, fix session-sync fallback
 - **日期**：2026-04-24 | **状态**：✅ 已合并
 - **问题**：生产网关的 session-sync sidecar 部署引入额外复杂性并导致回退逻辑异常。
@@ -530,6 +607,77 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2487](https://github.com/Vispie-AI/VisPie_backend/pull/2487) [DO NOT MERGE] feat(amy): ChannelAdapter Protocol
+- **日期**：2026-04-26 | **状态**：✅ 已合并
+- **问题**：Amy 各渠道（IM、文档评论、Slack 等）处理逻辑分散，缺乏统一的渠道适配抽象层。
+- **修复**：实现 ChannelAdapter 协议作为路线图文档，将渠道适配抽象为统一接口，代码已测试但未接入生产。
+- **成果**：渠道适配协议设计完成，为后续多渠道统一接入奠定架构基础。
+
+### [#2484](https://github.com/Vispie-AI/VisPie_backend/pull/2484) feat(twilio-batch): personalize batch SMS with {first_name}/{name} placeholders
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：批量短信发送使用统一模板内容，无法对每位接收者进行个性化内容替换。
+- **修复**：在 /send-batch 接口中增加可选占位符替换功能，支持 {first_name}/{name} 变量。
+- **成果**：批量短信现支持每位接收者个性化内容，提升创作者触达效果。
+
+### [#2483](https://github.com/Vispie-AI/VisPie_backend/pull/2483) feat(amy): real Drive comment reactions (IM-OnIt parity, Lark v2 API)
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：Amy 在飞书云文档评论中使用占位回复方案，无法与 IM OnIt 反应行为真正统一。
+- **修复**：接入飞书 Drive Comments v2 反应 API，将占位内容改为真实 Typing 反应，与 IM OnIt 行为完全对齐。
+- **成果**：Amy 在文档评论和 IM 中的交互体验高度一致，用户可看到真实的处理状态反馈。
+
+### [#2482](https://github.com/Vispie-AI/VisPie_backend/pull/2482) feat(amy): real Drive comment reactions (IM-OnIt parity, Lark v2 API)
+- **日期**：2026-04-25 | **状态**：🚫 已关闭
+- **问题**：#2480 的占位回复方案无法与 IM 的 OnIt 反应真正对齐，需升级为 v2 反应 API。
+- **修复**：尝试接入 Drive Comments v2 API 进行真实反应，后被 rebase 版本 #2483 取代关闭。
+- **成果**：此 PR 已由 #2483 替代，功能已在 #2483 中正式落地。
+
+### [#2480](https://github.com/Vispie-AI/VisPie_backend/pull/2480) feat(amy): IM-style OnIt → done unification for Lark doc comments
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：用户在飞书云文档评论中 @-提及 Amy 时缺少即时处理状态反馈，体验割裂。
+- **修复**：Amy 收到评论 @-提及后立即更新占位回复为"👀 thinking..."，完成后再更新为最终答复。
+- **成果**：飞书文档评论中的 Amy 交互体验与 IM OnIt→done 模式对齐，用户有即时响应感知。
+
+### [#2479](https://github.com/Vispie-AI/VisPie_backend/pull/2479) feat(amy): IM-style OnIt → done unification for Lark doc comments
+- **日期**：2026-04-25 | **状态**：🚫 已关闭
+- **问题**：Amy 在飞书文档评论中缺乏即时反馈机制，与 IM 的 OnIt→done 体验不一致。
+- **修复**：尝试实现评论 OnIt→done 统一模式，后被更完善的 #2480 替代而关闭。
+- **成果**：此 PR 已被 #2480 替代关闭，功能已在 #2480 中正式落地。
+
+### [#2476](https://github.com/Vispie-AI/VisPie_backend/pull/2476) feat(amy): route doc comments through Hatchet pipeline (Plan B)
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：Amy 在飞书云文档评论中仅能发送静态占位内容，无法使用 nanobot 完整工具能力。
+- **修复**：将文档评论 @-提及事件接入 Hatchet 管道（Plan B），与群聊 IM 使用相同的 nanobot agent 循环。
+- **成果**：Amy 可在飞书文档评论中使用完整工具集（网络搜索、文档更新等）进行智能回复。
+
+### [#2475](https://github.com/Vispie-AI/VisPie_backend/pull/2475) feat(metrics): add ctx_loss event — set the mirror before fixing context loss
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：缺少对 nanobot agent 上下文丢失情况的量化监控，无法定位高频丢失的会话。
+- **修复**：新增 ctx_loss 事件类型，通过 4 个高精度正则检测 agent 最终回复，并在每日 Lark 卡片中展示统计。
+- **成果**：可量化追踪上下文丢失频率、各 agent 分布及热点会话，为修复工作提供数据基础。
+
+### [#2473](https://github.com/Vispie-AI/VisPie_backend/pull/2473) feat(daily-brief): multi-user system — 18 personalized DM cards
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：每日晨报 agent 仅向 George 一人发送日程简报，无法覆盖多位团队成员。
+- **修复**：重构晨报流程为多用户系统，新增 recipients.py 支持 18 位接收者，分两档推送个性化内容。
+- **成果**：18 位团队成员每日收到包含日历和 @提及等个性化内容的晨报卡片。
+
+### [#2467](https://github.com/Vispie-AI/VisPie_backend/pull/2467) feat(amy): wire comment replies through nanobot agent (process_direct)
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：Amy 对飞书文档评论仅回复静态占位内容，未接入 nanobot agent 进行智能处理。
+- **修复**：将文档评论事件路由至 process_direct，使用完整 nanobot agent 循环（Bedrock Claude + 全工具注册表 + 线程记忆）处理。
+- **成果**：Amy 首次在文档评论中使用 nanobot 完整能力进行智能回复（后由 Plan B #2476 优化替代）。
+
+### [#2466](https://github.com/Vispie-AI/VisPie_backend/pull/2466) feat(nanobot): add /compact slash command
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：nanobot 上下文压缩仅在自动触发时执行，用户无法主动触发压缩管理会话长度。
+- **修复**：新增 /compact 斜杠命令，手动触发完整压缩流程（卸载→裁剪→截断→DeepSeek 索引→丢弃）。
+- **成果**：用户可主动执行会话压缩，压缩前后 token 数量以卡片形式展示。
+
+### [#2465](https://github.com/Vispie-AI/VisPie_backend/pull/2465) feat(nanobot): memory overhaul — DeepSeek extraction, group memory, MEMORY.md
+- **日期**：2026-04-25 | **状态**：✅ 已合并
+- **问题**：nanobot 记忆系统使用高成本模型生成压缩索引，群聊记忆未持久化，个人记忆未注入上下文。
+- **修复**：改用 DeepSeek V4 Pro（降低 20 倍成本）；持久化至 history.jsonl 和 Insforge；启用群聊记忆提取；MEMORY.md 注入系统上下文。
+- **成果**：记忆系统全面升级，成本大幅降低，群聊和个人记忆均可持久化并注入 nanobot 上下文。
 ### [#2447](https://github.com/Vispie-AI/VisPie_backend/pull/2447) feat: DEEP RESEARCH: PostHog + Stripe Integration Technical Feasib
 - **日期**：2026-04-26 | **状态**：🚫 已关闭
 - **问题**：需要评估 PostHog 与 Stripe 集成的技术可行性以支持产品决策。
@@ -1043,4 +1191,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 144 | 关闭未合并 15 | 待合并 9**
+**合计：19 个 PR | 已合并 167 | 关闭未合并 17 | 待合并 9**
