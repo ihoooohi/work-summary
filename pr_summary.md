@@ -1,12 +1,83 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-27 | 共 194 个 PR（已合并 167 · 关闭未合并 17 · 待合并 9）
-> 最后更新：2026-04-27
+> 统计周期：2026-04-10 ~ 2026-04-28 | 共 219 个 PR（已合并 185 · 关闭未合并 23 · 待合并 10）
+> 最后更新：2026-04-28
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2543](https://github.com/Vispie-AI/VisPie_backend/pull/2543) fix(insforge-fallback): correct wire format + cost attribution + observability
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：InsForge 备用路径请求字段（maxTokens/toolChoice 等）未遵循 camelCase 规范，费用归因错误返回 $0，且无可观测日志。
+- **修复**：修正参数命名、新增动态模型映射、修复费用路由至 OpenRouter 价格表，添加 `[bedrock-fallback]` 日志标记。
+- **成果**：15 次 smoke 全部通过，InsForge 备用路径费用统计准确，可通过日志追踪调用频率。
+
+### [#2541](https://github.com/Vispie-AI/VisPie_backend/pull/2541) fix(vio): deploy script port-conflict pre-check + reserved port docs
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：Vio 部署脚本未检测端口占用，manus 切换时端口 3201 被 autoamy-prod 占用，健康检查误报导致流量路由至错误租户。
+- **修复**：在 docker compose up 前新增端口预检（ss -tlnp），端口 <3210 直接拒绝，补充各端口保留说明。
+- **成果**：端口冲突可在部署前发现并中止，避免错误路由造成用户影响。
+
+### [#2540](https://github.com/Vispie-AI/VisPie_backend/pull/2540) fix(video-frontend): kill infinite analyze→upload→analyze loop (regression from PR #2535)
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2535 修复上传后，前端将 EventSource 正常关闭误判为失败，触发 analyze→upload→analyze 无限循环。
+- **修复**：引入显式状态机（attemptCount/completedSuccessfully/fallbackAttempted），限制 fallback 仅触发一次。
+- **成果**：URL 和文件上传场景均可正常终止，不再出现无限循环或无效错误提示。
+
+### [#2539](https://github.com/Vispie-AI/VisPie_backend/pull/2539) fix(amy): restore max_tool_result_chars in SubagentSyncTool → AgentRunSpec
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2522 重构时遗漏 `max_tool_result_chars` 的三处传递，导致生产环境 subagent 工具调用崩溃。
+- **修复**：恢复 `__init__` 接收参数、构造函数存储、`execute()` 传递至 AgentRunSpec 三处代码。
+- **成果**：394 个测试全部通过，subagent 工具调用恢复正常，新增回归守卫防止再次丢失。
+
+### [#2538](https://github.com/Vispie-AI/VisPie_backend/pull/2538) fix(env): quote DB URLs in .env so shell source parses them
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：.env 中 DB URL 未加引号，shell source 时特殊字符截断 URL，matrix mining pipeline 因端口解析失败无法启动。
+- **修复**：将 AGENT_DATABASE_URL、POSTGRES_DSN、MYSQL_DSN 三行改用单引号包裹，与 PGPASSWORD 保持一致。
+- **成果**：DB URL 可被 shell 正确解析，pipeline --stage 1 成功连接数据库。
+
+### [#2537](https://github.com/Vispie-AI/VisPie_backend/pull/2537) fix(vio): docker-compose volume key — service ref must match top-level def
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：compose 模板中 service 引用的 volume key 变量替换后与 top-level volumes 定义名不一致，导致启动报错。
+- **修复**：将 volume key 改为抽象名 `shadow-state`，仅在 `name:` 字段保留变量替换。
+- **成果**：compose 启动不再报 undefined volume 错误，manus cutover 可正常继续。
+
+### [#2536](https://github.com/Vispie-AI/VisPie_backend/pull/2536) fix(vio): correct manus cutover paths + add copy-first parallel-safe model
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2499 切换脚本中工作区路径、PG slug 及 LARK_VERIFICATION_TOKEN 必要性均与生产实际不符。
+- **修复**：修正路径为 JuiceFS 实际挂载点、slug 改为 `vio-manus`，新增 copy-first 模型让 nanobot 使用独立工作区副本。
+- **成果**：切换脚本可安全运行，OpenClaw 工作区不受影响，回滚时状态无损。
+
+### [#2535](https://github.com/Vispie-AI/VisPie_backend/pull/2535) fix(video): unified platform parser + fetcher fixes 400 on /api/proxy/media/video
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：前端 fallback 使用占位 URL `@tiktok`，后端 serializer 缺少 instagram_url 字段，无来源时返回 5xx 而非 4xx。
+- **修复**：新增 platform_parser/platform_fetcher 统一解析层，扩展 serializer 支持多平台 URL，修复前端 fallback 及上传格式限制。
+- **成果**：TikTok/Instagram/YouTube/Douyin 均可正常解析，28 个解析器单元测试通过。
+
+### [#2533](https://github.com/Vispie-AI/VisPie_backend/pull/2533) fix(amy): token-expiry retry on Lark Drive comment API calls
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：lark/comments.py 的 7 个 Drive API 函数缺少 token 过期重试，token 提前失效时 Amy 停止响应文档 @提及约 14 分钟。
+- **修复**：将 client.py 已验证的 `for attempt in range(2)` + `_invalidate_token()` 重试模式移植到全部 7 个函数。
+- **成果**：391 个测试通过，token 过期时自动刷新重试，Amy 响应不再中断。
+
+### [#2532](https://github.com/Vispie-AI/VisPie_backend/pull/2532) fix(ci): smoke test pipes script via stdin — fixes YAML literal-block syntax error
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2531 在 YAML run 块内嵌入 Python heredoc 导致三个 CI workflow YAML 解析失败并立即报错。
+- **修复**：将 smoke 脚本提取为独立文件 smoke_find_spec.py，通过 stdin 管道传入容器执行。
+- **成果**：三个 workflow YAML 语法验证通过，CI smoke 检查语义不变。
+
+### [#2530](https://github.com/Vispie-AI/VisPie_backend/pull/2530) fix(matrix-mining): add missing entry point wrappers
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：pipeline.py 引用的 run_stage1/run_stage2_sync/run_stage4_sync 入口函数在 #2529 合并后缺失，--run-all 无法执行。
+- **修复**：补充三个入口函数，run_stage1 支持 DuckDB/PG fallback，其余两个为 async 同步包装器。
+- **成果**：matrix mining pipeline 的 --run-all 入口可正常调用。
+
+### [#2524](https://github.com/Vispie-AI/VisPie_backend/pull/2524) fix(amy): v3 — explicit shadow tool deny-list (config gates bypassed in prod)
+- **日期**：2026-04-26 | **状态**：✅ 已合并
+- **问题**：DeepSeek shadow v2 的配置层禁用在生产中被绕过，shadow agent 实际调用了 shell 命令，存在双写风险。
+- **修复**：新增 `_SHADOW_BLOCKED_TOOLS` 常量，在注册默认工具后立即 unregister exec/message/spawn。
+- **成果**：89 个测试通过，pinning 测试确保危险工具不会被意外恢复到 shadow agent。
 ### [#2488](https://github.com/Vispie-AI/VisPie_backend/pull/2488) fix(ci): auto-rerun deploy workflows cancelled by GitHub concurrency
 - **日期**：2026-04-25 | **状态**：✅ 已合并
 - **问题**：GitHub 并发策略导致多个部署工作流竞争时互相取消，无法自动恢复。
@@ -607,6 +678,35 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2542](https://github.com/Vispie-AI/VisPie_backend/pull/2542) feat(flows): Prefect deployment for matrix creator mining
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：matrix creator mining pipeline 缺乏 Prefect Cloud 调度部署能力，无法接入 my-ec2-pool 工作池。
+- **修复**：添加 @flow 装饰器和 deploy.py 脚本，支持 Prefect Cloud 部署到 my-ec2-pool。
+- **成果**：pipeline 可通过 Prefect Cloud 触发和调度，实现 EC2 工作池的自动化运行。
+
+### [#2531](https://github.com/Vispie-AI/VisPie_backend/pull/2531) feat(ci): smoke + static checks prevent Dockerfile/imports drift (PR #2526 regression guard)
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2526 修复了 Dockerfile.autoamy 遗漏 COPY 导致的 crashloop，但没有机制阻止同类问题再次发生。
+- **修复**：新增静态检查脚本（check_dockerfile_imports.py）和 post-build smoke find-spec 测试，覆盖三个 CI 流程。
+- **成果**：14 个测试通过，镜像在 smoke 失败时不推送，Dockerfile 与 imports 漂移可在构建前被发现。
+
+### [#2529](https://github.com/Vispie-AI/VisPie_backend/pull/2529) feat(matrix-mining): v7 pipeline at flows/matrix_creator_mining/
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：v5/v6 矩阵创作者识别流水线分别因低召回率（5%）和高误判率（22% FP）而失败，需要基于视频内容的新方案。
+- **修复**：实现 5 阶段端到端流水线：DuckDB 候选提取→TikHub 异步抓取→Gemini Flash Lite 视频分类→IG 交叉查询→Lark 输出，全阶段可断点续跑。
+- **成果**：5 个手动测试用例方向全部正确，预计成本约 $1.30/千账号，可产出实际矩阵账号数据。
+
+### [#2523](https://github.com/Vispie-AI/VisPie_backend/pull/2523) feat(studio): Video Format AI Generate Studio
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：平台缺乏面向创作者的视频格式 AI 生成工作台，无法满足品牌投放策略制定需求。
+- **修复**：新增 /admin/format-generate-studio 页面，三栏布局支持格式选择、Brief/镜头方案生成和 Agent 执行日志，纯前端演示零后端调用。
+- **成果**：格式工作室页面完整呈现，侧边栏新增入口，为 Higgsfield/Glif studio 级 UX 提供原型基础。
+
+### [#2522](https://github.com/Vispie-AI/VisPie_backend/pull/2522) feat(amy): DeepSeek shadow v2 — full sandboxed AgentLoop with tools
+- **日期**：2026-04-26 | **状态**：✅ 已合并
+- **问题**：v1 的 DeepSeek shadow 是单轮对话且无工具调用，与 Bedrock AgentLoop 的对比不公平。
+- **修复**：v2 为 DeepSeek 提供与 Bedrock 相同工具集的沙箱 AgentLoop，使用独立临时目录和独立 MessageBus 屏蔽对外输出。
+- **成果**：82 个测试通过，DeepSeek shadow 现可进行多轮工具调用，费用自动计入每日/周/月报告。
 ### [#2487](https://github.com/Vispie-AI/VisPie_backend/pull/2487) [DO NOT MERGE] feat(amy): ChannelAdapter Protocol
 - **日期**：2026-04-26 | **状态**：✅ 已合并
 - **问题**：Amy 各渠道（IM、文档评论、Slack 等）处理逻辑分散，缺乏统一的渠道适配抽象层。
@@ -944,6 +1044,53 @@
 
 ## 三、文档建设（docs:）
 
+### [#2534](https://github.com/Vispie-AI/VisPie_backend/pull/2534) docs(amy): roadmap — Lark token-retry decorator (Plan B, follow-up to #2533)
+- **日期**：2026-04-27 | **状态**：🔀 待合并
+- **问题**：#2533 在 client.py 和 comments.py 间引入了多处重复的 token 重试代码，缺乏统一抽象。
+- **修复**：新增架构设计文档，规划 `with_token_retry` 装饰器的迁移路径、两种实现方案及验收标准，不含代码变更。
+- **成果**：提供清晰的后续重构路线图，与 #2533 风险隔离，团队任何成员可按文档实施。
+
+### [#2528](https://github.com/Vispie-AI/VisPie_backend/pull/2528) docs(matrix-mining): v7 spec + lessons + golden set + pipeline guide
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：v5/v6 流水线的失败经验、80 个手动验证账号的黄金集及 v7 视频分类方案缺乏文档化，团队协作交接困难。
+- **修复**：新增 docs/features/matrix-creator-mining/ 目录，包含需求、教训、实施指南、黄金集和验证脚本共 6 个文档。
+- **成果**：为 Yifan/Bruce 团队提供完整交接材料，明确本周 100 个矩阵账号审核目标与验收标准。
+
+### [#2527](https://github.com/Vispie-AI/VisPie_backend/pull/2527) chore(amy): disable OpenClaw Opus 4.6 shadow — keep DeepSeek shadow only
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：OpenClaw shadow 存在 AsyncLocalStorage 上下文丢失导致双写 Lark 文档的隐患，mentor 决定暂时关闭。
+- **修复**：将 fleet.json 中 amy 条目的 `shadow.enabled` 由 true 改为 false，一行配置翻转，不删除代码。
+- **成果**：OpenClaw shadow 停止发送，双写风险在生产层面消除，回滚只需翻转同一行。
+
+### [#2526](https://github.com/Vispie-AI/VisPie_backend/pull/2526) hotfix(amy): Dockerfile.autoamy must COPY vio_slack/ — autoamy-prod crashlooping
+- **日期**：2026-04-27 | **状态**：✅ 已合并
+- **问题**：PR #2522 编辑 Dockerfile.autoamy 时遗漏 `COPY vio_slack/`，导致 autoamy-prod 因 ModuleNotFoundError 崩溃重启 264 次。
+- **修复**：在 Dockerfile.autoamy 中补充 `COPY vio_slack/ vio_slack/`，与 Dockerfile.nanobot 中已有修复保持一致。
+- **成果**：autoamy-prod 构建恢复正常，crashloop 解除，线上 amy-nanobot 用户流量不受影响。
+
+### [#2521](https://github.com/Vispie-AI/VisPie_backend/pull/2521) AWS snapshot mega cleanup — 180TB→77TB, ~$5.2k/mo savings
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：AWS Backup 保留期过长，账号积累了 638 个快照共 180TB，每月存储成本高达 $9,031。
+- **修复**：将 Backup 保留期压缩至 14 天，删除 500 个恢复点，注销 4 个过期 AMI，并创建 DLM 策略。
+- **成果**：快照数量降至 274 个，存储缩减至 77TB，每月节省约 $5,159（全年约 $61.9k）。
+
+### [#2520](https://github.com/Vispie-AI/VisPie_backend/pull/2520) docs(security): AWS quick wins execution results
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：AWS 账号存在多个安全隐患：5 个孤立安全组、3 个 S3 桶公开访问、缺少只读审计用户及 VPC 流日志。
+- **修复**：删除 5 个孤立安全组，锁定 3 个 S3 桶公开访问，创建 audit-readonly IAM 用户，启用 VPC 流日志并验证。
+- **成果**：5 项安全加固全部完成并验证，结果记录在执行报告文档中。
+
+### [#2519](https://github.com/Vispie-AI/VisPie_backend/pull/2519) ops(aws): stop vispie-flink-dev — ~$368/mo savings
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：vispie-flink-dev（r5.2xlarge）持续运行但无活跃作业使用，每月产生约 $368 的无效计算费用。
+- **修复**：经 George 批准后停止（非终止）EC2 实例，保留 EBS 卷以便后续重启或调整规格。
+- **成果**：实例从 running 变更为 stopped，每月节省约 $368 按需计算费用。
+
+### [#2518](https://github.com/Vispie-AI/VisPie_backend/pull/2518) docs(ops): AWS EBS snapshot + AMI cleanup audit plan
+- **日期**：2026-04-27 | **状态**：🚫 已关闭
+- **问题**：账号 590184069312 的 638 个 EBS 快照（180.6TB）和 287 个 AMI 每月产生约 $9,031 存储费用，缺乏系统清理方案。
+- **修复**：完成全量审计，制定 Tier 1/Tier 2 两阶段删除计划及配套脚本，所有脚本默认 dry-run 模式，提供 DLM 策略。
+- **成果**：审计确认 6 个 AMI 和相关快照可安全删除，潜在节省约 $1,935/月，为正式清理提供执行方案。
 ### [#2446](https://github.com/Vispie-AI/VisPie_backend/pull/2446) docs(research): Multica deep analysis
 - **日期**：2026-04-24 | **状态**：🔀 待合并
 - **问题**：需要对 Multica 进行深度分析以支持产品或技术方向决策。
@@ -1191,4 +1338,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 167 | 关闭未合并 17 | 待合并 9**
+**合计：19 个 PR | 已合并 185 | 关闭未合并 23 | 待合并 10**
