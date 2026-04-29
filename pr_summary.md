@@ -1,12 +1,47 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-28 | 共 219 个 PR（已合并 185 · 关闭未合并 23 · 待合并 10）
-> 最后更新：2026-04-28
+> 统计周期：2026-04-10 ~ 2026-04-29 | 共 244 个 PR（已合并 207 · 关闭未合并 25 · 待合并 11）
+> 最后更新：2026-04-29
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2610](https://github.com/Vispie-AI/VisPie_backend/pull/2610) fix(mobile-app-web): hide creator_amount_cents from brands in ReviewTimeline
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：`ReviewTimeline.svelte` 无条件渲染创作者佣金金额，品牌端用户可见平台内部定价。
+- **修复**：对非管理员用户隐藏 `Creator: $X` 字段，仅管理员可查看平台手续费详情。
+- **成果**：品牌端审核页面不再泄露平台利润信息，保护平台定价隐私。
+
+### [#2605](https://github.com/Vispie-AI/VisPie_backend/pull/2605) fix(mobile-app-web): hide creator-cut pricing from invite modal
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：邀请创作者弹窗向品牌用户显示了创作者实际收款金额，泄露平台内部定价结构。
+- **修复**：移除 `InviteCreatorModal` 中调用 `calculateCreatorCut` 的子文本显示逻辑。
+- **成果**：品牌端邀请弹窗不再暴露平台分成结构，保护商业敏感信息。
+
+### [#2604](https://github.com/Vispie-AI/VisPie_backend/pull/2604) Fix Redis cache TTL argument
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：`cache_response` 传入 Redis-py 风格的 `ex=` 参数，本地封装的 `RedisClient.set()` 实际使用 `ttl=`，导致缓存失效。
+- **修复**：将 TTL 参数由 `ex=` 改为 `ttl=`，并将 `redis` 改为可选导入以兼容轻量环境。
+- **成果**：缓存功能恢复正常，轻量脚本及测试环境在无 redis 包时可自动禁用缓存。
+
+### [#2598](https://github.com/Vispie-AI/VisPie_backend/pull/2598) fix(amy): align DeepSeek shadow budget with primary Opus
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：DeepSeek 影子模型超时/迭代上限远低于主模型 Opus，长问题在影子侧提前终止，A/B 对比数据失真。
+- **修复**：将影子模型四项限制（超时/迭代/上下文等）对齐至与主模型 Opus 相同量级。
+- **成果**：A/B 对比面板在长复杂问题场景下可正常完成 DeepSeek 侧的完整推理。
+
+### [#2592](https://github.com/Vispie-AI/VisPie_backend/pull/2592) hotfix(video): expand_short_url manual single-hop — TikTok anti-bot 403
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：#2577 部署后服务端展开 TikTok 短链遭遇反爬 HTTP 403，所有短链提交返回 503 错误。
+- **修复**：改为手动单跳解析短链，绕过 TikTok 反爬机制，避免触发自动重定向检测。
+- **成果**：TikTok 短链展开功能恢复，用户提交视频链接不再返回服务不可用错误。
+
+### [#2591](https://github.com/Vispie-AI/VisPie_backend/pull/2591) hotfix(env): drop PR_NOTIFY_TITLE — unblocks deploy-ec2
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：`PR_NOTIFY_TITLE` 环境变量值含空格，`deploy-ec2` CI 步骤解析失败，#2587 后所有主分支部署中断。
+- **修复**：删除 `PR_NOTIFY_TITLE` 环境变量，解除对 `deploy-ec2` 工作流的阻塞。
+- **成果**：主分支 EC2 自动部署恢复正常，CI 流水线不再因含空格的环境变量报错。
 ### [#2543](https://github.com/Vispie-AI/VisPie_backend/pull/2543) fix(insforge-fallback): correct wire format + cost attribution + observability
 - **日期**：2026-04-27 | **状态**：✅ 已合并
 - **问题**：InsForge 备用路径请求字段（maxTokens/toolChoice 等）未遵循 camelCase 规范，费用归因错误返回 $0，且无可观测日志。
@@ -678,6 +713,35 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2611](https://github.com/Vispie-AI/VisPie_backend/pull/2611) feat(studio): creator avatar badges on format cards
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Studio 格式卡片缺乏创作者身份信息，品牌用户无法直观了解内容创作方背景。
+- **修复**：为 `StudioFormat` 类型添加 `creator` 字段，在格式卡片上展示头像（20px）、姓名和专长标签。
+- **成果**：Vizzy（3位）和 Manus（2位）活动的格式卡片现已显示创作者信息，提升品牌信任感。
+
+### [#2609](https://github.com/Vispie-AI/VisPie_backend/pull/2609) feat(scripts): weekly campaign performance report -> Lark Sheet
+- **日期**：2026-04-29 | **状态**：🚫 已关闭
+- **问题**：每周活动视频表现数据分散，缺乏自动化汇总并导出至飞书电子表格的工具。
+- **修复**：新增 `scripts/weekly_campaign_report.py`，从 FastAPI 后端拉取活跃活动数据并按均值排序后写入飞书表格。
+- **成果**：周报脚本已实现，但该 PR 关闭未合并，功能暂未上线。
+
+### [#2607](https://github.com/Vispie-AI/VisPie_backend/pull/2607) feat(studio): Vizzy Experiment — 3 Pixar animated ad formats
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Studio 缺乏 Pixar 风格 AI 动画广告创意，无法满足 DTC 品牌对动画内容形式的需求。
+- **修复**：新增 Vizzy 活动，基于爬取的 6 个参考视频合成 3 种 Pixar 风格动画广告格式。
+- **成果**：Studio 上线 Vizzy 实验性活动，为品牌提供三种差异化的 AI 动画广告模板。
+
+### [#2606](https://github.com/Vispie-AI/VisPie_backend/pull/2606) feat(nanobot): CardKit streaming heartbeat — 1s timer tick
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Nanobot 心跳每 4 秒更新一次，用户无法及时感知机器人存活状态，体验差。
+- **修复**：将心跳从 4s PATCH 消息改为每秒一次的 CardKit PUT，计时器逐秒递增显示。
+- **成果**：用户界面计数器每秒滚动（1s→2s→3s...），可立即发现机器人卡死，提升实时感知能力。
+
+### [#2599](https://github.com/Vispie-AI/VisPie_backend/pull/2599) feat(skills): add ui-alignment skill for designer workflow
+- **日期**：2026-04-29 | **状态**：🚫 已关闭
+- **问题**：设计师与 Coder Army 之间缺少标准化的 UI 对齐协作流程，Amy 无标准桥接规范。
+- **修复**：新增 ui-alignment skill，定义分诊→定位→执行→验证四阶段设计师工作流规范。
+- **成果**：该 PR 关闭未合并，功能暂未上线，后续可参考该方案重新实现。
 ### [#2542](https://github.com/Vispie-AI/VisPie_backend/pull/2542) feat(flows): Prefect deployment for matrix creator mining
 - **日期**：2026-04-27 | **状态**：🚫 已关闭
 - **问题**：matrix creator mining pipeline 缺乏 Prefect Cloud 调度部署能力，无法接入 my-ec2-pool 工作池。
@@ -1044,6 +1108,89 @@
 
 ## 三、文档建设（docs:）
 
+### [#2612](https://github.com/Vispie-AI/VisPie_backend/pull/2612) chore(lark): weekly campaign report writer for Apr 21-27
+- **日期**：2026-04-28 | **状态**：🔀 待合并
+- **问题**：4 月 21-27 日活动周报数据需要自动写入飞书电子表格指定 Tab。
+- **修复**：新增 Node.js 脚本 `scripts/lark/update_weekly_campaign_sheet.js`，拉取各活动指标并写入对应飞书表格。
+- **成果**：周报自动化脚本已就绪，PR 待合并后可直接执行本周周报填写任务。
+
+### [#2608](https://github.com/Vispie-AI/VisPie_backend/pull/2608) refactor(studio): remove Campaign Brief section
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Studio 的 Campaign Brief / Game Plan 模块质量低下，影响整体产品体验。
+- **修复**：完全移除 Campaign Brief 模块相关代码（导入、状态、UI 和样式），仅保留趋势视频格式网格。
+- **成果**：Studio 页面结构更加简洁，专注展示高质量趋势格式卡片内容。
+
+### [#2603](https://github.com/Vispie-AI/VisPie_backend/pull/2603) Handle IG discovery Lark output failures
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：IG 优先发现流水线在飞书 Bitable 输出失败时直接崩溃，且错误信息不可操作。
+- **修复**：捕获飞书输出异常并记录 HTTP 响应详情，即使飞书失败也保留本地 JSON/CSV 产物路径。
+- **成果**：流水线不再因飞书输出故障中断，同时输出更清晰的错误日志便于排查。
+
+### [#2602](https://github.com/Vispie-AI/VisPie_backend/pull/2602) Add Instagram-first matrix discovery pipeline
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：现有矩阵挖掘依赖 TikTok 数据源，缺乏以 Instagram 为入口的品牌大使发现能力。
+- **修复**：新增 IG 优先矩阵发现流水线，通过 Instagram RapidAPI 标签/帖子搜索从品牌种子发现大使账号。
+- **成果**：矩阵发现流水线新增 Instagram 首选路径，扩大跨平台创作者覆盖范围。
+
+### [#2601](https://github.com/Vispie-AI/VisPie_backend/pull/2601) Throttle matrix Stage 2 TikHub requests
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：矩阵挖掘 Stage 2 的 TikHub 请求并发过高，频繁触发 429 限速且无 Retry-After 处理。
+- **修复**：添加共享请求节流（3并发/2rps），支持读取 `Retry-After` 头，设 30s 全局 429 冷却时间。
+- **成果**：Stage 2 TikHub 请求稳定可控，429 错误率大幅降低，并发控制已有单元测试覆盖。
+
+### [#2600](https://github.com/Vispie-AI/VisPie_backend/pull/2600) Use user-scoped matrix mining checkpoint path
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：矩阵挖掘检查点默认写入 `/tmp/matrix_mining_checkpoint.json`，多用户环境存在路径冲突风险。
+- **修复**：改为用户作用域目录，`run_ec2.sh` 在启动前自动创建用户专属检查点和工作目录。
+- **成果**：多用户 EC2 环境下检查点路径隔离，避免并发挖掘任务互相覆盖数据。
+
+### [#2597](https://github.com/Vispie-AI/VisPie_backend/pull/2597) Run matrix creator mining directly on EC2
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：矩阵创作者挖掘流水线依赖 Prefect 调度框架，增加了 EC2 直接运行的复杂度。
+- **修复**：将流水线改为纯 Python 实现，移除 Prefect 装饰器，新增 `run_ec2.sh` 设置 EC2 默认参数。
+- **成果**：矩阵挖掘可直接在 EC2 上运行，无需 Prefect 依赖，部署链路更简洁高效。
+
+### [#2596](https://github.com/Vispie-AI/VisPie_backend/pull/2596) Use local source for matrix mining deployment
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：矩阵挖掘部署默认从 GitHub 克隆代码，在无持久 PAT 的 EC2 环境中无法正常使用。
+- **修复**：将默认源改为 EC2 本地仓库路径，保留 `MATRIX_MINING_SOURCE_MODE=github` 作为备选模式。
+- **成果**：矩阵挖掘部署不再强依赖 GitHub 克隆，本地代码路径成为默认可靠来源。
+
+### [#2595](https://github.com/Vispie-AI/VisPie_backend/pull/2595) Use default local DuckDB path at runtime
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：未设置 `STAGE1_DUCKDB_PATH` 时 Stage 1 无法自动回退到本地 DuckDB 文件路径。
+- **修复**：添加运行时回退逻辑，缺少环境变量时默认使用 `/tmp/sourcing_creators.duckdb`。
+- **成果**：Stage 1 在标准 EC2 环境中无需额外配置即可启动，降低部署门槛。
+
+### [#2594](https://github.com/Vispie-AI/VisPie_backend/pull/2594) Guard matrix mining Stage 1 local DuckDB usage
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：矩阵挖掘 Stage 1 缺少 `STAGE1_DUCKDB_PATH` 时会静默回退远程 Postgres，存在意外全表扫描风险。
+- **修复**：部署路径默认使用 EC2 本地 DuckDB，完整 Stage 1 运行若无该变量则快速失败报错。
+- **成果**：防止意外触发远程 Postgres 全量扫描，Stage 1 本地 DuckDB 使用更加可控安全。
+
+### [#2593](https://github.com/Vispie-AI/VisPie_backend/pull/2593) Optimize creator overview loading
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：创作者概览页面加载性能不足，影响用户等待体验。
+- **修复**：优化创作者概览数据加载逻辑，减少不必要的数据处理开销。
+- **成果**：创作者概览页面加载速度提升，用户访问体验得到改善。
+
+### [#2590](https://github.com/Vispie-AI/VisPie_backend/pull/2590) Codex/creator overview followup
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Codex 生成的创作者概览功能存在需要跟进修复的遗留问题。
+- **修复**：针对创作者概览 Codex 实现进行跟进修复和完善调整。
+- **成果**：创作者概览功能在 Codex 方案基础上进一步稳定，可靠性提升。
+
+### [#2589](https://github.com/Vispie-AI/VisPie_backend/pull/2589) test(pr-bot): smoke — verify PR group commit-cards
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：需要验证 #2587 引入的 PR 分组提交卡片机器人功能是否正确运行。
+- **修复**：添加仅含 `docs/changelog/` 文件变更的烟雾测试 PR，触发机器人验证流程。
+- **成果**：PR 机器人功能验证通过，零代码变更确认新机器人行为符合预期。
+
+### [#2588](https://github.com/Vispie-AI/VisPie_backend/pull/2588) Default creator card videos to date sort
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：创作者卡片视频列表默认排序方式不符合用户浏览习惯，影响内容发现体验。
+- **修复**：将创作者卡片视频列表默认排序改为按日期降序排列。
+- **成果**：用户浏览创作者卡片时默认看到最新视频，内容时效性得到保障。
 ### [#2534](https://github.com/Vispie-AI/VisPie_backend/pull/2534) docs(amy): roadmap — Lark token-retry decorator (Plan B, follow-up to #2533)
 - **日期**：2026-04-27 | **状态**：🔀 待合并
 - **问题**：#2533 在 client.py 和 comments.py 间引入了多处重复的 token 重试代码，缺乏统一抽象。
@@ -1338,4 +1485,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 185 | 关闭未合并 23 | 待合并 10**
+**合计：19 个 PR | 已合并 207 | 关闭未合并 25 | 待合并 11**
