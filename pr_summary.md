@@ -1,12 +1,83 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-29 | 共 244 个 PR（已合并 207 · 关闭未合并 25 · 待合并 11）
-> 最后更新：2026-04-29
+> 统计周期：2026-04-10 ~ 2026-04-30 | 共 269 个 PR（已合并 229 · 关闭未合并 27 · 待合并 12）
+> 最后更新：2026-04-30
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2640](https://github.com/Vispie-AI/VisPie_backend/pull/2640) fix(vio-video-review): Hatchet 1.29.3 API + Vault for HMAC secret
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：PR #2624 Staging 金丝雀冒烟测试发现 Hatchet API 调用失败及 HMAC 密钥硬编码两处阻塞性 Bug。
+- **修复**：升级至 Hatchet 1.29.3 API，并将 HMAC 密钥迁移至 Vault 管理，消除硬编码风险。
+- **成果**：视频审核 Phase 1 部署阻塞解除，Staging 冒烟测试通过。
+
+### [#2638](https://github.com/Vispie-AI/VisPie_backend/pull/2638) Fix creator overview submission sync
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Creator Overview 提交数据与后端存在同步不一致问题，影响数据展示准确性。
+- **修复**：修正提交同步逻辑，确保 Creator Overview 与后端数据一致性。
+- **成果**：Creator Overview 数据同步恢复正常，展示数据可信度提升。
+
+### [#2636](https://github.com/Vispie-AI/VisPie_backend/pull/2636) fix(amy): seed DeepSeek shadow with primary's session history
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：DeepSeek shadow 以全新会话运行，导致回复式对话缺少上下文，答复"没有之前的上下文"。
+- **修复**：为 DeepSeek shadow 注入主模型的历史会话记录，使其具备上下文感知能力。
+- **成果**：shadow 回复质量与主模型对齐，多轮对话连贯性显著提升。
+
+### [#2631](https://github.com/Vispie-AI/VisPie_backend/pull/2631) Fix Format Studio Seedance generation timeouts
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Format Studio 调用 Seedance 生成视频时，提供商挂起或拒绝请求导致任务超时崩溃。
+- **修复**：为 Seedance 任务创建添加有界超时，提供商异常时自动回退至无参考视频模式。
+- **成果**：Format Studio 视频生成稳定性提升，超时场景不再导致任务失败。
+
+### [#2630](https://github.com/Vispie-AI/VisPie_backend/pull/2630) fix: prevent live Coder Army slot overwrite
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Coder Army 活跃槽位被新创建请求覆盖，导致正在运行的 Agent 任务数据丢失。
+- **修复**：将槽位识别为可复用执行资源，活跃槽位收到创建请求时返回 HTTP 409，终止槽位可安全释放。
+- **成果**：Coder Army 槽位管理机制完善，防止任务被意外覆盖。
+
+### [#2629](https://github.com/Vispie-AI/VisPie_backend/pull/2629) fix(eva): pass GitHub app env to nanobot shell
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Eva 的 GitHub App 元数据未传入 nanobot shell 子进程，PR/CI 工作流无法访问 GitHub 凭据。
+- **修复**：将 GitHub App 环境变量透传至 nanobot shell，镜像中安装 gh/rg 工具并挂载 TOOLS.md 文档。
+- **成果**：Eva nanobot 可正常执行 GitHub 相关操作，CI 工作流集成就绪。
+
+### [#2627](https://github.com/Vispie-AI/VisPie_backend/pull/2627) fix(studio): add pro template thumbnails
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Pro Templates 视频格网缺少缩略图，用户无法直观预览模板样式。
+- **修复**：生成并上传 33 张格式模板缩略图至 GCS，从视频 URL 自动推导 poster/modal/reference 图。
+- **成果**：Pro Templates 展示完整，用户可直观预览各模板样式，体验显著改善。
+
+### [#2625](https://github.com/Vispie-AI/VisPie_backend/pull/2625) fix(nanobot): fix IndentationError crashing all nanobots
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：PR #2622 heartbeat 函数遗留 4 个多余空格缩进，导致所有 nanobot 启动时 IndentationError 崩溃循环。
+- **修复**：重新缩进 heartbeat 函数内 33 行代码，消除语法错误，完成紧急热修复。
+- **成果**：所有 nanobot 恢复正常运行，生产环境崩溃问题快速消除。
+
+### [#2622](https://github.com/Vispie-AI/VisPie_backend/pull/2622) revert(nanobot): remove CardKit streaming, use 2s PATCH heartbeat
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：CardKit 流式传输（PR #2606/#2613/#2617）在生产环境不稳定，频繁引发异常。
+- **修复**：移除全部 CardKit 流式代码（净减 195 行），将心跳间隔由 4s 降至 2s，改用简单 PATCH 更新。
+- **成果**：nanobot 通信机制回归稳定，代码复杂度大幅降低。
+
+### [#2621](https://github.com/Vispie-AI/VisPie_backend/pull/2621) fix: unified creator name search across creator_pool + actor_creators (P0)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：创作者搜索仅查询单一数据表，导致部分创作者无法被检索，触发 P0 级用户反馈。
+- **修复**：统一跨 creator_pool 和 actor_creators 两张表的创作者名称搜索逻辑。
+- **成果**：创作者搜索召回率提升，P0 问题解决，用户可正常发送邀请。
+
+### [#2618](https://github.com/Vispie-AI/VisPie_backend/pull/2618) fix(studio): remove sparkline curves
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：趋势格式卡片中的折线图 SVG 曲线影响界面整洁度与视觉一致性。
+- **修复**：移除 Studio 趋势格式卡片中的折线图 SVG 曲线样式。
+- **成果**：格式卡片 UI 更简洁，界面视觉一致性提升。
+
+### [#2617](https://github.com/Vispie-AI/VisPie_backend/pull/2617) fix(nanobot): restore reasoning body in CardKit heartbeat without jumping
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：PR #2613 过度修正导致 CardKit 心跳中 reasoning body 内容丢失，影响展示完整性。
+- **修复**：恢复 reasoning body 在 CardKit 心跳中的展示，仅排除 _stream_buf 实时预览部分。
+- **成果**：CardKit 推理内容正常展示且无跳动问题，用户体验改善。
 ### [#2610](https://github.com/Vispie-AI/VisPie_backend/pull/2610) fix(mobile-app-web): hide creator_amount_cents from brands in ReviewTimeline
 - **日期**：2026-04-28 | **状态**：✅ 已合并
 - **问题**：`ReviewTimeline.svelte` 无条件渲染创作者佣金金额，品牌端用户可见平台内部定价。
@@ -713,6 +784,47 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2639](https://github.com/Vispie-AI/VisPie_backend/pull/2639) feat: use Creator Overview video counts for Manus and Oxygeon AI approved progress (v3)
+- **日期**：2026-04-29 | **状态**：🚫 已关闭
+- **问题**：Manus 和 Oxygeon AI 活动批准进度需改用 Creator Overview 仪表板视频数，前两次实现被关闭。
+- **修复**：第三次尝试实现 Creator Overview 视频数作为批准进度来源，取跨平台最大值。
+- **成果**：此版本已关闭，功能经迭代后由更稳定版本合入。
+
+### [#2634](https://github.com/Vispie-AI/VisPie_backend/pull/2634) feat(shadow): Gemini 2.5 Flash judge + DeepSeek shadow A/B
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：原公平评判器使用 DeepSeek-chat 能力有限，需切换至更强模型并恢复 DeepSeek shadow 流。
+- **修复**：将评判器切换为 Gemini 2.5 Flash，并将 DeepSeek shadow 接入 A/B 评判管道。
+- **成果**：评判质量提升，DeepSeek shadow A/B 测试机制完善，多模型对比能力增强。
+
+### [#2626](https://github.com/Vispie-AI/VisPie_backend/pull/2626) feat: use Creator Overview video counts for Manus & Oxygeon AI approved progress (v2)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Manus 和 Oxygeon AI 活动使用数据库提交计数作为批准进度，与实际展示数据不一致。
+- **修复**：引入 APPROVED_FROM_DASHBOARD 配置常量，对指定活动使用 Creator Overview 仪表板视频数。
+- **成果**：特定活动批准进度数据来源统一，展示更准确，运营决策更可靠。
+
+### [#2624](https://github.com/Vispie-AI/VisPie_backend/pull/2624) feat(vio): video review migration — Phase 1 (Path C hybrid, fail-loud, OCR parallel) + incident fix
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：遗留后端 fastapi 4 规则视频审核路径 100% 卡死，严重影响视频审核流程。
+- **修复**：实施 Vio 视频审核迁移 Phase 1（1.1-1.4），构建按提交粒度、租户感知、事件驱动的审核流水线，OCR 并行处理。
+- **成果**：视频审核基础架构完成迁移，遗留路径替换完成，处理效率显著提升。
+
+### [#2623](https://github.com/Vispie-AI/VisPie_backend/pull/2623) feat(studio): add recreate resources and PR guardrails
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Format Studio 缺少活动资源，且无机制防止开发者直接向主分支推送代码。
+- **修复**：添加根目录 AGENTS.md，配置 Claude/Codex push hooks 阻断直接推送，丰富 Manus/Fanka 活动资源。
+- **成果**：分支保护机制生效，活动资源完善，开发流程更规范安全。
+
+### [#2620](https://github.com/Vispie-AI/VisPie_backend/pull/2620) feat: use Creator Overview video counts for Manus & Oxygeon AI approved progress
+- **日期**：2026-04-29 | **状态**：🚫 已关闭
+- **问题**：需要将 Manus 和 Oxygeon AI 活动的批准进度改用 Creator Overview 视频数，首次实现存在问题。
+- **修复**：首次尝试通过 APPROVED_FROM_DASHBOARD 集合覆盖批准计数逻辑，后被关闭。
+- **成果**：此版本已关闭，功能由 v2（PR #2626）重新实现并合入主干。
+
+### [#2619](https://github.com/Vispie-AI/VisPie_backend/pull/2619) feat(studio): Pro Templates video grid — 6 columns, APP/Ecom tabs
+- **日期**：2026-04-28 | **状态**：✅ 已合并
+- **问题**：Campaign Brief 中 Pro Templates 展示形式老旧，缺少按应用场景分类的视频格网。
+- **修复**：将 Pro Templates 替换为平铺视频格网（6 列、9:16 比例、悬停播放、点击展开），新增 APP/Ecom 分类 Tab。
+- **成果**：28 个模板视频以直观格网展示，用户选模板效率大幅提升。
 ### [#2611](https://github.com/Vispie-AI/VisPie_backend/pull/2611) feat(studio): creator avatar badges on format cards
 - **日期**：2026-04-28 | **状态**：✅ 已合并
 - **问题**：Studio 格式卡片缺乏创作者身份信息，品牌用户无法直观了解内容创作方背景。
@@ -1108,6 +1220,41 @@
 
 ## 三、文档建设（docs:）
 
+### [#2641](https://github.com/Vispie-AI/VisPie_backend/pull/2641) design: campaigns2 sandbox — Creator Auto-Reminder & Offboard banner
+- **日期**：2026-04-29 | **状态**：🔀 待合并
+- **问题**：campaigns2 缺少创作者超期自动提醒和下线横幅功能，品牌管理创作者效率低。
+- **修复**：新增 /dashboard/campaigns2/[id] 沙盒页面，实现 Creator Reminder Banner 和 Offboard 横幅设计。
+- **成果**：设计稿已提交待审，功能合入后可提升品牌对创作者的管理效率。
+
+### [#2637](https://github.com/Vispie-AI/VisPie_backend/pull/2637) Write IG discovery debug outputs
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Instagram 发现流程输出为空时缺少可解释的调试信息，问题排查困难。
+- **修复**：始终将所有发现的 IG 候选人写入 debug CSV/JSON 文件，并记录资质拒绝原因计数。
+- **成果**：调试可观测性显著提升，空结果问题可快速定位根因。
+
+### [#2635](https://github.com/Vispie-AI/VisPie_backend/pull/2635) Qualify IG ambassador discovery results
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Instagram 大使发现结果缺乏资质过滤，包含官方账号/剪辑号/无脸账号等低质候选人。
+- **修复**：用 Instagram 个人主页数据对候选人进行富化，过滤非 UGC 账号，输出合格大使外联名单。
+- **成果**：大使发现结果质量提升，外联名单更精准，节约人工筛选成本。
+
+### [#2633](https://github.com/Vispie-AI/VisPie_backend/pull/2633) Add mobile-ui-alignment skill (Phase 1–4 workflow)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Amy agent 处理 Vizzy 移动端视觉对齐请求时缺少标准化技能文档与工作流程规范。
+- **修复**：新增 mobile-ui-alignment SKILL.md 技能文件，定义 Phase 1–4 四阶段移动端 UI 对齐工作流。
+- **成果**：Amy agent 具备规范化移动端 UI 对齐能力，可安全处理相关 UX 请求。
+
+### [#2632](https://github.com/Vispie-AI/VisPie_backend/pull/2632) Codex/creator overview next
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Creator Overview 功能需持续迭代演进，Codex 集成待推进。
+- **修复**：完成 Creator Overview 与 Codex 相关的下一步功能开发与集成工作。
+- **成果**：Creator Overview 功能持续演进，Codex 集成推进落地。
+
+### [#2628](https://github.com/Vispie-AI/VisPie_backend/pull/2628) Dev UI
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：开发界面需要补充 Stripe 无效账户检测等 UI 功能以支持支付异常处理。
+- **修复**：实现 Stripe 无效账户检测及相关开发界面改进。
+- **成果**：开发 UI 功能完善，支付相关异常处理能力增强。
 ### [#2612](https://github.com/Vispie-AI/VisPie_backend/pull/2612) chore(lark): weekly campaign report writer for Apr 21-27
 - **日期**：2026-04-28 | **状态**：🔀 待合并
 - **问题**：4 月 21-27 日活动周报数据需要自动写入飞书电子表格指定 Tab。
@@ -1485,4 +1632,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 207 | 关闭未合并 25 | 待合并 11**
+**合计：19 个 PR | 已合并 229 | 关闭未合并 27 | 待合并 12**
