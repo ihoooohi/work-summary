@@ -1,12 +1,83 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-04-30 | 共 269 个 PR（已合并 229 · 关闭未合并 27 · 待合并 12）
-> 最后更新：2026-04-30
+> 统计周期：2026-04-10 ~ 2026-05-01 | 共 294 个 PR（已合并 249 · 关闭未合并 28 · 待合并 16）
+> 最后更新：2026-05-01
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2685](https://github.com/Vispie-AI/VisPie_backend/pull/2685) fix: preserve coder army feature branches on slot reuse
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Coder Army 复用工作区槽位时未先切换分支，功能分支引用被重置至 master 导致 PR 被误关闭。
+- **修复**：在 reset --hard 前强制切回槽位草稿分支，确保功能分支引用不被覆盖。
+- **成果**：功能分支在槽位复用后得以保留，GitHub PR 不再被意外关闭。
+
+### [#2682](https://github.com/Vispie-AI/VisPie_backend/pull/2682) fix(twilio-conversations): cancel in-flight detail fetches + dedupe pollers
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：快速切换会话时多个并发请求竞争写入状态，导致消息头显示错误联系人名称并出现页面冻结。
+- **修复**：引入 AbortController 取消过时请求，并为详情轮询和列表轮询分别添加防重入守卫。
+- **成果**：消息头始终显示正确联系人，快速切换或点击"加载更多"时页面不再冻结。
+
+### [#2676](https://github.com/Vispie-AI/VisPie_backend/pull/2676) fix(vio-video-review): elevate env-cache forensic to INFO/ERROR
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：PR #2675 的环境缓存诊断日志被 DEBUG 级别屏蔽，生产环境无法确认缓存何时为空。
+- **修复**：移除 DEBUG 门控，将缓存为空情形升级为 ERROR 日志并打印完整状态快照。
+- **成果**：生产环境缓存异常时触发可见 ERROR 日志，为定位根本原因提供完整现场信息。
+
+### [#2675](https://github.com/Vispie-AI/VisPie_backend/pull/2675) fix(vio-video-review): cache env at module import — defensive workaround for runtime env-clearing
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Hatchet worker 运行期间 os.environ 中的 Supabase 凭据被意外清空，导致写回任务持续报 "Supabase not configured"。
+- **修复**：在模块导入时将 SUPABASE_URL 和 KEY 缓存为模块属性，绕过运行时环境变量异常清除。
+- **成果**：写回任务不再因环境变量丢失而失败，同时新增诊断日志用于追踪缓存漂移来源。
+
+### [#2674](https://github.com/Vispie-AI/VisPie_backend/pull/2674) fix(vio-video-review): remove non-existent content_id from writeback INSERT — P0 unblocks AI comments
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：写回 submission_actions 时携带不存在的 content_id 字段，PostgREST 返回 400 导致所有 AI 审核评论静默失败。
+- **修复**：从 INSERT body 中删除 content_id 字段，并新增回归测试防止其再次引入。
+- **成果**：Manus 视频审核完成后 AI 评论成功写入数据库，品牌管理后台可正常展示审核结果。
+
+### [#2673](https://github.com/Vispie-AI/VisPie_backend/pull/2673) fix(nanobot): add ffmpeg to Dockerfile.nanobot — vio_video_review OCR
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Dockerfile.nanobot 缺少 ffmpeg，导致 vio_video_review OCR 帧提取失败，C7 文字叠加规则静默降级为纯 Gemini 视觉判断。
+- **修复**：在 apt-get install 列表中补充 ffmpeg，与 Mitchell Dockerfile（PR #2373）保持一致。
+- **成果**：nanobot 容器恢复 ffmpeg 能力，OCR 文字叠加检测重新正常工作。
+
+### [#2671](https://github.com/Vispie-AI/VisPie_backend/pull/2671) fix(monitoring): nanobot L2 pattern + de-Amyfy alert card title
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：L2 进程检查未匹配 vio-*-nanobot 容器导致健康容器误报 Critical，且告警卡片标题硬编码 "Amy Alert" 无视实际 agent。
+- **修复**：扩展 L2 grep 模式以识别 python.*nanobot_server，并将告警卡片中的 "Amy" 替换为实际 agent 名称。
+- **成果**：nanobot 容器健康时不再触发误报，告警卡片准确显示受影响的 agent 名称。
+
+### [#2668](https://github.com/Vispie-AI/VisPie_backend/pull/2668) fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：DeepSeek thinking 模式要求每条历史 assistant 消息携带非空 reasoning_content，种子中 Bedrock 的空值导致 iter 1 立即返回 4xx。
+- **修复**：在种子边界为 Bedrock 助手消息合成占位 reasoning_content，同时剥离 thinking_blocks。
+- **成果**：DeepSeek shadow 有种子时不再触发 4xx，回复类场景（"撤回/不对"）恢复正常响应。
+
+### [#2667](https://github.com/Vispie-AI/VisPie_backend/pull/2667) fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt)
+- **日期**：2026-04-29 | **状态**：🚫 已关闭
+- **问题**：PR #2658 和 #2662 修复方向相反，生产日志证明任意种子均触发 iter 1 即时 4xx，根本原因仍未解决。
+- **修复**：在种子边界合成 reasoning_content 占位符（本 PR 与 master 有冲突，由 rebase 版本 #2668 取代）。
+- **成果**：本 PR 已关闭，核心修复思路通过无冲突的 #2668 落地。
+
+### [#2665](https://github.com/Vispie-AI/VisPie_backend/pull/2665) fix(matrix-mining): use Part.from_bytes for Vertex AI (no files.upload)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Vertex AI 客户端不支持 client.files.upload()，切换 Vertex 后视频上传抛出 "only supported in Developer client" 错误。
+- **修复**：改用 Part.from_bytes 将视频数据内联传送，无需调用文件上传 API。
+- **成果**：Gemini Vertex AI 可成功分析 IG Reels 视频，matrix-mining 管道恢复正常运行。
+
+### [#2664](https://github.com/Vispie-AI/VisPie_backend/pull/2664) fix(matrix-mining): Vertex AI Gemini — use inline bytes instead of file upload
+- **日期**：2026-04-29 | **状态**：🔀 待合并
+- **问题**：Vertex AI 不支持 files.upload() API，切换后视频分析功能中断。
+- **修复**：改用 Part.from_bytes 内联字节传递媒体（被来自 master 的干净分支 #2665 取代仍处于开放状态）。
+- **成果**：实际修复已通过更干净的 #2665 合并，本 PR 仍处于开放状态待关闭。
+
+### [#2662](https://github.com/Vispie-AI/VisPie_backend/pull/2662) fix(amy): strip Bedrock thinking artifacts at shadow seed boundary
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：PR #2658 错误地在 provider 层剥除 reasoning_content，导致 DeepSeek 自身 thinking 链路断裂，相同错误在生产复现。
+- **修复**：还原 provider 层修改，改在种子边界精准剥除 Bedrock 注入的 reasoning_content 和 thinking_blocks。
+- **成果**：种子边界处理更精准，不影响 DeepSeek 正常 thinking 轮次，测试覆盖 22 个用例。
 ### [#2640](https://github.com/Vispie-AI/VisPie_backend/pull/2640) fix(vio-video-review): Hatchet 1.29.3 API + Vault for HMAC secret
 - **日期**：2026-04-29 | **状态**：✅ 已合并
 - **问题**：PR #2624 Staging 金丝雀冒烟测试发现 Hatchet API 调用失败及 HMAC 密钥硬编码两处阻塞性 Bug。
@@ -784,6 +855,53 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2683](https://github.com/Vispie-AI/VisPie_backend/pull/2683) feat(phyllo): creator-data integration foundation — backend client + endpoints + admin demo
+- **日期**：2026-04-29 | **状态**：🔀 待合并
+- **问题**：平台无法获取创作者私有数据（受众画像、真实互动率、收入等），依赖可抓取的公开数据存在明显局限。
+- **修复**：集成 Phyllo API，实现 OAuth 授权、Token 管理及账户连接的完整后端客户端与管理员演示页。
+- **成果**：基础集成已通过 staging 端到端验证，36 单元测试 + 3 集成测试全通过，为后续数据摄取奠定基础。
+
+### [#2681](https://github.com/Vispie-AI/VisPie_backend/pull/2681) feat(vio-video-review): worker-side tenant guard + ADR — defense-in-depth (Option A+B)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：仅依赖 Hatchet 任务名路由隔离存在盲区，手动调度或未预见的 bug 仍可导致跨租户数据污染。
+- **修复**：在 task 函数最前端添加租户守卫，不匹配则立即返回 FAILED，并新增 ADR 文档固化多租户架构规范。
+- **成果**：双层防护（任务名 + worker 守卫）消除跨租户语义污染风险，架构决策有文档可循。
+
+### [#2680](https://github.com/Vispie-AI/VisPie_backend/pull/2680) feat(vio-video-review): per-tenant Hatchet task names — multi-tenant routing fix
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：所有租户共用同一个 Hatchet 任务名 vio-video-review，无关容器争抢任务导致多租户路由混乱（4.29 事故根因）。
+- **修复**：每个容器根据 VIO_TENANT_SLUG 注册独立任务名，dispatcher 按 slug 精确路由，旧名称废弃。
+- **成果**：租户间任务隔离从结构上得以保证，新增租户只需设置环境变量，无需改动代码。
+
+### [#2679](https://github.com/Vispie-AI/VisPie_backend/pull/2679) feat(creators): default brand-scoped AI creator feed (precomputed)
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：品牌主访问创作者页面时展示全量 17K 创作者列表，缺乏与品牌自动匹配的智能推荐。
+- **修复**：预计算品牌默认 persona 并缓存至数据库，首屏直接返回 AI 筛选列表，热路径响应约 50ms，Gemini 故障时平滑降级。
+- **成果**：品牌主无需输入即可看到匹配自身品牌的创作者推荐，缓存命中响应速度提升约 50 倍。
+
+### [#2677](https://github.com/Vispie-AI/VisPie_backend/pull/2677) feat(ci): add Deploy Vio Nanobot workflow — closes Phase 1 deploy gap
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Vio EC2 上的 nanobot 缺少自动化部署路径，代码合并后须手动 SSM 更新容器，4.29 事故中多次因旧代码干扰调试。
+- **修复**：新增 CI workflow，在 Deploy Nanobot Fleet 成功后自动触发 Vio EC2 容器更新，并支持手动 dispatch 和健康验证。
+- **成果**：Vio nanobot 部署纳入自动化流程，消除因手动遗漏旧代码导致的调试偏差。
+
+### [#2672](https://github.com/Vispie-AI/VisPie_backend/pull/2672) feat: dashboard approved override for Manus/Newsbreak + Scoopz legacy offset (v4)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Manus 和 Newsbreak 的活动审批进度数值未能反映 Creator Overview 仪表盘的真实视频数量。
+- **修复**：为 manus 和 oxygeon ai 启用仪表盘计数覆盖，并为 Scoopz 历史视频添加 77 条遗留偏移量。
+- **成果**：Manus 显示 651 条、Newsbreak 显示 128 条，与仪表盘实际数据保持一致。
+
+### [#2663](https://github.com/Vispie-AI/VisPie_backend/pull/2663) feat(matrix-mining): switch Gemini to Vertex AI (360 RPM)
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：旧版 google.generativeai 免费层限制 15 RPM，频繁触发 429 错误影响 matrix-mining 管道稳定性。
+- **修复**：切换至 google.genai SDK 使用 Vertex AI 服务账号认证（360 RPM），无需 API Key 轮换管理。
+- **成果**：速率限制提升 24 倍，帖子间延迟从 5s 降至 2s，matrix-mining 管道更加稳定高效。
+
+### [#2661](https://github.com/Vispie-AI/VisPie_backend/pull/2661) feat(matrix-mining): Gemini multi-key rotation + 429 auto-retry
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：单个 Gemini API Key 触发 429 限速时 matrix-mining 任务中断，缺乏自动重试和多密钥容错机制。
+- **修复**：支持 MATRIX_IG_GEMINI_KEYS 环境变量配置多密钥轮换，遇 429 时自动切换并等待重试（最多 3 次）。
+- **成果**：多密钥轮换降低 429 中断概率，任务连续性显著提升。
 ### [#2639](https://github.com/Vispie-AI/VisPie_backend/pull/2639) feat: use Creator Overview video counts for Manus and Oxygeon AI approved progress (v3)
 - **日期**：2026-04-29 | **状态**：🚫 已关闭
 - **问题**：Manus 和 Oxygeon AI 活动批准进度需改用 Creator Overview 仪表板视频数，前两次实现被关闭。
@@ -1220,6 +1338,35 @@
 
 ## 三、文档建设（docs:）
 
+### [#2684](https://github.com/Vispie-AI/VisPie_backend/pull/2684) docs(research): client persona audit — Fanka case study
+- **日期**：2026-04-29 | **状态**：🔀 待合并
+- **问题**：缺乏系统化的客户 persona 数据来源梳理，Fanka 客户沟通主要依赖难以获取的微信记录。
+- **修复**：汇总 Vio 管理 API、客户 brief、内部飞书群（313 条消息）等数据源，形成 Fanka 客户 persona 审计文档。
+- **成果**：明确各数据来源覆盖范围与缺口（最大缺口为客户微信记录），并给出优先级补全建议。
+
+### [#2678](https://github.com/Vispie-AI/VisPie_backend/pull/2678) Mobile App Web optimizations: sign-in tabs, editable fields, remove dashboards, reference videos
+- **日期**：2026-04-29 | **状态**：🔀 待合并
+- **问题**：登录页密码入口隐蔽，活动描述不可编辑，内容板块命名不直观，生成仪表盘按钮存在 bug。
+- **修复**：密码登录改为对等标签页，活动描述支持内联编辑，内容板块更名为"参考视频"，移除有问题的仪表盘生成按钮。
+- **成果**：移动端 Web 登录流程更顺畅，活动管理操作更直观，参考视频板块语义更清晰。
+
+### [#2670](https://github.com/Vispie-AI/VisPie_backend/pull/2670) Show newest generations first
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：生成卡片列表顺序与 tasks API 返回的最新优先顺序不一致，新生成内容未能优先展示。
+- **修复**：将新创建的生成卡片插入到结果行首位，与 tasks API 的最新优先排序对齐。
+- **成果**：用户可立即在列表最左侧看到最新生成结果，浏览体验更直观。
+
+### [#2669](https://github.com/Vispie-AI/VisPie_backend/pull/2669) Move pro creator badge to bottom-left
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Pro 模板创作者头像与名称位于中央遮罩层，遮挡模板内容视觉呈现。
+- **修复**：将创作者标识移至左下角，保留右下角悬停时的 Recreate 按钮。
+- **成果**：模板卡片布局更简洁，创作者信息与操作按钮各占合理位置，不干扰主视觉。
+
+### [#2666](https://github.com/Vispie-AI/VisPie_backend/pull/2666) Polish format studio templates and Seedance resilience
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Format Studio 模板网格 UI 不够精致，Seedance 生成缺乏容错，部分模板内容和 brief 描述不完善。
+- **修复**：重设计模板网格为沉浸式 Higgsfield 风格，增强 Seedance 超时重试与 Gemini 兜底，补充 APP/Ecom 模板集与 brief 说明。
+- **成果**：模板浏览体验更专业，Seedance 生成稳定性提升，客户 brief 需求描述更清晰。
 ### [#2641](https://github.com/Vispie-AI/VisPie_backend/pull/2641) design: campaigns2 sandbox — Creator Auto-Reminder & Offboard banner
 - **日期**：2026-04-29 | **状态**：🔀 待合并
 - **问题**：campaigns2 缺少创作者超期自动提醒和下线横幅功能，品牌管理创作者效率低。
@@ -1632,4 +1779,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 229 | 关闭未合并 27 | 待合并 12**
+**合计：19 个 PR | 已合并 249 | 关闭未合并 28 | 待合并 16**
