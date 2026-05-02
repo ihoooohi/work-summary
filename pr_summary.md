@@ -1,11 +1,47 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-01 | 共 294 个 PR（已合并 249 · 关闭未合并 28 · 待合并 16）
-> 最后更新：2026-05-01
+> 统计周期：2026-04-10 ~ 2026-05-02 | 共 319 个 PR（已合并 271 · 关闭未合并 28 · 待合并 19）
+> 最后更新：2026-05-02
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#2705](https://github.com/Vispie-AI/VisPie_backend/pull/2705) fix(alembic): recover orphaned legacy_object_map migration + CI guard
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：同事手动建表后未提交迁移文件，git 与生产数据库 schema 不一致。
+- **修复**：补提反向工程迁移文件并重链迁移链，新增 CI 检查强制迁移随 PR 提交。
+- **成果**：Alembic 迁移树恢复线性，未来遗漏迁移将被 CI 自动拦截。
+
+### [#2697](https://github.com/Vispie-AI/VisPie_backend/pull/2697) fix(ci): repair jq filter quoting in Deploy Vio Nanobot workflow
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：jq 引号嵌套错误导致 Vio Nanobot 部署 workflow 自上线起每次均失败。
+- **修复**：改用 heredoc 传入 jq 过滤器，规避 bash 词语分割引起的引号提前终止。
+- **成果**：部署 workflow 恢复正常，合并后自动补齐了落下的镜像更新。
+
+### [#2692](https://github.com/Vispie-AI/VisPie_backend/pull/2692) fix(amy): bump primary timeout 600s→1500s, Hatchet 15m→30m
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Amy 执行多源任务时在 600s 被强制终止，复杂任务无法完成。
+- **修复**：asyncio 超时提升至 1500s，Hatchet 执行超时提升至 30m，内外差保持 5 分钟。
+- **成果**：Amy 可完整执行复杂多源任务，根因技能发现优化跟进中。
+
+### [#2690](https://github.com/Vispie-AI/VisPie_backend/pull/2690) fix(alert-card): action items use Vio host paths for Vio agents
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Vio 租户告警操作指引硬编码了 Amy 的主机路径，误导值班人员 SSH 至错误主机。
+- **修复**：根据 agent 前缀动态推导容器名、主机标签和日志路径，消除硬编码。
+- **成果**：Vio 告警操作指引指向正确主机，新增 4 个回归测试。
+
+### [#2689](https://github.com/Vispie-AI/VisPie_backend/pull/2689) fix(twilio-conversations): null-safe friendly_name
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：friendly_name 为 null 时前端渲染头像抛出 TypeError，详情面板静默失败。
+- **修复**：新增 getDisplayName 回退链（friendly_name→recipient_name→phone），替换全部渲染处的直接访问。
+- **成果**：无名会话点击正常，通过 30 次快速点击压力测试。
+
+### [#2686](https://github.com/Vispie-AI/VisPie_backend/pull/2686) fix(vio-video-review): align comment format + Gemini prompt with auto-amy canonical
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Vio 视频审核格式与 auto-amy 生产格式不一致，Gemini 提示缺失导致约 30% 误判。
+- **修复**：统一评论分组格式，补充规则级 Gemini 提示词及错别字白名单，添加可配置"编辑规则"链接。
+- **成果**：审核格式对齐 auto-amy，误判率降低，5 个新增单元测试通过。
 
 ### [#2685](https://github.com/Vispie-AI/VisPie_backend/pull/2685) fix: preserve coder army feature branches on slot reuse
 - **日期**：2026-04-29 | **状态**：✅ 已合并
@@ -855,6 +891,42 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2704](https://github.com/Vispie-AI/VisPie_backend/pull/2704) feat(matrix-mining): auto-load .env, disable Redis, Prefect flow + local deploy
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：IG 矩阵挖掘需手动 source .env，频繁报 Redis 错误，无法通过 Prefect 调度。
+- **修复**：添加启动自动读取 .env、默认禁用 Redis 和 Prefect 流封装及本地部署脚本。
+- **成果**：28 个测试通过，流水线可直接运行并支持 Prefect 触发。
+
+### [#2703](https://github.com/Vispie-AI/VisPie_backend/pull/2703) feat(matrix-mining): auto-load .env, disable Redis, Prefect flow + remove API key gate
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：使用 Vertex AI 服务账号鉴权，但代码仍要求 GEMINI_API_KEY 导致初始化报错。
+- **修复**：移除 API Key 门控，新增 .env 自动加载和 Redis 默认禁用。
+- **成果**：Vertex AI 鉴权流程打通，28 个测试通过，支持 Prefect 部署。
+
+### [#2702](https://github.com/Vispie-AI/VisPie_backend/pull/2702) feat(mocks): Manus campaign share H5 flow mock
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：Campaign 分享流程未实现，需可供利益相关方预览的完整 H5 原型。
+- **修复**：制作单文件 375px 移动端 mock，覆盖活动详情、底栏弹窗及 10 个平台预览页。
+- **成果**：原型已上传 S3，含 UTM 链接、OG 卡片预览和深色主题动效，无外部依赖。
+
+### [#2699](https://github.com/Vispie-AI/VisPie_backend/pull/2699) feat(skills): mobile-ui-alignment v2 — Phase 0 + batch mode + conflict triage + wrapper scripts
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：v1 技能实际运行中出现 Phase 3 步骤丢失和 EAS 命令被重新生成错误等结构性故障。
+- **修复**：引入 Phase 0 初始化、4 个封装脚本、批次模式和 Phase 5 冲突分诊，关键命令标记禁止重新生成。
+- **成果**：技能升级至 11 规则 6 阶段，结构性故障封堵，沙箱隔离由脚本层强制执行。
+
+### [#2688](https://github.com/Vispie-AI/VisPie_backend/pull/2688) feat: performance monitor — Newsbreak display, dashboard approved override, column rename
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Oxygeon AI 应显示为 Newsbreak，仪表板批准数计算和列名需修正。
+- **修复**：更新展示名为 Newsbreak（含 +77 Scoopz 历史），仪表板改用 max(platform count) 计算批准数并重命名列头。
+- **成果**：性能监控数据准确，仪表板指标与业务口径对齐。
+
+### [#2687](https://github.com/Vispie-AI/VisPie_backend/pull/2687) feat: collect coder army delivery feedback automatically
+- **日期**：2026-04-29 | **状态**：✅ 已合并
+- **问题**：Coder Army 任务完成后缺少自动化交付评估，用户无法在原始会话收到反馈。
+- **修复**：基于分支推送、PR 状态、CI 和 diff 记录 agent_evaluation 事件，结果回调至原始会话。
+- **成果**：交付状态和失败原因自动回传到用户聊天，覆盖两个核心文件共 241 行。
+
 ### [#2683](https://github.com/Vispie-AI/VisPie_backend/pull/2683) feat(phyllo): creator-data integration foundation — backend client + endpoints + admin demo
 - **日期**：2026-04-29 | **状态**：🔀 待合并
 - **问题**：平台无法获取创作者私有数据（受众画像、真实互动率、收入等），依赖可抓取的公开数据存在明显局限。
@@ -1338,6 +1410,84 @@
 
 ## 三、文档建设（docs:）
 
+### [#2710](https://github.com/Vispie-AI/VisPie_backend/pull/2710) Add Vercel ignored build step for monorepo selective builds
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Monorepo 中 5 个前端项目每次推送均全量重建，浪费构建时间和资源。
+- **修复**：新增共享脚本通过 git diff 判断变更范围，仅触发涉及子项目的 Vercel 构建。
+- **成果**：只有变更项目触发构建，节省构建资源和部署时间。
+
+### [#2709](https://github.com/Vispie-AI/VisPie_backend/pull/2709) Fix FastAPI deploy image packaging
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：FastAPI 服务部署时镜像打包存在缺陷导致部署流程失败。
+- **修复**：修正 2 个配置文件中的镜像打包逻辑。
+- **成果**：FastAPI 部署镜像构建恢复正常，持续交付流程畅通。
+
+### [#2708](https://github.com/Vispie-AI/VisPie_backend/pull/2708) Migrate legacy Django paths to FastAPI compatibility layer
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：遗留 Django 路径与 FastAPI 并存，维护成本高且路由不统一。
+- **修复**：批量将遗留 Django 路径迁移至 FastAPI 兼容层，涉及 283 个文件大规模重构。
+- **成果**：路由体系统一至 FastAPI，为后续完全弃用 Django 奠定基础。
+
+### [#2707](https://github.com/Vispie-AI/VisPie_backend/pull/2707) docs(vio-video-review): Phase 1 retrospective + 5 corrections
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Vio 视频审核 Phase 1 上线过程中的诊断链和决策依据缺少系统性文档记录。
+- **修复**：新增 232 行复盘文档，涵盖 5 层 Bug 洋葱、14 个 PR 时间线及 SOAKED 验收 SQL，修正 5 处偏差。
+- **成果**：Phase 1 知识完整保留，Phase 2 可直接引用此文档作为交叉索引。
+
+### [#2706](https://github.com/Vispie-AI/VisPie_backend/pull/2706) ops(creator-pool): pre-warm brand personas + ops follow-up report
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：20 个活跃品牌均无缓存 persona，品牌主首次登录触发 Gemini 冷启动延迟高。
+- **修复**：编写预热脚本调用生产接口为所有活跃品牌生成并缓存高质量 persona（置信度 0.90-0.95）。
+- **成果**：20 个品牌完成预热，后续登录缓存命中延迟低于 100ms，识别 3 项后续优化项。
+
+### [#2701](https://github.com/Vispie-AI/VisPie_backend/pull/2701) Fix brand message campaign scope
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：品牌消息 Campaign 下拉框缺少无会话的活动选项，广播未包含已联系创作者。
+- **修复**：从品牌关联活动加载 Campaign 选项，广播搜索和校验纳入已联系创作者，管理员保持全平台权限。
+- **成果**：Campaign 选项完整，品牌广播可覆盖全部相关创作者，7 个文件完成更新。
+
+### [#2700](https://github.com/Vispie-AI/VisPie_backend/pull/2700) Fix admin campaign dashboard generation flow
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：管理员活动仪表板生成流程存在缺陷导致数据无法正常展示。
+- **修复**：修正仪表板生成流程逻辑，涉及 5 个文件调整。
+- **成果**：管理员活动仪表板恢复正常生成和展示。
+
+### [#2698](https://github.com/Vispie-AI/VisPie_backend/pull/2698) Fallback admin broadcast creator counts
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：#2696 代码先于 Supabase 迁移上线时，缺少新 RPC 导致广播模块 500 报错。
+- **修复**：添加回退逻辑，缺少新 RPC 时通过分页旧接口获取精确总数和全量 Select All。
+- **成果**：广播功能在迁移应用前后均可正常工作，消除部署时序引发的中断风险。
+
+### [#2696](https://github.com/Vispie-AI/VisPie_backend/pull/2696) Fix broadcast select-all total count
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：广播模态框仅显示 "200+"，Select All 只能选中前 200 条，影响大规模广播。
+- **修复**：新增精确计数接口，Select All 解析完整结果集（上限 500），Supabase 迁移将 RPC 上限提至 501。
+- **成果**：广播可选中全量匹配创作者，总数展示精确，用户体验改善。
+
+### [#2695](https://github.com/Vispie-AI/VisPie_backend/pull/2695) P0 hotfix(creator-pool): /default-feed reads wrong Supabase project
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：fetch_brand_from_supabase 读取了错误的 Supabase 项目，所有品牌 ID 返回 404，推荐流静默回退至未过滤 17K 列表。
+- **修复**：新增 MOBILE_APP_WEB_SUPABASE_URL/KEY 环境变量指向正确项目，修正 industry 字段下划线格式化。
+- **成果**：品牌登录后正确看到 AI 过滤推荐流和 persona 横幅，单元测试增至 33 个。
+
+### [#2694](https://github.com/Vispie-AI/VisPie_backend/pull/2694) Lazy load broadcast recipients on scroll
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：广播收件人列表仅加载最多 200 条，无法展示更多创作者。
+- **修复**：改为滚动触底时分页追加加载，通过 offset 传递页码，超出当前页显示 200+ 样式计数。
+- **成果**：收件人列表支持无限滚动，Select All 和 500 上限行为保持不变。
+
+### [#2693](https://github.com/Vispie-AI/VisPie_backend/pull/2693) ci: split shared deploy group — give Amy/Eva nanobot priority queue
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：4 个部署 workflow 共享并发组，Amy/Eva Nanobot 频繁被取消，最坏延迟达 13 分钟。
+- **修复**：Amy/Eva Nanobot 单独划为优先并发组，其余迁入次级组，两组各自串行互不影响。
+- **成果**：Amy/Eva Nanobot 部署不再被取消，用户侧延迟降至纯部署耗时。
+
+### [#2691](https://github.com/Vispie-AI/VisPie_backend/pull/2691) Scope brand broadcasts to campaign action creators
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：品牌广播范围覆盖全平台创作者，而非仅限活动下有投稿行为的创作者。
+- **修复**：品牌搜索和广播发送均限定为所属活动有 action 记录的创作者，管理员保持全平台权限。
+- **成果**：品牌广播精准触达活动相关创作者，6 个文件确保前后端范围一致。
+
 ### [#2684](https://github.com/Vispie-AI/VisPie_backend/pull/2684) docs(research): client persona audit — Fanka case study
 - **日期**：2026-04-29 | **状态**：🔀 待合并
 - **问题**：缺乏系统化的客户 persona 数据来源梳理，Fanka 客户沟通主要依赖难以获取的微信记录。
@@ -1779,4 +1929,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 249 | 关闭未合并 28 | 待合并 16**
+**合计：19 个 PR | 已合并 271 | 关闭未合并 28 | 待合并 19**
