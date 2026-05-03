@@ -1,12 +1,65 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-02 | 共 319 个 PR（已合并 271 · 关闭未合并 28 · 待合并 19）
-> 最后更新：2026-05-02
+> 统计周期：2026-04-10 ~ 2026-05-03 | 共 344 个 PR（已合并 290 · 关闭未合并 28 · 待合并 25）
+> 最后更新：2026-05-03
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2734](https://github.com/Vispie-AI/VisPie_backend/pull/2734) fix(format-analysis): tolerate music search failures
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：TikTok音乐搜索全部密钥失败时会中断整个格式分析流程。
+- **修复**：将音乐搜索改为尽力而为，RapidAPI全部失败时返回空候选列表。
+- **成果**：格式分析流程对音乐搜索失败具备容错能力，不再因此中断。
+
+### [#2732](https://github.com/Vispie-AI/VisPie_backend/pull/2732) fix(web): defer video loading until user clicks play
+- **日期**：2026-05-01 | **状态**：🔀 待合并
+- **问题**：网格视图每张卡片在页面加载时立即创建video元素，产生大量Supabase存储出口流量。
+- **修复**：Player组件默认显示缩略图，仅在用户点击播放后才创建video元素。
+- **成果**：每次页面加载消除24+次视频预加载请求，显著降低存储出口成本。
+
+### [#2731](https://github.com/Vispie-AI/VisPie_backend/pull/2731) fix: deploy format analysis prefect flow
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：格式分析Prefect流程未被部署工作流重新部署，Doubao环境变量未传递。
+- **修复**：在部署工作流中重新加入format_analysis_flow_v2并注入ARK_API_KEY等变量。
+- **成果**：格式分析流程成功部署，支持Doubao Seed 2视频验证。
+
+### [#2730](https://github.com/Vispie-AI/VisPie_backend/pull/2730) fix: improve coder army callback summaries
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Coder Army回调摘要使用Nova Micro模型质量低，且缺乏可追溯的trace ID。
+- **修复**：切换到DeepSeek v4 pro生成摘要，并在回调载荷中加入完整trace ID。
+- **成果**：Coder Army回调摘要质量提升，支持通过trace ID快速定位任务记录。
+
+### [#2729](https://github.com/Vispie-AI/VisPie_backend/pull/2729) fix: compact Agent Doctor debug layout
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Agent Doctor页面trace选择器和原始引用默认展开，遮挡主调试内容。
+- **修复**：将trace选择器和原始引用改为默认折叠，侧边栏可收起，主区域改为全宽布局。
+- **成果**：Agent Doctor调试页面更简洁，诊断内容优先展示，排障效率提升。
+
+### [#2725](https://github.com/Vispie-AI/VisPie_backend/pull/2725) fix: scope coder army watchdog PR metrics
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Coder Army看门狗将所有分支都计为缺少PR的任务，指标统计偏高。
+- **修复**：仅对明确要求提交/推送/PR的任务检查PR交付，跳过空分支的自动推送。
+- **成果**：看门狗PR指标统计准确，非PR类任务不再被误报为缺失PR。
+
+### [#2724](https://github.com/Vispie-AI/VisPie_backend/pull/2724) fix(format-analysis): rebuild failed blacklist query
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：SQLAlchemy在已附加过滤条件后调用select_from仍拒绝失败黑名单查询。
+- **修复**：从干净的select_from重新构建失败格式黑名单查询，避免条件与select_from冲突。
+- **成果**：format hunt失败黑名单查询执行成功，格式分析流程得以正常推进。
+
+### [#2722](https://github.com/Vispie-AI/VisPie_backend/pull/2722) fix(format-analysis): disambiguate failed-format blacklist query
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：#2720优化后的失败格式黑名单查询因SQLAlchemy join歧义在步骤5.5重试。
+- **修复**：为join显式指定左侧表，消除SQLAlchemy join歧义问题。
+- **成果**：已发现格式去重速度已确认提升，失败黑名单查询亦可正常执行。
+
+### [#2720](https://github.com/Vispie-AI/VisPie_backend/pull/2720) fix(format-analysis): speed up hunt dedup query
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：格式hunt在步骤0.5因90天窗口N+1查询扫描约183k条引用记录而卡住。
+- **修复**：去重窗口缩至14天，N+1查询替换为单次join，候选为空时提前退出。
+- **成果**：格式hunt去重阶段大幅提速，active Prefect运行得以恢复正常。
 ### [#2705](https://github.com/Vispie-AI/VisPie_backend/pull/2705) fix(alembic): recover orphaned legacy_object_map migration + CI guard
 - **日期**：2026-04-30 | **状态**：✅ 已合并
 - **问题**：同事手动建表后未提交迁移文件，git 与生产数据库 schema 不一致。
@@ -891,6 +944,41 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2735](https://github.com/Vispie-AI/VisPie_backend/pull/2735) feat(shadow-judge): upgrade judge model to gemini-3-pro-preview
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Shadow Arena使用gemini-2.5-flash评判，频繁产生winner:error，判决质量低。
+- **修复**：将公平裁判模型从gemini-2.5-flash升级为gemini-3-pro-preview。
+- **成果**：判决质量提升，error率降低，A/B对比结果更具参考价值。
+
+### [#2733](https://github.com/Vispie-AI/VisPie_backend/pull/2733) feat: add weekly-campaign-tracker Prefect flow
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：周度活动追踪依赖Node脚本，无法通过Prefect统一调度和监控。
+- **修复**：将weekly-campaign-tracker移植为Python Prefect流程，每天08:00 UTC通过Cloud Run V2执行。
+- **成果**：活动追踪自动化，支持MAX平台汇总、周同比对比及飞书表格自动写入。
+
+### [#2728](https://github.com/Vispie-AI/VisPie_backend/pull/2728) feat(format-analysis): support Doubao Seed 2 video verify
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：视频验证仅支持Gemini，缺乏国内多模态大模型备选方案。
+- **修复**：添加BytePlus Ark/Doubao客户端，视频验证支持通过环境变量切换到Doubao Seed 2。
+- **成果**：格式分析增加Doubao Seed 2视频验证能力，Gemini作为自动降级备用。
+
+### [#2727](https://github.com/Vispie-AI/VisPie_backend/pull/2727) feat: prefer Codex for Coder Army auto routing
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Coder Army自动路由未明确设定各编码智能体的权重分配策略。
+- **修复**：auto模式按Codex 80%、OpenCode 15%、Claude 5%权重路由，Codex默认使用gpt-5.5。
+- **成果**：Coder Army任务优先由Codex处理，路由策略清晰且支持环境变量灵活配置。
+
+### [#2726](https://github.com/Vispie-AI/VisPie_backend/pull/2726) feat: add Agent Doctor trace debug
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：缺乏可视化工具对Agent trace进行在线诊断和调试。
+- **修复**：新增只读Agent Doctor后端路由及前端内部工具页面，支持通过trace_id查询调试。
+- **成果**：运维人员可通过Agent Doctor页面快速定位和诊断Agent异常trace。
+
+### [#2721](https://github.com/Vispie-AI/VisPie_backend/pull/2721) feat(ci): GitHub Actions secret-injection for Vio per-tenant nanobot deploy
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Vio EC2上nanobot的GLM_API_KEY为空，OCR功能在每次审核时均输出警告。
+- **修复**：通过GitHub Actions将GLM_API_KEY经Parameter Store安全注入各租户.env.nanobot。
+- **成果**：OCR功能恢复正常，密钥注入流程安全可审计，支持多租户横向扩展。
 ### [#2704](https://github.com/Vispie-AI/VisPie_backend/pull/2704) feat(matrix-mining): auto-load .env, disable Redis, Prefect flow + local deploy
 - **日期**：2026-04-30 | **状态**：✅ 已合并
 - **问题**：IG 矩阵挖掘需手动 source .env，频繁报 Redis 错误，无法通过 Prefect 调度。
@@ -1410,6 +1498,65 @@
 
 ## 三、文档建设（docs:）
 
+### [#2723](https://github.com/Vispie-AI/VisPie_backend/pull/2723) Vizzyshubh
+- **日期**：2026-05-01 | **状态**：🔀 待合并
+- **问题**：Vizzyshubh相关功能模块需要合入主分支。
+- **修复**：包含82个文件变更，合计新增16705行代码，涵盖多项功能改动。
+- **成果**：PR待审核合并，具体功能范围待评审确认。
+
+### [#2719](https://github.com/Vispie-AI/VisPie_backend/pull/2719) Prefer Cloud Run backend for format studio
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Format Studio默认使用cc-army-api，但该服务仍返回旧版Seedance缩略图响应格式。
+- **修复**：将Format Studio后端优先级调整为Cloud Run FastAPI，cc-army-api作为降级备用。
+- **成果**：Format Studio正常获取最新Seedance thumbnail_url响应，功能恢复正常。
+
+### [#2718](https://github.com/Vispie-AI/VisPie_backend/pull/2718) docs: abandoned revisions detail audit
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：需了解217条废弃修订事件的分布及各活动的放弃率，发现数据质量缺口。
+- **修复**：从Supabase拉取数据生成详细分析报告，标记10处数据质量问题并列出高放弃率活动。
+- **成果**：Fanka（67%）、StudyX（83%）等活动的异常高放弃率得到量化，为干预提供依据。
+
+### [#2717](https://github.com/Vispie-AI/VisPie_backend/pull/2717) Use generated thumbnails for Seedance videos
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Seedance生成视频使用模板缩略图而非实际生成内容首帧。
+- **修复**：提取生成视频首帧并上传为JPEG缩略图，API响应和前端均使用生成缩略图。
+- **成果**：Seedance视频缩略图展示真实生成内容，点击后可在播放弹窗中查看完整视频。
+
+### [#2716](https://github.com/Vispie-AI/VisPie_backend/pull/2716) Fix trending formats loading in studio
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Format Studio趋势格式页面在API成功返回后仍停留在加载中状态。
+- **修复**：将SvelteKit导航replaceState替换为原生history.replaceState，仅在URL变化时调用。
+- **成果**：趋势格式页面正常加载渲染6个格式卡片，运行时崩溃问题消除。
+
+### [#2715](https://github.com/Vispie-AI/VisPie_backend/pull/2715) Fix format studio initial video loading
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：Format Studio页面挂载时为所有历史任务加载video src，导致初始加载缓慢。
+- **修复**：改为懒加载生成视频，并将每个活动的历史任务初始显示数量从20减少到12。
+- **成果**：Format Studio初始加载速度提升，不必要的视频预加载请求大幅减少。
+
+### [#2714](https://github.com/Vispie-AI/VisPie_backend/pull/2714) docs: Apr 2026 revision turnaround analysis for brands platform
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：需了解品牌平台2026年4月修订周转效率，并定位35%放弃率的根本原因。
+- **修复**：分析411个修订周期，生成含P50/P90周转时间的分角色对比报告。
+- **成果**：中位周转7.6小时，客户角色P90比管理员长4倍，建议建立客户SLA机制。
+
+### [#2713](https://github.com/Vispie-AI/VisPie_backend/pull/2713) Reapply FastAPI cutover with login/deploy fixes
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：生产回滚后需重新合入FastAPI切换，同时修复登录失败和部署阻塞问题。
+- **修复**：修复SvelteKit响应头变更导致登录失败、Cloud Run启动探针超时及Alembic重复版本头等问题。
+- **成果**：全链路冒烟测试通过（公共37/内部81/移动25），等待CI验证后可重新部署。
+
+### [#2712](https://github.com/Vispie-AI/VisPie_backend/pull/2712) Add per-project ignore-build.sh for Vercel selective builds
+- **日期**：2026-04-30 | **状态**：🔀 待合并
+- **问题**：Vercel单体仓库在未变更的前端项目上也会触发构建，浪费构建资源。
+- **修复**：为5个前端项目分别添加ignore-build.sh，利用VERCEL_GIT_PREVIOUS_SHA进行精准目录diff。
+- **成果**：各前端项目仅在对应目录有变更时触发Vercel构建，资源消耗显著降低。
+
+### [#2711](https://github.com/Vispie-AI/VisPie_backend/pull/2711) Rollback Django/FastAPI cutover
+- **日期**：2026-04-30 | **状态**：✅ 已合并
+- **问题**：FastAPI部署上线后生产出现问题，需紧急回退到Django旧路径稳定服务。
+- **修复**：回退PR #2709和#2708，将代码库恢复至切换前的提交4fdbde815。
+- **成果**：生产恢复至Django后端，FastAPI修复工作已暂存，待稳定后重新推进。
 ### [#2710](https://github.com/Vispie-AI/VisPie_backend/pull/2710) Add Vercel ignored build step for monorepo selective builds
 - **日期**：2026-04-30 | **状态**：✅ 已合并
 - **问题**：Monorepo 中 5 个前端项目每次推送均全量重建，浪费构建时间和资源。
@@ -1929,4 +2076,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 271 | 关闭未合并 28 | 待合并 19**
+**合计：19 个 PR | 已合并 290 | 关闭未合并 28 | 待合并 25**
