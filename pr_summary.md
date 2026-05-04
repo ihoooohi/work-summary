@@ -1,12 +1,71 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-03 | 共 344 个 PR（已合并 290 · 关闭未合并 28 · 待合并 25）
-> 最后更新：2026-05-03
+> 统计周期：2026-04-10 ~ 2026-05-04 | 共 369 个 PR（已合并 310 · 关闭未合并 28 · 待合并 30）
+> 最后更新：2026-05-04
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2769](https://github.com/Vispie-AI/VisPie_backend/pull/2769) Fix nanobot shadow context and add replay campaigns
+- **日期**：2026-05-03 | **状态**：🔀 待合并
+- **问题**：nanobot影子上下文缓存TTL过短，DeepSeek超时后回调丢失，且缺少批量活动重放能力。
+- **修复**：延长影子回调缓存TTL，加强DeepSeek上下文种子规范化，新增多候选活动重放支持。
+- **成果**：nanobot影子响应更稳定，支持多候选活动批量重放测试。
+
+### [#2768](https://github.com/Vispie-AI/VisPie_backend/pull/2768) Fix CodeArmy Codex startup loop
+- **日期**：2026-05-03 | **状态**：✅ 已合并
+- **问题**：CodeArmy Codex面板继承TERM=dumb环境变量，导致启动进入死循环。
+- **修复**：强制Codex面板使用真实终端环境，清理逻辑容错慢速EFS工作树移除。
+- **成果**：CodeArmy代理创建流程更可靠，面板启动稳定性提升。
+
+### [#2763](https://github.com/Vispie-AI/VisPie_backend/pull/2763) fix(deploy): host-shared secret inheritance in inject-vio-tenant-secrets.sh (α1.8)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：Vio部署链密钥注入脚本静默回退，致Manus视频审核流水线中断约23小时。
+- **修复**：修复inject-vio-tenant-secrets.sh宿主机共享密钥继承逻辑，消除静默失败。
+- **成果**：生产环境密钥注入可靠，Manus视频审核管道恢复正常运行。
+
+### [#2761](https://github.com/Vispie-AI/VisPie_backend/pull/2761) fix: use ADMIN_PAT for secrets-to-variables workflow
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：secrets-to-variables工作流使用GITHUB_TOKEN，缺少变量写入权限导致失败。
+- **修复**：改用具有Variables读写权限的ADMIN_PAT替代GITHUB_TOKEN。
+- **成果**：工作流成功将46个密钥同步为仓库变量，代理可在运行时读取配置值。
+
+### [#2751](https://github.com/Vispie-AI/VisPie_backend/pull/2751) fix: clarify Agent Doctor memory retrieval state
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Agent Doctor将内存层标记为被动RAG，零内存追踪被误判为监控缺口。
+- **修复**：将内存层重新标记为"memory retrieval"，零内存追踪标记为无关而非异常。
+- **成果**：Agent Doctor诊断信息更准确，减少误报性警告。
+
+### [#2750](https://github.com/Vispie-AI/VisPie_backend/pull/2750) fix: make auto compact quiet
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：自动压缩与归档通知以卡片形式频繁发送，打扰用户正常交互。
+- **修复**：将自动压缩通知默认改为表情回应模式，手动触发或特定配置时才发卡片。
+- **成果**：后台维护操作对用户无感知，通知噪音大幅降低。
+
+### [#2749](https://github.com/Vispie-AI/VisPie_backend/pull/2749) fix(deploy): run git pull as ubuntu user; fail-loud on auth/network errors (alpha1.7)
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：工作流中git pull以root身份执行，无法访问ubuntu用户SSH密钥，认证静默失败。
+- **修复**：改为以ubuntu用户执行git pull，并对认证/网络错误增加明确失败提示。
+- **成果**：部署流程SSH认证可靠，错误可被及时发现并定位。
+
+### [#2748](https://github.com/Vispie-AI/VisPie_backend/pull/2748) fix(deploy): stop existing container BEFORE port pre-check (update path was broken)
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：deploy-vio-tenant.sh端口预检在停止旧容器之前执行，同名容器占用端口时误报。
+- **修复**：调整执行顺序，先停止旧容器再执行端口检查。
+- **成果**：nanobot部署流程端口冲突问题消除，容器替换逻辑正确。
+
+### [#2746](https://github.com/Vispie-AI/VisPie_backend/pull/2746) fix(ci): vio-deploy workflow paths point to /home/ubuntu/VisPie_backend, fail-loud on git pull
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：CI工作流路径指向错误目录，且git pull失败时静默忽略错误。
+- **修复**：修正工作流路径为/home/ubuntu/VisPie_backend，对git pull失败增加强制报错。
+- **成果**：CI部署路径准确，git pull失败可被立即发现和定位。
+
+### [#2745](https://github.com/Vispie-AI/VisPie_backend/pull/2745) fix: archive stale sessions without compaction
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：闲置超7天的过期会话未被及时归档，旧provider压缩索引生成器残留增加复杂度。
+- **修复**：移除旧provider压缩逻辑，新增idle过期会话直接归档为markdown并替换为指针。
+- **成果**：会话存储占用减少，归档机制更简洁高效。
 ### [#2734](https://github.com/Vispie-AI/VisPie_backend/pull/2734) fix(format-analysis): tolerate music search failures
 - **日期**：2026-05-01 | **状态**：✅ 已合并
 - **问题**：TikTok音乐搜索全部密钥失败时会中断整个格式分析流程。
@@ -944,6 +1003,47 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2764](https://github.com/Vispie-AI/VisPie_backend/pull/2764) feat(vio-gateway): runtime-aware workspace + ETag/If-Match (α2 D3 complete)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：gateway未区分租户类型，管理后台内存编辑器始终写入旧版workspace/目录。
+- **修复**：getTenantWorkspace()实现运行时感知，nanobot租户返回workspace-nanobot/。
+- **成果**：多租户内存隔离正确，管理后台写入路径按租户类型正确分流。
+
+### [#2762](https://github.com/Vispie-AI/VisPie_backend/pull/2762) feat(twilio): MMS media support — capture, store in GCS, render in UI
+- **日期**：2026-05-02 | **状态**：✅ 已合并
+- **问题**：客户通过MMS发送图片时，运营后台Conversation Manager显示空气泡。
+- **修复**：在webhook处理器中捕获Twilio Media字段，上传至GCS并在UI中渲染展示。
+- **成果**：MMS图片在对话管理界面正常展示，客户发送的图片不再丢失。
+
+### [#2759](https://github.com/Vispie-AI/VisPie_backend/pull/2759) feat(perf-monitor): view buckets, best video, creator tiers, WoW cards
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：Performance Monitor缺少视频播放量分布、最佳视频及创作者层级等关键指标。
+- **修复**：新增视图分桶直方图、最佳视频、创作者层级及周同比卡片功能。
+- **成果**：运营团队可直观掌握各客户内容表现分布和顶级视频数据。
+
+### [#2758](https://github.com/Vispie-AI/VisPie_backend/pull/2758) feat(twilio): account health check + friendly 401 error UX
+- **日期**：2026-05-02 | **状态**：✅ 已合并
+- **问题**：Twilio账号被停用时SDK返回晦涩错误，运营人员无法快速识别和处理。
+- **修复**：FastAPI启动时增加Twilio健康检查，401/低余额时触发Lark告警并展示友好提示。
+- **成果**：账号异常在启动阶段即可被发现，运营界面展示可操作的告警信息。
+
+### [#2757](https://github.com/Vispie-AI/VisPie_backend/pull/2757) feat(perf-monitor): replace Total Views/Likes WoW with Posted Videos/Avg Views WoW
+- **日期**：2026-05-01 | **状态**：🔀 待合并
+- **问题**：Performance Monitor周同比指标（总浏览/点赞）对运营决策意义有限。
+- **修复**：将周同比指标替换为发布视频数和平均播放量，更贴近运营关注点。
+- **成果**：运营团队可更直观评估内容发布效率和单视频平均表现趋势。
+
+### [#2754](https://github.com/Vispie-AI/VisPie_backend/pull/2754) feat(memory): shard history and remove mem0
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：nanobot历史记录存储在单一文件，mem0依赖引入额外复杂度和维护成本。
+- **修复**：将历史记录按日期分片存储，移除mem0技能及sidecar，改用本地文件+Lark历史。
+- **成果**：记忆系统更轻量，历史检索效率提升，依赖链显著简化。
+
+### [#2752](https://github.com/Vispie-AI/VisPie_backend/pull/2752) feat: link nanobot traces to Agent Doctor
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：nanobot追踪日志缺少直接跳转到Agent Doctor诊断页面的链接。
+- **修复**：在Lark卡片和debug footer中添加Agent Doctor链接，覆盖thinking/error卡片。
+- **成果**：运营人员可从追踪信息一键跳转Agent Doctor，诊断效率显著提升。
 ### [#2735](https://github.com/Vispie-AI/VisPie_backend/pull/2735) feat(shadow-judge): upgrade judge model to gemini-3-pro-preview
 - **日期**：2026-05-01 | **状态**：✅ 已合并
 - **问题**：Shadow Arena使用gemini-2.5-flash评判，频繁产生winner:error，判决质量低。
@@ -1498,6 +1598,53 @@
 
 ## 三、文档建设（docs:）
 
+### [#2767](https://github.com/Vispie-AI/VisPie_backend/pull/2767) docs: B2B AI brand creative tools landscape research
+- **日期**：2026-05-03 | **状态**：🔀 待合并
+- **问题**：缺乏对B2B AI品牌创意工具市场的系统性竞品研究文档。
+- **修复**：整理了26家B2B AI品牌创意/设计平台的公司信息、产品定位及竞争差异。
+- **成果**：为产品团队提供竞品全景参考，支撑市场定位和差异化决策。
+
+### [#2766](https://github.com/Vispie-AI/VisPie_backend/pull/2766) style(admin): redesign format generate studio
+- **日期**：2026-05-03 | **状态**：✅ 已合并
+- **问题**：格式生成工作室页面布局不合理，响应式行为欠佳。
+- **修复**：按编辑风格参考重新设计页面，恢复活动标签、参数栏、提示词工作区等模块。
+- **成果**：管理后台格式生成工作室页面视觉体验和操作流程大幅改善。
+
+### [#2765](https://github.com/Vispie-AI/VisPie_backend/pull/2765) docs: Product Sense + PM-Dev Alignment doctrines (CLAUDE.md + DAO.md)
+- **日期**：2026-05-03 | **状态**：🔀 待合并
+- **问题**：CLAUDE.md和DAO.md缺少客户优先意识和产品-研发对齐原则。
+- **修复**：增加客户优先感知（Doctrine #13）和PM-Dev对齐（Doctrine #14）原则及决策启发式。
+- **成果**：团队AI代理行为准则更完善，决策框架更贴近用户价值导向。
+
+### [#2760](https://github.com/Vispie-AI/VisPie_backend/pull/2760) chore: one-time workflow to copy secrets to variables
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：代理无法在运行时通过gh命令读取仓库密钥值，限制了自动化能力。
+- **修复**：新增一次性工作流，将46个仓库密钥批量同步为仓库变量，不删除原密钥。
+- **成果**：代理可通过gh variable get在运行时读取配置值，自动化能力增强。
+
+### [#2756](https://github.com/Vispie-AI/VisPie_backend/pull/2756) docs(memory): clarify nanobot memory source prompts
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：nanobot内存来源提示不清晰，compaction写入目标模糊。
+- **修复**：明确各内存来源映射（日记/MEMORY.md/USER_MEMORY.md/Lark历史等），更新多端提示。
+- **成果**：nanobot内存管理规范统一，compaction写入路径清晰一致。
+
+### [#2755](https://github.com/Vispie-AI/VisPie_backend/pull/2755) docs(workspace): replace mem0 with file-based memory search guidance
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：AGENTS.md中仍引用已废弃的mem0技能，与实际系统架构不符。
+- **修复**：将"何时搜索记忆"章节的mem0引用替换为基于文件和Lark历史的检索指引。
+- **成果**：代理记忆搜索指引与实际架构一致，避免调用已废弃mem0技能。
+
+### [#2753](https://github.com/Vispie-AI/VisPie_backend/pull/2753) docs(workspace): add active memory search prompt guidance
+- **日期**：2026-05-01 | **状态**：✅ 已合并
+- **问题**：代理缺乏主动使用记忆检索的提示指引，被动RAG禁用后无替代引导。
+- **修复**：在内外部AGENTS.md模板中增加"何时搜索记忆"章节，指导代理主动调用记忆。
+- **成果**：代理能在适当时机主动检索记忆，补全被动RAG移除后的记忆召回能力。
+
+### [#2747](https://github.com/Vispie-AI/VisPie_backend/pull/2747) chore(claude): SessionStart hook for Claude Code Web
+- **日期**：2026-05-01 | **状态**：🔀 待合并
+- **问题**：Claude Code Web会话启动时缺少自动安装Python和前端依赖的机制。
+- **修复**：新增session-start.sh，在远程会话中自动安装Django/FastAPI和pnpm依赖。
+- **成果**：Claude Code Web会话可直接运行测试和Linter，本地环境不受影响。
 ### [#2723](https://github.com/Vispie-AI/VisPie_backend/pull/2723) Vizzyshubh
 - **日期**：2026-05-01 | **状态**：🔀 待合并
 - **问题**：Vizzyshubh相关功能模块需要合入主分支。
@@ -2076,4 +2223,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 290 | 关闭未合并 28 | 待合并 25**
+**合计：19 个 PR | 已合并 310 | 关闭未合并 28 | 待合并 30**
