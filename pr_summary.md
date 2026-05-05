@@ -1,12 +1,41 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-04 | 共 369 个 PR（已合并 310 · 关闭未合并 28 · 待合并 30）
-> 最后更新：2026-05-04
+> 统计周期：2026-04-10 ~ 2026-05-05 | 共 394 个 PR（已合并 321 · 关闭未合并 29 · 待合并 43）
+> 最后更新：2026-05-05
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2825](https://github.com/Vispie-AI/VisPie_backend/pull/2825) fix(autoamy): wildcard *.py + check detects file-level imports (α6.0.8.2)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：α6.0.8 后 Auto-Amy 部署崩溃，提示 ModuleNotFoundError，因 PR #2801 新增模块未被正确 COPY 进容器。
+- **修复**：扩展 *.py 通配符覆盖范围，并让检测工具支持文件级 import 识别。
+- **成果**：Auto-Amy 独立部署恢复正常，模块导入检查更健壮稳定。
+
+### [#2824](https://github.com/Vispie-AI/VisPie_backend/pull/2824) fix(check): support α6.0.8 prefixed COPY paths in check_dockerfile_imports.py
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：α6.0.8 将 Docker 构建上下文迁移至仓库根目录后，COPY 路径前缀变更导致检查脚本误报。
+- **修复**：更新 check_dockerfile_imports.py 以支持带 auto-amy/ 前缀的 COPY 路径格式。
+- **成果**：Dockerfile 导入检查恢复准确，α6.0.8 部署流程不再产生误报。
+
+### [#2820](https://github.com/Vispie-AI/VisPie_backend/pull/2820) fix: sign up bug & post link bug
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：用户注册流程存在缺陷，帖子链接跳转功能也无法正常使用。
+- **修复**：修正注册逻辑漏洞，并修复帖子链接路由问题。
+- **成果**：注册流程与帖子链接功能修复完成，待合并上线。
+
+### [#2807](https://github.com/Vispie-AI/VisPie_backend/pull/2807) fix: add Coder Army native resume
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：Coder Army 重启后无法恢复之前的 CLI 会话，工作树状态随之丢失。
+- **修复**：捕获 Codex/Claude CLI 会话 ID，新增软停止与原生恢复路径，并暴露 resume API 端点。
+- **成果**：Coder Army agent 支持原生会话恢复，中断后可无缝续接工作状态。
+
+### [#2805](https://github.com/Vispie-AI/VisPie_backend/pull/2805) fix(brand-creative): use Vertex AI for Pomelli Brand DNA
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：Pomelli 解析器使用 google-genai API Key 路径，容器内密钥无效，始终回退到确定性兜底逻辑。
+- **修复**：切换至 Vertex AI 认证路径，绕过 API Key 失效问题。
+- **成果**：品牌 DNA 解析成功通过 Vertex AI 调用 Gemini，不再触发降级兜底。
 ### [#2769](https://github.com/Vispie-AI/VisPie_backend/pull/2769) Fix nanobot shadow context and add replay campaigns
 - **日期**：2026-05-03 | **状态**：🔀 待合并
 - **问题**：nanobot影子上下文缓存TTL过短，DeepSeek超时后回调丢失，且缺少批量活动重放能力。
@@ -1003,6 +1032,107 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2823](https://github.com/Vispie-AI/VisPie_backend/pull/2823) feat(vio): α6.0.8 — deploy infrastructure (Docker build context + workflows + API mount)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：vio/ 模块作为 α6.0 新增组件，无法被现有 Docker 构建流程正确包含和挂载。
+- **修复**：将 Docker 构建上下文从 auto-amy/ 迁移至仓库根目录，并更新工作流与 API 挂载配置。
+- **成果**：Vio 视频审核 α6 部署基础设施就绪，vio/ 模块可被正确构建、部署和挂载。
+
+### [#2822](https://github.com/Vispie-AI/VisPie_backend/pull/2822) feat(vio): α6.0.7 — feature-flag-gated DB-load pipeline (production behavior unchanged)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：Vio α6 的数据库加载路径需在不影响现有生产环境的前提下安全上线。
+- **修复**：通过 VIO_USE_DB_PREFS=1 环境变量对新 DB 加载路径进行特性开关隔离，按租户灰度启用。
+- **成果**：α6 DB 加载流程可按需灰度开启，生产行为默认保持不变。
+
+### [#2821](https://github.com/Vispie-AI/VisPie_backend/pull/2821) feat(vio/preferences): α6.0 — JSON SSOT infrastructure for tenant video preferences (dormant)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：Vio 视频审核依赖 Markdown 驱动规则，缺乏按租户管理的结构化偏好存储机制。
+- **修复**：引入 JSON SSOT 基础设施，以数据库方式管理租户视频偏好，替代 Markdown 规则（休眠状态上线）。
+- **成果**：α6 租户偏好基础设施已通过隔离测试并合并，不影响现有生产逻辑。
+
+### [#2818](https://github.com/Vispie-AI/VisPie_backend/pull/2818) feat: BCS Tonight Parallel Build Briefs (Coder Army slot 6)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室并行构建任务需要多个 Coder Army slot 协作完成各子任务。
+- **修复**：通过 Coder Army slot 6 自动创建对应任务分支并启动构建流程。
+- **成果**：BCS 并行构建 slot 6 任务已创建，等待后续评审合并。
+
+### [#2817](https://github.com/Vispie-AI/VisPie_backend/pull/2817) feat(brand-creative): Creative Direction Engine
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室缺少从品牌 DNA 和参考广告自动生成结构化创意方向的能力。
+- **修复**：新增创意方向引擎，可基于品牌 DNA 与参考广告生成 5-10 个结构化创意方向。
+- **成果**：BCS 任务 B（创意方向引擎）实现完成，已集成到品牌创意工作室流程。
+
+### [#2816](https://github.com/Vispie-AI/VisPie_backend/pull/2816) feat(brand-creative): direction-driven asset generation workspace
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：用户选定创意方向后缺乏自动生成静态广告素材的工作区和对应端点。
+- **修复**：新增端点，支持从选定创意方向驱动静态广告素材生成工作区。
+- **成果**：BCS 任务 C 完成，选定方向到生成素材的完整演示闭环已打通。
+
+### [#2815](https://github.com/Vispie-AI/VisPie_backend/pull/2815) feat: BCS Tonight Parallel Build Briefs (Coder Army slot 5)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室并行构建需要 slot 5 的任务支持以完成对应子模块。
+- **修复**：通过 Coder Army slot 5 自动创建任务分支并启动构建流程。
+- **成果**：BCS 并行构建 slot 5 任务已创建，等待后续评审合并。
+
+### [#2814](https://github.com/Vispie-AI/VisPie_backend/pull/2814) feat(brand-creative): reference ad discovery + Gemini analysis + demo UI
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室缺乏从品牌 DNA 自动发现和分析参考竞品广告的能力。
+- **修复**：新增端点，从品牌 DNA 派生查询调用 Meta Ads 搜索，并通过 Gemini 分析参考广告，附带演示 UI。
+- **成果**：参考广告发现与 Gemini 分析功能完成，演示 UI 同步集成。
+
+### [#2813](https://github.com/Vispie-AI/VisPie_backend/pull/2813) feat: BCS Tonight Parallel Build Briefs (Coder Army slot 9)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室并行构建需要 slot 9 的任务支持以完成对应子模块。
+- **修复**：通过 Coder Army slot 9 自动创建任务分支并启动构建流程。
+- **成果**：BCS 并行构建 slot 9 任务已创建，等待后续评审合并。
+
+### [#2812](https://github.com/Vispie-AI/VisPie_backend/pull/2812) feat(brand-creative): verifier endpoints + UI QA badges
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：生成的广告素材和创意方向缺乏与品牌 DNA 一致性的自动化验证机制。
+- **修复**：新增验证器服务，对品牌契合度、声明安全性、视觉一致性和语调匹配四个维度评分，UI 展示 QA 徽章。
+- **成果**：BCS 验证器端点与 UI QA 徽章完成，素材质量可量化评估。
+
+### [#2811](https://github.com/Vispie-AI/VisPie_backend/pull/2811) feat: BCS Tonight Parallel Build Briefs (Coder Army slot 8)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：品牌创意工作室并行构建需要 slot 8 的任务支持以完成对应子模块。
+- **修复**：通过 Coder Army slot 8 自动创建任务分支并启动构建流程。
+- **成果**：BCS 并行构建 slot 8 任务已创建，等待后续评审合并。
+
+### [#2810](https://github.com/Vispie-AI/VisPie_backend/pull/2810) feat(brand-creative): brand DNA edit & approval loop
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：管理员无法在后台界面直接编辑和审批品牌 DNA 的关键字段。
+- **修复**：在 /admin/brand-creative-studio 新增可编辑品牌 DNA 卡片，涵盖名称、标语等字段，并新增 POST 审批端点。
+- **成果**：品牌 DNA 编辑与审批闭环功能完成，管理员可直接维护品牌核心信息。
+
+### [#2809](https://github.com/Vispie-AI/VisPie_backend/pull/2809) feat: Follow-up Task — Use Gemini 3 Flash as default model for BCS (Coder Army slot 3)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：BCS Pomelli 解析器默认模型升级为 Gemini 3 Flash 的跟进任务需通过 Coder Army 实现。
+- **修复**：通过 Coder Army slot 3 自动创建跟进任务分支并启动构建。
+- **成果**：Gemini 3 Flash 默认模型升级跟进任务已创建，等待合并评审。
+
+### [#2808](https://github.com/Vispie-AI/VisPie_backend/pull/2808) feat(brand-creative): default Pomelli DNA parser to Gemini 3 Flash
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：BCS Pomelli 品牌 DNA 解析器默认使用 gemini-2.5-flash，未充分利用最新 Gemini 3 Flash 能力。
+- **修复**：将默认模型切换为 gemini-3-flash-preview，并添加优雅降级链（fallback 到 gemini-2.5-flash）。
+- **成果**：Pomelli 解析器默认使用 Gemini 3 Flash，解析质量提升，降级机制保障可用性。
+
+### [#2806](https://github.com/Vispie-AI/VisPie_backend/pull/2806) feat: Follow-up Task — Make BCS Pomelli parser use real Gemini/Vertex (Coder Army slot 2)
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：BCS Pomelli 解析器切换至真实 Gemini/Vertex 调用的跟进任务需通过 Coder Army 实现。
+- **修复**：通过 Coder Army slot 2 自动创建跟进任务分支并启动构建。
+- **成果**：Gemini/Vertex 切换跟进任务已创建，等待后续合并评审。
+
+### [#2804](https://github.com/Vispie-AI/VisPie_backend/pull/2804) feat: Rebuild Brand Creative Studio demo into Pomelli-style (Coder Army slot 1)
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：品牌创意工作室演示需重构为 Pomelli 风格，工作量较大需通过 Coder Army 完成。
+- **修复**：通过 Coder Army slot 1 自动创建任务分支，完成 BCS 演示重构。
+- **成果**：BCS 演示成功重构为 Pomelli 风格，任务已合并上线。
+
+### [#2803](https://github.com/Vispie-AI/VisPie_backend/pull/2803) feat(brand-creative): Pomelli-style URL-only Brand DNA pipeline
+- **日期**：2026-05-04 | **状态**：🔀 待合并
+- **问题**：BCS 演示的品牌 DNA 采集依赖复杂的 API/调试 UI，缺乏简洁的 URL-only 入口。
+- **修复**：用 Pomelli 风格 URL-only 入门卡替换旧有 UI，新增 Playwright 页面截图解析与 Gemini 结构化提取。
+- **成果**：品牌 DNA 采集流程简化为纯 URL 输入，采集结果更结构化，待合并上线。
 ### [#2764](https://github.com/Vispie-AI/VisPie_backend/pull/2764) feat(vio-gateway): runtime-aware workspace + ETag/If-Match (α2 D3 complete)
 - **日期**：2026-05-04 | **状态**：✅ 已合并
 - **问题**：gateway未区分租户类型，管理后台内存编辑器始终写入旧版workspace/目录。
@@ -1598,6 +1728,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#2819](https://github.com/Vispie-AI/VisPie_backend/pull/2819) App login bug fix
+- **日期**：2026-05-04 | **状态**：🚫 已关闭
+- **问题**：应用登录功能存在缺陷，导致用户无法正常完成登录操作。
+- **修复**：排查登录相关逻辑错误，提交修复方案但最终关闭未合并。
+- **成果**：该 PR 已关闭，登录修复通过其他 PR（#2820）跟进处理。
+
+### [#2802](https://github.com/Vispie-AI/VisPie_backend/pull/2802) Fix George fleet model to Codex
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：George fleet 的 LLM 模型配置未指向 Codex，导致模型调用路径不正确。
+- **修复**：将 fleet 的 llm_model 和 subagent_model 设置为 openai-codex/gpt-5.5，并持久化 Codex OAuth token 路径。
+- **成果**：George fleet 正确通过 Codex 模型运行，OAuth token 路径在部署后稳定保留。
+
+### [#2801](https://github.com/Vispie-AI/VisPie_backend/pull/2801) Fix George Codex provider callback path
+- **日期**：2026-05-04 | **状态**：✅ 已合并
+- **问题**：openai-codex/* 模型的回调路径被错误路由到 Bedrock/Anthropic 提供方。
+- **修复**：将 openai-codex/* 模型请求路由至 Codex OAuth 提供方，并锁定 LLM_MODEL 禁用智能路由。
+- **成果**：George 的 Codex 模型请求正确通过 Codex OAuth 提供方完成回调，路由逻辑修复。
 ### [#2767](https://github.com/Vispie-AI/VisPie_backend/pull/2767) docs: B2B AI brand creative tools landscape research
 - **日期**：2026-05-03 | **状态**：🔀 待合并
 - **问题**：缺乏对B2B AI品牌创意工具市场的系统性竞品研究文档。
@@ -2223,4 +2370,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 310 | 关闭未合并 28 | 待合并 30**
+**合计：19 个 PR | 已合并 321 | 关闭未合并 29 | 待合并 43**
