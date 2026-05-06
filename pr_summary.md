@@ -1,12 +1,89 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-05 | 共 394 个 PR（已合并 321 · 关闭未合并 29 · 待合并 43）
-> 最后更新：2026-05-05
+> 统计周期：2026-04-10 ~ 2026-05-06 | 共 419 个 PR（已合并 344 · 关闭未合并 30 · 待合并 44）
+> 最后更新：2026-05-06
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2902](https://github.com/Vispie-AI/VisPie_backend/pull/2902) fix(coder-army): widen event summary + preserve error records
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：coder-army 事件摘要字段过窄，错误记录在保存时丢失。
+- **修复**：加宽事件摘要列并修复错误记录持久化逻辑。
+- **成果**：事件数据完整保存，错误记录不再缺失。
+
+### [#2900](https://github.com/Vispie-AI/VisPie_backend/pull/2900) fix(perf-monitor): use posted video basis for Period-over-Period
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：环比分析使用了错误的视频基准导致数据不准确。
+- **修复**：改为以已发布视频作为环比统计基准。
+- **成果**：性能监控环比数据准确反映实际发布视频表现。
+
+### [#2898](https://github.com/Vispie-AI/VisPie_backend/pull/2898) fix(perf-monitor): use posted videos for Period-over-Period metrics
+- **日期**：2026-05-05 | **状态**：🚫 已关闭
+- **问题**：环比指标统计未正确区分已发布视频与草稿。
+- **修复**：将环比分析数据源限定为已发布视频。
+- **成果**：该修复方案因冲突关闭，由 #2900 替代合并。
+
+### [#2897](https://github.com/Vispie-AI/VisPie_backend/pull/2897) fix(ci): repair alembic-migration-guard.yml workflow validation
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：alembic-migration-guard.yml 工作流 YAML 校验失败阻塞 CI。
+- **修复**：修正工作流文件的 YAML 语法错误。
+- **成果**：CI 迁移守护工作流恢复正常运行。
+
+### [#2895](https://github.com/Vispie-AI/VisPie_backend/pull/2895) fix(gateway): resolve coder-army callback for *-nanobot bot names
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：网关无法正确解析以 "-nanobot" 结尾的机器人名称的 coder-army 回调。
+- **修复**：更新网关路由匹配逻辑以支持通配符 nanobot 名称格式。
+- **成果**：coder-army 回调正确路由，nanobot 机器人功能恢复正常。
+
+### [#2894](https://github.com/Vispie-AI/VisPie_backend/pull/2894) fix(perf-monitor): Period-over-Period with avg views/likes
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：性能监控环比分析缺少平均播放量和点赞数对比数据。
+- **修复**：在环比报告中新增平均播放量与点赞量计算字段。
+- **成果**：环比报告提供更全面的数据维度供分析决策。
+
+### [#2892](https://github.com/Vispie-AI/VisPie_backend/pull/2892) fix(perf-monitor): split creator tiers by platform with correct avg views and profile URLs
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：创作者等级统计未按平台拆分，且均值和主页链接不正确。
+- **修复**：按平台分拆创作者等级，并修正均值计算及个人主页 URL。
+- **成果**：各平台创作者层级数据准确，支持精准运营分析。
+
+### [#2890](https://github.com/Vispie-AI/VisPie_backend/pull/2890) fix(perf-monitor): simplify creator tiers to 2 levels with clickable handles
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：创作者等级层级过多导致报告复杂，账号名称缺少可点击链接。
+- **修复**：将创作者等级简化为 2 级，并将 handle 改为可点击链接。
+- **成果**：报告可读性提升，用户可直接跳转查看创作者主页。
+
+### [#2887](https://github.com/Vispie-AI/VisPie_backend/pull/2887) fix(coder-army): add Auto option to dashboard
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：coder-army 控制面板缺少自动模式选项。
+- **修复**：在控制面板添加 Auto 选项供用户选择执行模式。
+- **成果**：用户可通过控制面板直接切换自动模式，操作更便捷。
+
+### [#2884](https://github.com/Vispie-AI/VisPie_backend/pull/2884) fix(ci): include vio/** in Nanobot Fleet trigger paths
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：Nanobot Fleet CI 触发路径未包含 vio/ 目录，vio 更改无法触发部署。
+- **修复**：在触发路径配置中添加 vio/** 目录匹配规则。
+- **成果**：vio 模块代码变更可正确触发 Nanobot Fleet 自动部署流程。
+
+### [#2883](https://github.com/Vispie-AI/VisPie_backend/pull/2883) fix(vio): Supabase env-var fallback for vio nanobot containers (P0 cascade from #2881)
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：vio nanobot 容器未配置 Supabase 环境变量回退，导致 P0 级联故障。
+- **修复**：为 vio nanobot 容器添加 Supabase 环境变量回退机制。
+- **成果**：vio nanobot 容器 Supabase 连接稳定，P0 级联故障消除。
+
+### [#2882](https://github.com/Vispie-AI/VisPie_backend/pull/2882) fix(BCS): inject fal key for Cloud Run deploy
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：BCS Cloud Run 部署缺少 fal API 密钥注入，导致部署后服务不可用。
+- **修复**：在 Cloud Run 部署配置中正确注入 fal API 密钥。
+- **成果**：BCS Cloud Run 部署成功获取 fal 密钥，服务恢复正常。
+
+### [#2881](https://github.com/Vispie-AI/VisPie_backend/pull/2881) fix(vio): α6.5 tool wrappers must return str — fixes Slack @vio Anthropic API rejection (P0)
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：vio α6.5 工具包装器返回非字符串类型，Anthropic API 拒绝 Slack @vio 请求（P0）。
+- **修复**：强制所有工具包装器返回 str 类型以符合 Anthropic API 规范。
+- **成果**：Slack @vio 请求不再被 Anthropic API 拒绝，P0 故障解除。
 ### [#2825](https://github.com/Vispie-AI/VisPie_backend/pull/2825) fix(autoamy): wildcard *.py + check detects file-level imports (α6.0.8.2)
 - **日期**：2026-05-04 | **状态**：✅ 已合并
 - **问题**：α6.0.8 后 Auto-Amy 部署崩溃，提示 ModuleNotFoundError，因 PR #2801 新增模块未被正确 COPY 进容器。
@@ -1032,6 +1109,59 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2905](https://github.com/Vispie-AI/VisPie_backend/pull/2905) feat(coder-army): show requester on dashboard
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：coder-army 控制面板不显示任务请求者信息，难以追溯来源。
+- **修复**：在控制面板增加请求者字段展示。
+- **成果**：管理员可在面板直接查看任务请求者，提升工作流透明度。
+
+### [#2904](https://github.com/Vispie-AI/VisPie_backend/pull/2904) feat(bcs): default image edits to GPT direct
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：BCS 图像编辑未设置默认提供商，用户体验不一致。
+- **修复**：将 BCS 图像编辑默认提供商设置为 GPT Direct。
+- **成果**：图像编辑流程更简洁，默认使用 GPT Direct 提供商。
+
+### [#2903](https://github.com/Vispie-AI/VisPie_backend/pull/2903) feat(coder-army): human claim endpoint + direct Lark callback
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：coder-army 缺少人工领取任务接口及直接 Lark 回调能力。
+- **修复**：新增 human claim 接口并接入 Lark 直接回调机制。
+- **成果**：支持人工介入领取任务，Lark 通知直达，协作效率提升。
+
+### [#2901](https://github.com/Vispie-AI/VisPie_backend/pull/2901) feat(BCS): add Atlas Cloud image edit provider
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：BCS 图像编辑功能缺少 Atlas Cloud 提供商选项。
+- **修复**：集成 Atlas Cloud 作为新的图像编辑服务提供商。
+- **成果**：BCS 图像编辑支持更多提供商，灵活性显著提升。
+
+### [#2893](https://github.com/Vispie-AI/VisPie_backend/pull/2893) feat(BCS): allow editing reference prompt
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：BCS 参考提示词不可编辑，限制了内容定制能力。
+- **修复**：开放参考提示词编辑入口，支持用户自定义修改。
+- **成果**：用户可灵活调整参考提示词，提升内容生成精准度。
+
+### [#2891](https://github.com/Vispie-AI/VisPie_backend/pull/2891) feat(vio): video review reporting tools — 4 tools per fc802c1d doctrine (Iter 14)
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：vio 缺少视频审核报告工具集，无法满足审核流程需求。
+- **修复**：按 fc802c1d 规范新增 4 个视频审核报告工具（第 14 次迭代）。
+- **成果**：vio 具备完整视频审核报告能力，满足审核流程要求。
+
+### [#2889](https://github.com/Vispie-AI/VisPie_backend/pull/2889) feat(perf-monitor): platform-split view buckets, creator tiers with handles, best video per platform
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：性能监控缺少平台维度分组、创作者层级 handle 及各平台最佳视频。
+- **修复**：新增平台分组视图分段、带 handle 的创作者层级及各平台最佳视频展示。
+- **成果**：性能监控报告多维度呈现跨平台数据，决策支持更全面。
+
+### [#2888](https://github.com/Vispie-AI/VisPie_backend/pull/2888) feat(nanobot): /codex-oauth Lark command — device code auth
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：nanobot 缺少通过 Lark 进行 Codex OAuth 设备码授权的命令。
+- **修复**：实现 /codex-oauth Lark 命令，支持设备码授权流程。
+- **成果**：用户可通过 Lark 完成 Codex OAuth 授权，无需额外操作。
+
+### [#2886](https://github.com/Vispie-AI/VisPie_backend/pull/2886) feat(BCS): generated asset edit flow
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：BCS 缺少对已生成素材的编辑流程，用户无法直接修改生成结果。
+- **修复**：新增生成素材编辑工作流，支持对已生成内容进行二次编辑。
+- **成果**：用户可直接在 BCS 内编辑生成素材，简化内容迭代流程。
 ### [#2823](https://github.com/Vispie-AI/VisPie_backend/pull/2823) feat(vio): α6.0.8 — deploy infrastructure (Docker build context + workflows + API mount)
 - **日期**：2026-05-04 | **状态**：✅ 已合并
 - **问题**：vio/ 模块作为 α6.0 新增组件，无法被现有 Docker 构建流程正确包含和挂载。
@@ -1728,6 +1858,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#2899](https://github.com/Vispie-AI/VisPie_backend/pull/2899) chore(ci): upgrade deprecated GitHub Actions versions (Node 20 EOL)
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：GitHub Actions 工作流使用了已废弃的旧版本（Node 20 EOL）。
+- **修复**：升级 GitHub Actions 各步骤至最新支持版本。
+- **成果**：CI 工作流升级完毕，不再依赖废弃版本，兼容性增强。
+
+### [#2896](https://github.com/Vispie-AI/VisPie_backend/pull/2896) chore(coder-army): remove CC_ARMY naming + add deploy script
+- **日期**：2026-05-05 | **状态**：✅ 已合并
+- **问题**：coder-army 模块保留了旧的 CC_ARMY 命名，且缺少部署脚本。
+- **修复**：清除 CC_ARMY 旧命名并新增一键部署脚本。
+- **成果**：命名规范统一，部署流程简化，运维效率提升。
+
+### [#2885](https://github.com/Vispie-AI/VisPie_backend/pull/2885) docs: record dashboard smoke test
+- **日期**：2026-05-05 | **状态**：🔀 待合并
+- **问题**：控制面板缺少冒烟测试记录文档，测试覆盖情况不透明。
+- **修复**：新增控制面板冒烟测试记录文档。
+- **成果**：测试过程有据可查，提升质量保障可追溯性。
 ### [#2819](https://github.com/Vispie-AI/VisPie_backend/pull/2819) App login bug fix
 - **日期**：2026-05-04 | **状态**：🚫 已关闭
 - **问题**：应用登录功能存在缺陷，导致用户无法正常完成登录操作。
@@ -2370,4 +2517,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 321 | 关闭未合并 29 | 待合并 43**
+**合计：19 个 PR | 已合并 344 | 关闭未合并 30 | 待合并 44**
