@@ -1,12 +1,113 @@
 # 工作成果总结
 
-> 统计周期：2026-04-10 ~ 2026-05-06 | 共 419 个 PR（已合并 344 · 关闭未合并 30 · 待合并 44）
-> 最后更新：2026-05-06
+> 统计周期：2026-04-10 ~ 2026-05-07 | 共 444 个 PR（已合并 365 · 关闭未合并 31 · 待合并 47）
+> 最后更新：2026-05-07
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#2994](https://github.com/Vispie-AI/VisPie_backend/pull/2994) fix(agent-doctor): show full context layers
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：Agent Doctor 上下文层仅展示预览摘要，无法查看完整内容，调试不便。
+- **修复**：为上下文层添加 full_text/truncated 字段，支持 UI 详情面板渲染完整内容。
+- **成果**：Agent Doctor 可展示全量上下文，新增后端测试覆盖长请求场景。
+
+### [#2993](https://github.com/Vispie-AI/VisPie_backend/pull/2993) fix(github-webhook): keyword false positive + non-clickable CI URL
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：关键词正则在文档类提交中误触发 @ 通知，且 CI 链接指向 API URL 导致 404。
+- **修复**：改用类型锚定正则匹配提交前缀，CI URL 构造为 /commit/{sha}/checks 可点击页面。
+- **成果**：消除误报，37 测试全绿，生产卡片 CI 链接可直接在浏览器打开。
+
+### [#2992](https://github.com/Vispie-AI/VisPie_backend/pull/2992) fix(coder-army): wait for hooks after screen idle
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：屏幕空闲检测误将 Claude/Codex/OpenCode 运行标记为完成，导致任务提前结束。
+- **修复**：空闲事件仅记录诊断，转由完成 Hook 决定任务结束时机。
+- **成果**：消除空闲误判，任务完成回调更加可靠。
+
+### [#2990](https://github.com/Vispie-AI/VisPie_backend/pull/2990) fix(coder-army): defer idle callbacks and mount doctor
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：Agent Doctor 路由未挂载到主 FastAPI 应用，无 PR/diff 证据时空闲回调仍被提交。
+- **修复**：在 main.py 挂载 Agent Doctor 路由，并在无交付证据时延迟空闲回调。
+- **成果**：/api/internal_only/agent-doctor 正常服务，回调准确性提升。
+
+### [#2986](https://github.com/Vispie-AI/VisPie_backend/pull/2986) fix(coder-army): target terminal pane for input
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：Coder Army 输入发送至焦点窗格，隐藏插件窗格导致 delivered=true 误报。
+- **修复**：使用 zellij bracketed paste 将输入和回车键精确发送至 terminal_0。
+- **成果**：Agent 输入投递验证可靠，避免空窗格造成任务卡顿。
+
+### [#2983](https://github.com/Vispie-AI/VisPie_backend/pull/2983) fix(github-webhook): hotfix — Bitable text fields are lists not strings
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：Bitable search 返回文本字段为列表结构而非字符串，master 分支每次 check_suite 均返回 500。
+- **修复**：新增 _extract_text() 辅助函数统一归一化 Bitable 字段，并增加外层异常防护。
+- **成果**：27 测试全绿，master 分支 CI 卡片恢复正常 patch，消除 GitHub 重试双倍 Bedrock 开销。
+
+### [#2981](https://github.com/Vispie-AI/VisPie_backend/pull/2981) fix(bcs): hide generated context thumbnail
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：BCS 已完成任务卡片中显示冗余的 Generated 缩略图，与 Reference/Product 重叠。
+- **修复**：从已完成任务卡片移除 Generated 上下文缩略图，保留 Reference 和 Product 缩略图。
+- **成果**：卡片信息更简洁，Svelte 类型检查 0 错误。
+
+### [#2980](https://github.com/Vispie-AI/VisPie_backend/pull/2980) fix(coder-army): use hooks for completion callbacks
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：Claude Code 和 OpenCode 完成回调依赖 prompt 指令，在旧 EFS 槽位中无法可靠触发。
+- **修复**：改由注入的环境变量驱动 Hook 回调，同步资产到所有 worktree，agent_done 重复提交幂等。
+- **成果**：回调可靠性显著提升，重复提交得到幂等处理。
+
+### [#2979](https://github.com/Vispie-AI/VisPie_backend/pull/2979) fix(bcs): remove duplicated generated history section
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：上一 PR 误删任务卡片上下文信息，实际只需隐藏底部重复的历史区块。
+- **修复**：恢复任务卡片中的 Generated/Reference/Product 缩略图，仅移除底部重复历史区块。
+- **成果**：BCS 卡片信息完整，重复历史区块消除，Svelte 检查 0 错误。
+
+### [#2978](https://github.com/Vispie-AI/VisPie_backend/pull/2978) fix(bcs): simplify generated history ordering
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：BCS 生成历史排序混乱，已完成卡片展示冗余时长标签和重复缩略图。
+- **修复**：改为时间倒序展示，增加分页 /generated-assets API 和无限滚动加载。
+- **成果**：生成历史展示清晰，接口测试通过，BCS 隧道返回 200。
+
+### [#2977](https://github.com/Vispie-AI/VisPie_backend/pull/2977) fix(coder-army): keep callbacks in minimal runtime
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：最小化运行时关闭监控模式后丢失任务完成回调能力。
+- **修复**：注入 CODER_ARMY_SLOT 等环境变量，保留 Codex Stop hook 回调并追加 agent_done 指令。
+- **成果**：最小运行时保持轻量的同时完整保留回调链路。
+
+### [#2976](https://github.com/Vispie-AI/VisPie_backend/pull/2976) fix(vio): P15.2b PR 1 — AI runtime tenant isolation regression
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：AI 运行时 Vio 偏好工具存在 tenant_slug 参数泄露风险，旧安全方案过度复杂。
+- **修复**：新增 35 个回归测试锁定 11 个工具的租户隔离契约，采用简化 2-PR 加固计划。
+- **成果**：35 测试全绿，AI 运行时租户隔离基线得到保障。
+
+### [#2975](https://github.com/Vispie-AI/VisPie_backend/pull/2975) fix(bcs): hide describe prompt after template selection
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：选择模板后自由输入框 "Describe the creative…" 仍然显示，造成 UI 歧义。
+- **修复**：选择模板后隐藏自由描述输入框，以 Reference 面板作为主要输入区域。
+- **成果**：BCS 模板选择流程更清晰，Svelte 检查 0 错误。
+
+### [#2974](https://github.com/Vispie-AI/VisPie_backend/pull/2974) fix(coder-army): default to minimal zellij runtime
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：Coder Army 默认启用监控模式，引入 WASM 渲染和 JSONL 轮询等不必要开销。
+- **修复**：默认切换到最小化 zellij+ttyd 运行时，监控模式由 CODER_ARMY_MONITOR_MODE=plugin 按需启用。
+- **成果**：默认运行时更轻量，监控插件按需启用，保留完整回退能力。
+
+### [#2973](https://github.com/Vispie-AI/VisPie_backend/pull/2973) fix(bcs): simplify job cards and cache PipiAds
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：BCS 任务卡片显示 0 秒生成时长，PipiSpy/PipiAds 每次请求无缓存导致接口开销大。
+- **修复**：改用后端返回的真实时长，移除重复状态行，增加 24 小时 Redis 缓存。
+- **成果**：5 项验证全通过，BCS 隧道返回 200，Redis 缓存冒烟测试通过。
+
+### [#2972](https://github.com/Vispie-AI/VisPie_backend/pull/2972) fix(bcs): hide duplicate template prompt
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：Brand Creative Studio 选择模板后通用描述文本框仍然可见，与模板输入重复。
+- **修复**：选择模板或参考后隐藏通用描述文本框，保留可编辑的 Reference recipe 区域。
+- **成果**：Svelte 类型检查 0 错误，生成负载元数据不再包含旧提示词。
+
+### [#2971](https://github.com/Vispie-AI/VisPie_backend/pull/2971) fix(feishu-doc-v2): native Lark tables + safe doc_url fallback
+- **日期**：2026-05-06 | **状态**：✅ 已合并
+- **问题**：feishu-doc-v2 技能的 Markdown 表格以管道符纯文本写入文档，create 返回无效 open-platform doc_url。
+- **修复**：实现 Markdown 表格到 Lark 原生表格块（block_type 31）的转换，重写 doc_url 回退逻辑优先使用租户域名。
+- **成果**：17 项冒烟测试全绿，表格渲染正常，doc_url 不再返回 404 链接。
 ### [#2902](https://github.com/Vispie-AI/VisPie_backend/pull/2902) fix(coder-army): widen event summary + preserve error records
 - **日期**：2026-05-05 | **状态**：✅ 已合并
 - **问题**：coder-army 事件摘要字段过窄，错误记录在保存时丢失。
@@ -1109,6 +1210,35 @@
 
 ## 二、新功能开发（feat:）
 
+### [#2991](https://github.com/Vispie-AI/VisPie_backend/pull/2991) feat: Data/API task — Create a Lark Bitable (Coder Army slot 2)
+- **日期**：2026-05-07 | **状态**：🔀 待合并
+- **问题**：Coder Army slot 2 自动创建 Lark Bitable 数据操作任务 PR，不修改代码库。
+- **修复**：由 Coder Army 自动执行数据/API 任务，结果输出至 EFS。
+- **成果**：PR 由系统自动生成，当前处于待合并状态。
+
+### [#2988](https://github.com/Vispie-AI/VisPie_backend/pull/2988) feat: Read full task at EFS (Coder Army slot 3)
+- **日期**：2026-05-07 | **状态**：🔀 待合并
+- **问题**：Coder Army slot 3 自动创建任务 PR，尝试读取 EFS 任务文件但路径不存在。
+- **修复**：由 Coder Army 自动处理，因任务文件缺失未能正常完成。
+- **成果**：PR 由系统自动生成，当前处于待合并状态。
+
+### [#2987](https://github.com/Vispie-AI/VisPie_backend/pull/2987) feat: Strategy analysis/writing task (Coder Army slot 1)
+- **日期**：2026-05-07 | **状态**：🔀 待合并
+- **问题**：Coder Army slot 1 自动创建策略分析/写作类任务 PR，不修改代码库文件。
+- **修复**：由 Coder Army 自动执行策略分析任务，产出内容写入 EFS。
+- **成果**：PR 由系统自动生成，当前处于待合并状态。
+
+### [#2985](https://github.com/Vispie-AI/VisPie_backend/pull/2985) feat: Data/API task — Create a Lark Bitable (Coder Army slot 2)
+- **日期**：2026-05-07 | **状态**：🚫 已关闭
+- **问题**：Coder Army slot 2 自动创建 Lark Bitable 数据操作任务 PR，不修改代码库。
+- **修复**：由 Coder Army 自动执行数据/API 任务，不涉及代码库修改。
+- **成果**：PR 由系统自动生成，已关闭未合并。
+
+### [#2982](https://github.com/Vispie-AI/VisPie_backend/pull/2982) feat(vio): P15.2b PR 2 — admin server-side proxy + grep guard CI
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：Vio 管理后台前端直接调用 Cloud Run，缺少服务端 token 注入，存在 token 泄漏风险。
+- **修复**：新增 SvelteKit 专用代理路由注入 VIO_INTERNAL_SERVICE_TOKEN，并增加 CI grep 守卫防止 token 泄漏。
+- **成果**：代理路由优先级高于通配规则，Svelte 检查 0 错误，CI grep 守卫通过验证。
 ### [#2905](https://github.com/Vispie-AI/VisPie_backend/pull/2905) feat(coder-army): show requester on dashboard
 - **日期**：2026-05-05 | **状态**：✅ 已合并
 - **问题**：coder-army 控制面板不显示任务请求者信息，难以追溯来源。
@@ -1858,6 +1988,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#2995](https://github.com/Vispie-AI/VisPie_backend/pull/2995) chore(ci): add dependabot config for GitHub Actions weekly auto-updates
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：GitHub Actions 版本长期未自动更新，存在因 Node 20 弃用等导致 CI 紧急修复的风险。
+- **修复**：新增 .github/dependabot.yml，配置每周一自动扫描并分组提交 minor/patch 更新 PR。
+- **成果**：jsonschema 验证通过，在 2026-06-02 Node 20 强制切换前建立自动更新基础。
+
+### [#2989](https://github.com/Vispie-AI/VisPie_backend/pull/2989) docs(vio): hotfix STEP 3 runbook order — Vercel env FIRST, gcloud SECOND
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：P15.2b STEP 3 运维手册中 Cloud Run 锁定步骤排在 Vercel 环境变量更新之前，存在短暂 401 窗口风险。
+- **修复**：调整顺序为生成 token → 更新 Vercel 验证 → 执行 gcloud 锁定，确保代理先于严格模式就位。
+- **成果**：运维手册顺序修正，未产生生产影响（执行前已被发现并纠正）。
+
+### [#2984](https://github.com/Vispie-AI/VisPie_backend/pull/2984) docs(vio): P15.2b STEP 3 operational runbook
+- **日期**：2026-05-07 | **状态**：✅ 已合并
+- **问题**：P15.2b PR 2 合并后缺少可检索的运维操作手册，会话结束后操作步骤无法复现。
+- **修复**：在 docs/sop/ 下新增 STEP 3 运维手册，记录 gcloud/Vercel/冒烟矩阵的完整执行序列。
+- **成果**：运维手册可通过 git log 检索，为后续 token 轮换和锁定操作提供可追踪的 SOP 文档。
 ### [#2899](https://github.com/Vispie-AI/VisPie_backend/pull/2899) chore(ci): upgrade deprecated GitHub Actions versions (Node 20 EOL)
 - **日期**：2026-05-05 | **状态**：✅ 已合并
 - **问题**：GitHub Actions 工作流使用了已废弃的旧版本（Node 20 EOL）。
@@ -2517,4 +2664,4 @@
 | [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | feedback bot_name env var 修复 | fix | ✅ 已合并 | 2026-04-11 |
 | [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | AGENT_NAME bot_name fallback 修复 | fix | ✅ 已合并 | 2026-04-10 |
 
-**合计：19 个 PR | 已合并 344 | 关闭未合并 30 | 待合并 44**
+**合计：19 个 PR | 已合并 365 | 关闭未合并 31 | 待合并 47**
