@@ -512,86 +512,86 @@
 
 ## 四、总览
 
-| # | 日期 | 类型 | 状态 | 标题 |
-|---|---|---|---|---|
-| [#3312](https://github.com/Vispie-AI/VisPie_backend/pull/3312) | 2026-05-14 | misc | ✅ | ci(mitchell): inject AMY_COST_REPORT_WEBHOOK from repo Variable on every deploy |
-| [#3298](https://github.com/Vispie-AI/VisPie_backend/pull/3298) | 2026-05-14 | fix | ✅ | fix(vio): hide feedback buttons by default for ISV apps (avoids code:200340) |
-| [#3288](https://github.com/Vispie-AI/VisPie_backend/pull/3288) | 2026-05-14 | fix | ✅ | fix(cost-report): empty webhook short-circuits with rc=6 (don't None-poison urllib) |
-| [#3250](https://github.com/Vispie-AI/VisPie_backend/pull/3250) | 2026-05-13 | misc | ✅ | test(pr-bot): smoke — verify PR group restoration |
-| [#3153](https://github.com/Vispie-AI/VisPie_backend/pull/3153) | 2026-05-10 | fix | ✅ | fix(monitoring): amy-liveness L3 — auto-discover gateway port |
-| [#3137](https://github.com/Vispie-AI/VisPie_backend/pull/3137) | 2026-05-10 | fix | ✅ | fix(vio): Gemini API key runtime-exposure mitigation (URL→header + per-call read) |
-| [#3122](https://github.com/Vispie-AI/VisPie_backend/pull/3122) | 2026-05-09 | feat | ✅ | feat(vio-gateway): auto-register chat_route on first ISV cross-app webhook |
-| [#3120](https://github.com/Vispie-AI/VisPie_backend/pull/3120) | 2026-05-09 | fix | ✅ | fix(deploy-vio-tenant): allow nanobot-only tenants (no OpenClaw workspace) |
-| [#3119](https://github.com/Vispie-AI/VisPie_backend/pull/3119) | 2026-05-09 | fix | ✅ | fix(nanobot/lark): bypass local mention gate for ISV apps (follow-up to #3117) |
-| [#3117](https://github.com/Vispie-AI/VisPie_backend/pull/3117) | 2026-05-09 | fix | ✅ | fix(vio-gateway): trust Lark scope filter for ISV-app group webhooks |
-| [#3046](https://github.com/Vispie-AI/VisPie_backend/pull/3046) | 2026-05-07 | feat | ✅ | feat(auto-amy): FallbackLLMProvider Lark alert + cost-report fallback row |
-| [#3041](https://github.com/Vispie-AI/VisPie_backend/pull/3041) | 2026-05-07 | feat | ✅ | feat(auto-amy): wire UsageMeter for Codex OAuth — token usage only |
-| [#3039](https://github.com/Vispie-AI/VisPie_backend/pull/3039) | 2026-05-07 | misc | ✅ | docs(amy): add 'Grep First' anti-speculation rule to AGENTS.md |
-| [#3003](https://github.com/Vispie-AI/VisPie_backend/pull/3003) | 2026-05-07 | fix | ✅ | fix(alerter): R1 schema guard — stop false-positive Critical from foreign liveness probes |
-| [#2967](https://github.com/Vispie-AI/VisPie_backend/pull/2967) | 2026-05-06 | misc | ✅ | docs(amy): add Data Source Map to AGENTS.md — fix H2 DB confusion |
-| [#2964](https://github.com/Vispie-AI/VisPie_backend/pull/2964) | 2026-05-06 | feat | ✅ | feat(nanobot): session-aware memory tier loading (DM/group isolation, P1) |
-| [#2961](https://github.com/Vispie-AI/VisPie_backend/pull/2961) | 2026-05-06 | feat | ✅ | feat(nanobot): active memory_search tool with chat scope (P0 follow-up to #2741) |
-| [#2956](https://github.com/Vispie-AI/VisPie_backend/pull/2956) | 2026-05-06 | misc | ✅ | ci: auto-sync /opt/amy/scripts/amy_cost_daily_report.py via SSM |
-| [#2945](https://github.com/Vispie-AI/VisPie_backend/pull/2945) | 2026-05-06 | fix | ✅ | fix(auto-amy): cost report — detect Lark biz errors, retry on rate-limit |
-| [#2740](https://github.com/Vispie-AI/VisPie_backend/pull/2740) | 2026-05-01 | fix | ✅ | fix(shadow-judge): align GeminiJudge URL regex with gemini-3-pro-preview |
-| [#2739](https://github.com/Vispie-AI/VisPie_backend/pull/2739) | 2026-05-01 | fix | ✅ | fix(auto-amy): DeepSeek cost — cache-hit + active promo pricing |
-| [#2738](https://github.com/Vispie-AI/VisPie_backend/pull/2738) | 2026-05-01 | fix | ✅ | fix(shadow-judge): align GeminiJudge test assertion with gemini-3-pro-preview |
-| [#2735](https://github.com/Vispie-AI/VisPie_backend/pull/2735) | 2026-05-01 | feat | ✅ | feat(shadow-judge): upgrade judge model to gemini-3-pro-preview |
-| [#2697](https://github.com/Vispie-AI/VisPie_backend/pull/2697) | 2026-04-30 | fix | ✅ | fix(ci): repair jq filter quoting in Deploy Vio Nanobot workflow |
-| [#2693](https://github.com/Vispie-AI/VisPie_backend/pull/2693) | 2026-04-30 | misc | ✅ | ci: split shared deploy group — give Amy/Eva nanobot priority queue |
-| [#2692](https://github.com/Vispie-AI/VisPie_backend/pull/2692) | 2026-04-30 | fix | ✅ | fix(amy): bump primary timeout 600s→1500s, Hatchet 15m→30m |
-| [#2690](https://github.com/Vispie-AI/VisPie_backend/pull/2690) | 2026-04-30 | fix | ✅ | fix(alert-card): action items use Vio host paths for Vio agents |
-| [#2671](https://github.com/Vispie-AI/VisPie_backend/pull/2671) | 2026-04-29 | fix | ✅ | fix(monitoring): nanobot L2 pattern + de-Amyfy alert card title |
-| [#2668](https://github.com/Vispie-AI/VisPie_backend/pull/2668) | 2026-04-29 | fix | ✅ | fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt) |
-| [#2667](https://github.com/Vispie-AI/VisPie_backend/pull/2667) | 2026-04-29 | fix | 🚫 | fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt) |
-| [#2662](https://github.com/Vispie-AI/VisPie_backend/pull/2662) | 2026-04-29 | fix | ✅ | fix(amy): strip Bedrock thinking artifacts at shadow seed boundary |
-| [#2658](https://github.com/Vispie-AI/VisPie_backend/pull/2658) | 2026-04-29 | fix | ✅ | fix(lark-isv): correct app_ticket schema (V1 event_callback wrapper) |
-| [#2657](https://github.com/Vispie-AI/VisPie_backend/pull/2657) | 2026-04-29 | feat | ✅ | feat(vio-gateway): app_ticket fan-out for ISV nanobot tenants (vio-isv-lark PR3/3) |
-| [#2656](https://github.com/Vispie-AI/VisPie_backend/pull/2656) | 2026-04-29 | fix | ✅ | fix(ci): recursive S3 sync for vio-gateway deploy (P0) |
-| [#2653](https://github.com/Vispie-AI/VisPie_backend/pull/2653) | 2026-04-29 | feat | ✅ | feat(vio-gateway): Lark raw-body + sig header passthrough (vio-isv-lark PR2/2) |
-| [#2648](https://github.com/Vispie-AI/VisPie_backend/pull/2648) | 2026-04-29 | feat | ✅ | feat(lark): ISV mode for store-app token chain (vio-isv-lark PR1/2) |
-| [#2636](https://github.com/Vispie-AI/VisPie_backend/pull/2636) | 2026-04-29 | fix | ✅ | fix(amy): seed DeepSeek shadow with primary's session history |
-| [#2634](https://github.com/Vispie-AI/VisPie_backend/pull/2634) | 2026-04-29 | feat | ✅ | feat(shadow): Gemini 2.5 Flash judge + DeepSeek shadow A/B |
-| [#2598](https://github.com/Vispie-AI/VisPie_backend/pull/2598) | 2026-04-28 | fix | ✅ | fix(amy): align DeepSeek shadow budget with primary Opus |
-| [#2591](https://github.com/Vispie-AI/VisPie_backend/pull/2591) | 2026-04-28 | fix | ✅ | hotfix(env): drop PR_NOTIFY_TITLE — unblocks deploy-ec2 |
-| [#2589](https://github.com/Vispie-AI/VisPie_backend/pull/2589) | 2026-04-28 | misc | ✅ | test(pr-bot): smoke — verify PR group commit-cards |
-| [#2587](https://github.com/Vispie-AI/VisPie_backend/pull/2587) | 2026-04-28 | feat | ✅ | feat(github-webhook): PR group commit cards — replace Zapier |
-| [#2566](https://github.com/Vispie-AI/VisPie_backend/pull/2566) | 2026-04-28 | feat | ✅ | feat(amy): show trace_id in shadow panels for log correlation |
-| [#2527](https://github.com/Vispie-AI/VisPie_backend/pull/2527) | 2026-04-27 | misc | ✅ | chore(amy): disable OpenClaw Opus 4.6 shadow — keep DeepSeek shadow only |
-| [#2524](https://github.com/Vispie-AI/VisPie_backend/pull/2524) | 2026-04-26 | fix | ✅ | fix(amy): v3 — explicit shadow tool deny-list (config gates bypassed in prod) |
-| [#2522](https://github.com/Vispie-AI/VisPie_backend/pull/2522) | 2026-04-26 | feat | ✅ | feat(amy): DeepSeek shadow v2 — full sandboxed AgentLoop with tools |
-| [#2515](https://github.com/Vispie-AI/VisPie_backend/pull/2515) | 2026-04-26 | misc | ✅ | docs(amy): close DeepSeek shadow v1 SPEC — deployed + lessons learned |
-| [#2514](https://github.com/Vispie-AI/VisPie_backend/pull/2514) | 2026-04-26 | feat | ✅ | feat(amy): DeepSeek V4-Pro shadow panel — v1 single-turn |
-| [#2506](https://github.com/Vispie-AI/VisPie_backend/pull/2506) | 2026-04-26 | fix | ✅ | fix(auto-amy): switch weekly cost card to purple |
-| [#2500](https://github.com/Vispie-AI/VisPie_backend/pull/2500) | 2026-04-26 | feat | ✅ | feat(auto-amy): weekly + monthly cost reports |
-| [#2396](https://github.com/Vispie-AI/VisPie_backend/pull/2396) | 2026-04-23 | fix | ✅ | fix(vio-liveness): match plain 'node index.js' for vio-gateway L2 check |
-| [#2395](https://github.com/Vispie-AI/VisPie_backend/pull/2395) | 2026-04-23 | feat | ✅ | feat(monitoring): extend liveness monitoring to Vio (dynamic + rollup) |
-| [#2379](https://github.com/Vispie-AI/VisPie_backend/pull/2379) | 2026-04-22 | feat | ✅ | feat(auto-amy): track Gemini + Nova Micro + embedding costs |
-| [#2376](https://github.com/Vispie-AI/VisPie_backend/pull/2376) | 2026-04-22 | fix | ✅ | fix(auto-amy): apply 1.1x US inference-profile multiplier |
-| [#2356](https://github.com/Vispie-AI/VisPie_backend/pull/2356) | 2026-04-21 | fix | ✅ | fix(auto-amy): correct Bedrock pricing — Opus was 3x too high |
-| [#2355](https://github.com/Vispie-AI/VisPie_backend/pull/2355) | 2026-04-21 | feat | ✅ | feat(auto-amy): daily API cost report → Lark webhook |
-| [#2354](https://github.com/Vispie-AI/VisPie_backend/pull/2354) | 2026-04-21 | feat | ✅ | feat(auto-amy): extend UsageMeter to full fleet (13 agents + amy + eva) |
-| [#2353](https://github.com/Vispie-AI/VisPie_backend/pull/2353) | 2026-04-21 | fix | ✅ | fix(auto-amy): hook streaming path + cache-aware pricing |
-| [#2352](https://github.com/Vispie-AI/VisPie_backend/pull/2352) | 2026-04-21 | fix | 🚫 | fix(auto-amy): hook streaming path + cache-aware pricing |
-| [#2351](https://github.com/Vispie-AI/VisPie_backend/pull/2351) | 2026-04-21 | feat | ✅ | feat(auto-amy): wire Mitchell Bedrock calls into UsageMeter |
-| [#2350](https://github.com/Vispie-AI/VisPie_backend/pull/2350) | 2026-04-21 | fix | ✅ | fix(deploy): poll FastAPI healthcheck instead of racing 15s sleep |
-| [#2349](https://github.com/Vispie-AI/VisPie_backend/pull/2349) | 2026-04-21 | misc | ✅ | chore(ci): remove 4 dead/deprecated workflow files |
-| [#2282](https://github.com/Vispie-AI/VisPie_backend/pull/2282) | 2026-04-20 | fix | 🚫 | fix(daily-report): retry once on HTTP 4xx from Lark send_lark_card |
-| [#2241](https://github.com/Vispie-AI/VisPie_backend/pull/2241) | 2026-04-18 | feat | ✅ | feat(daily-report): integrate Amy liveness into George AI daily card |
-| [#2228](https://github.com/Vispie-AI/VisPie_backend/pull/2228) | 2026-04-17 | fix | ✅ | fix(monitoring): add 'liveness' probe_type + correct L2 process check |
-| [#2227](https://github.com/Vispie-AI/VisPie_backend/pull/2227) | 2026-04-17 | feat | ✅ | feat(monitoring): liveness-based alerter + persistent dedup |
-| [#2226](https://github.com/Vispie-AI/VisPie_backend/pull/2226) | 2026-04-17 | feat | 🚫 | feat(monitoring): add monitoring_alert_dedup table (migration) |
-| [#2225](https://github.com/Vispie-AI/VisPie_backend/pull/2225) | 2026-04-17 | fix | ✅ | fix(vizzy-lark): render headings & tables inside collapsible panels |
-| [#2224](https://github.com/Vispie-AI/VisPie_backend/pull/2224) | 2026-04-17 | fix | ✅ | fix(nanobot/feishu): render tables & headings in final streamed card |
-| [#2177](https://github.com/Vispie-AI/VisPie_backend/pull/2177) | 2026-04-16 | feat | ✅ | feat(alerter): Synthetic Health Alerter — every-15-min bot availability monitoring |
-| [#2176](https://github.com/Vispie-AI/VisPie_backend/pull/2176) | 2026-04-16 | fix | ✅ | fix(migration): correct down_revision for error_reason migration |
-| [#2175](https://github.com/Vispie-AI/VisPie_backend/pull/2175) | 2026-04-16 | fix | ✅ | fix(shadow): notify OpenClaw on error/cancel + extend cardCache TTL |
-| [#2174](https://github.com/Vispie-AI/VisPie_backend/pull/2174) | 2026-04-16 | feat | ✅ | feat(monitoring): add error_reason fields and drop unused indexes (PR #1) |
-| [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) | 2026-04-15 | fix | ✅ | fix(shadow): preserve trace_id across queue drain for shadow-done fan-out |
-| [#2140](https://github.com/Vispie-AI/VisPie_backend/pull/2140) | 2026-04-15 | fix | ✅ | fix(shadow): raise shadow response display cap 1500 → 4000 chars |
-| [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) | 2026-04-13 | feat | 🔀 | feat(monitoring): add error_reason tracking to SLA probes |
-| [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) | 2026-04-12 | misc | ✅ | docs: add bilingual system map for auto-amy architecture |
-| [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) | 2026-04-11 | fix | ✅ | fix(vizzy-lark): align elapsed_sec timing with nanobot for fair shadow A/B |
-| [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) | 2026-04-11 | fix | ✅ | fix(nanobot): align context window and max output tokens with OpenClaw |
-| [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | 2026-04-11 | fix | ✅ | fix(nanobot): use env var for bot_name in feedback — fixes stale card data |
-| [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | 2026-04-11 | fix | ✅ | fix(nanobot): use AGENT_NAME as bot_name fallback in feedback records |
+| # | 日期 | 类型 | 状态 | 标题 | 一句话总结 |
+|---|---|---|---|---|---|
+| [#3312](https://github.com/Vispie-AI/VisPie_backend/pull/3312) | 2026-05-14 | misc | ✅ | ci(mitchell): inject AMY_COST_REPORT_WEBHOOK from repo Variable on every deploy | 成本报表 webhook 通过 CI/CD 持久化为单一来源，部署日志可审计，再无手工注入风险 |
+| [#3298](https://github.com/Vispie-AI/VisPie_backend/pull/3298) | 2026-05-14 | fix | ✅ | fix(vio): hide feedback buttons by default for ISV apps (avoids code:200340) | ISV 用户点击不再报错，amy/eva/skin-bots 行为保持原样；9/9 单元测试覆盖各 env 组合 |
+| [#3288](https://github.com/Vispie-AI/VisPie_backend/pull/3288) | 2026-05-14 | fix | ✅ | fix(cost-report): empty webhook short-circuits with rc=6 (don't None-poison urllib) | cost report 失败可观测可告警，配合 PR #3312 的 CI 注入彻底关闭这条静默丢失通路 |
+| [#3250](https://github.com/Vispie-AI/VisPie_backend/pull/3250) | 2026-05-13 | misc | ✅ | test(pr-bot): smoke — verify PR group restoration | PR group 重新收卡片即代表 GitHub webhook → Lark 链路全恢复，同时排查同类 fallback 漏洞清单待跟进 |
+| [#3153](https://github.com/Vispie-AI/VisPie_backend/pull/3153) | 2026-05-10 | fix | ✅ | fix(monitoring): amy-liveness L3 — auto-discover gateway port | L3 探针恢复返回 200，R1 告警停止误报，监控状态恢复正常 |
+| [#3137](https://github.com/Vispie-AI/VisPie_backend/pull/3137) | 2026-05-10 | fix | ✅ | fix(vio): Gemini API key runtime-exposure mitigation (URL→header + per-call read) | 密钥不再出现于日志 URL，轮换后无需重启即可生效，12 项安全单元测试全部通过 |
+| [#3122](https://github.com/Vispie-AI/VisPie_backend/pull/3122) | 2026-05-09 | feat | ✅ | feat(vio-gateway): auto-register chat_route on first ISV cross-app webhook | ISV 新群组无需手动 SQL，机器人邀入后首条 @消息即可自动触发回复，10 项新测试全部通过 |
+| [#3120](https://github.com/Vispie-AI/VisPie_backend/pull/3120) | 2026-05-09 | fix | ✅ | fix(deploy-vio-tenant): allow nanobot-only tenants (no OpenClaw workspace) | ISV nanobot 专属租户可正常部署，vio-test 租户阻塞问题解除 |
+| [#3119](https://github.com/Vispie-AI/VisPie_backend/pull/3119) | 2026-05-09 | fix | ✅ | fix(nanobot/lark): bypass local mention gate for ISV apps (follow-up to #3117) | ISV 租户群组消息成功触发 Hatchet 任务，机器人可在群组中正常回复，7 项新测试通过 |
+| [#3117](https://github.com/Vispie-AI/VisPie_backend/pull/3117) | 2026-05-09 | fix | ✅ | fix(vio-gateway): trust Lark scope filter for ISV-app group webhooks | ISV 群组 @mention 成功转发，8 项新单元测试全部通过，SelfBuild 路径无回归 |
+| [#3046](https://github.com/Vispie-AI/VisPie_backend/pull/3046) | 2026-05-07 | feat | ✅ | feat(auto-amy): FallbackLLMProvider Lark alert + cost-report fallback row | 降级事件实时可见，成本报告新增 Fallback 行，12 项新单元测试全部通过 |
+| [#3041](https://github.com/Vispie-AI/VisPie_backend/pull/3041) | 2026-05-07 | feat | ✅ | feat(auto-amy): wire UsageMeter for Codex OAuth — token usage only | Codex 调用量数据入库，成本卡显示真实 token 用量，54 项现有测试全部通过 |
+| [#3039](https://github.com/Vispie-AI/VisPie_backend/pull/3039) | 2026-05-07 | misc | ✅ | docs(amy): add 'Grep First' anti-speculation rule to AGENTS.md | Amy 处理标签含义查询时须先 `rg` 定位源码，减少幻觉，规则随每次 nanobot 会话启动时加载 |
+| [#3003](https://github.com/Vispie-AI/VisPie_backend/pull/3003) | 2026-05-07 | fix | ✅ | fix(alerter): R1 schema guard — stop false-positive Critical from foreign liveness probes | cloud-run-fastapi 误报 Critical 告警消除，新增 1 项测试，共 67 项通过 |
+| [#2967](https://github.com/Vispie-AI/VisPie_backend/pull/2967) | 2026-05-06 | misc | ✅ | docs(amy): add Data Source Map to AGENTS.md — fix H2 DB confusion | Amy 回答数据问题时有了数据库定位索引，关闭一例长期 H2 误判，知识缺口而非能力缺口被对齐 |
+| [#2964](https://github.com/Vispie-AI/VisPie_backend/pull/2964) | 2026-05-06 | feat | ✅ | feat(nanobot): session-aware memory tier loading (DM/group isolation, P1) | DM/group memory 结构性隔离，关闭一例 memory 污染来源；附 reset_caches 支持单测 |
+| [#2961](https://github.com/Vispie-AI/VisPie_backend/pull/2961) | 2026-05-06 | feat | ✅ | feat(nanobot): active memory_search tool with chat scope (P0 follow-up to #2741) | agent 重获语义 memory 召回且默认按 chat 隔离，SKILL.md 教学何时用 memory_search vs grep；保留写侧 namespace 隔离与 hybrid 检索作为后续工作 |
+| [#2956](https://github.com/Vispie-AI/VisPie_backend/pull/2956) | 2026-05-06 | misc | ✅ | ci: auto-sync /opt/amy/scripts/amy_cost_daily_report.py via SSM | cost report 脚本 source-of-truth 进入 CI 流，自动同步 host 文件，关闭 5/6 类回归路径；README 增加 Deploy + 手动回滚 SOP |
+| [#2945](https://github.com/Vispie-AI/VisPie_backend/pull/2945) | 2026-05-06 | fix | ✅ | fix(auto-amy): cost report — detect Lark biz errors, retry on rate-limit | 限流自动重试成功，永久错误立即 fail loud；cron-storm 错开后再未观察到 5/6 类静默漏发 |
+| [#2740](https://github.com/Vispie-AI/VisPie_backend/pull/2740) | 2026-05-01 | fix | ✅ | fix(shadow-judge): align GeminiJudge URL regex with gemini-3-pro-preview | gateway 62/62 测试通过，CI 恢复绿，可继续 dev → prod 部署 |
+| [#2739](https://github.com/Vispie-AI/VisPie_backend/pull/2739) | 2026-05-01 | fix | ✅ | fix(auto-amy): DeepSeek cost — cache-hit + active promo pricing | DeepSeek 月报从 \$565 修正为 ~\$22 真实值；附 `test_pricing_v4_pro_real_world_overestimate_fix` 用 prod 数据做回归 sentinel |
+| [#2738](https://github.com/Vispie-AI/VisPie_backend/pull/2738) | 2026-05-01 | fix | ✅ | fix(shadow-judge): align GeminiJudge test assertion with gemini-3-pro-preview | Gateway Router build+test 通过，可触发 amy-gateway-prod 镜像滚动 |
+| [#2735](https://github.com/Vispie-AI/VisPie_backend/pull/2735) | 2026-05-01 | feat | ✅ | feat(shadow-judge): upgrade judge model to gemini-3-pro-preview | 判决质量提升，error率降低，A/B对比结果更具参考价值 |
+| [#2697](https://github.com/Vispie-AI/VisPie_backend/pull/2697) | 2026-04-30 | fix | ✅ | fix(ci): repair jq filter quoting in Deploy Vio Nanobot workflow | 部署 workflow 恢复正常，合并后自动补齐了落下的镜像更新 |
+| [#2693](https://github.com/Vispie-AI/VisPie_backend/pull/2693) | 2026-04-30 | misc | ✅ | ci: split shared deploy group — give Amy/Eva nanobot priority queue | Amy/Eva Nanobot 部署不再被取消，用户侧延迟降至纯部署耗时 |
+| [#2692](https://github.com/Vispie-AI/VisPie_backend/pull/2692) | 2026-04-30 | fix | ✅ | fix(amy): bump primary timeout 600s→1500s, Hatchet 15m→30m | Amy 可完整执行复杂多源任务，根因技能发现优化跟进中 |
+| [#2690](https://github.com/Vispie-AI/VisPie_backend/pull/2690) | 2026-04-30 | fix | ✅ | fix(alert-card): action items use Vio host paths for Vio agents | Vio 告警操作指引指向正确主机，新增 4 个回归测试 |
+| [#2671](https://github.com/Vispie-AI/VisPie_backend/pull/2671) | 2026-04-29 | fix | ✅ | fix(monitoring): nanobot L2 pattern + de-Amyfy alert card title | nanobot 容器健康时不再触发误报，告警卡片准确显示受影响的 agent 名称 |
+| [#2668](https://github.com/Vispie-AI/VisPie_backend/pull/2668) | 2026-04-29 | fix | ✅ | fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt) | DeepSeek shadow 有种子时不再触发 4xx，回复类场景（"撤回/不对"）恢复正常响应 |
+| [#2667](https://github.com/Vispie-AI/VisPie_backend/pull/2667) | 2026-04-29 | fix | 🚫 | fix(amy): synthesize reasoning_content for seeded assistant turns (3rd attempt) | 本 PR 已关闭，核心修复思路通过无冲突的 #2668 落地 |
+| [#2662](https://github.com/Vispie-AI/VisPie_backend/pull/2662) | 2026-04-29 | fix | ✅ | fix(amy): strip Bedrock thinking artifacts at shadow seed boundary | 种子边界处理更精准，不影响 DeepSeek 正常 thinking 轮次，测试覆盖 22 个用例 |
+| [#2658](https://github.com/Vispie-AI/VisPie_backend/pull/2658) | 2026-04-29 | fix | ✅ | fix(lark-isv): correct app_ticket schema (V1 event_callback wrapper) | 真实 Lark app_ticket 推送可被识别，gateway 9/9 + nanobot 18/19 测试通过 |
+| [#2657](https://github.com/Vispie-AI/VisPie_backend/pull/2657) | 2026-04-29 | feat | ✅ | feat(vio-gateway): app_ticket fan-out for ISV nanobot tenants (vio-isv-lark PR3/3) | cli_a939bf store app + 未来 ISV 安装企业的 token chain 解锁，gateway 9/9 node:test 通过 |
+| [#2656](https://github.com/Vispie-AI/VisPie_backend/pull/2656) | 2026-04-29 | fix | ✅ | fix(ci): recursive S3 sync for vio-gateway deploy (P0) | vio-gateway 恢复健康，所有租户 Lark webhook 通路恢复；约 10min 下线 |
+| [#2653](https://github.com/Vispie-AI/VisPie_backend/pull/2653) | 2026-04-29 | feat | ✅ | feat(vio-gateway): Lark raw-body + sig header passthrough (vio-isv-lark PR2/2) | cli_a939bf store-app webhook 可在 ISV 容器完成 HMAC 校验；老 OpenClaw vizzy-lark + manus-nanobot 零回归（无 `LARK_VERIFICATION_TOKEN` 时跳过验签） |
+| [#2648](https://github.com/Vispie-AI/VisPie_backend/pull/2648) | 2026-04-29 | feat | ✅ | feat(lark): ISV mode for store-app token chain (vio-isv-lark PR1/2) | mitchell+amy+eva+11 skin-bots+manus-nanobot SelfBuild 零回归；store-app ISV 接入容器侧 token chain 完成，配合 PR #2653 完成端到端；SPEC 经 Codex 4 轮 review 抓出 14 个真 bug |
+| [#2636](https://github.com/Vispie-AI/VisPie_backend/pull/2636) | 2026-04-29 | fix | ✅ | fix(amy): seed DeepSeek shadow with primary's session history | shadow 回复质量与主模型对齐，多轮对话连贯性显著提升 |
+| [#2634](https://github.com/Vispie-AI/VisPie_backend/pull/2634) | 2026-04-29 | feat | ✅ | feat(shadow): Gemini 2.5 Flash judge + DeepSeek shadow A/B | 评判质量提升，DeepSeek shadow A/B 测试机制完善，多模型对比能力增强 |
+| [#2598](https://github.com/Vispie-AI/VisPie_backend/pull/2598) | 2026-04-28 | fix | ✅ | fix(amy): align DeepSeek shadow budget with primary Opus | A/B 对比面板在长复杂问题场景下可正常完成 DeepSeek 侧的完整推理 |
+| [#2591](https://github.com/Vispie-AI/VisPie_backend/pull/2591) | 2026-04-28 | fix | ✅ | hotfix(env): drop PR_NOTIFY_TITLE — unblocks deploy-ec2 | 主分支 EC2 自动部署恢复正常，CI 流水线不再因含空格的环境变量报错 |
+| [#2589](https://github.com/Vispie-AI/VisPie_backend/pull/2589) | 2026-04-28 | misc | ✅ | test(pr-bot): smoke — verify PR group commit-cards | PR 机器人功能验证通过，零代码变更确认新机器人行为符合预期 |
+| [#2587](https://github.com/Vispie-AI/VisPie_backend/pull/2587) | 2026-04-28 | feat | ✅ | feat(github-webhook): PR group commit cards — replace Zapier | master 每个 squash 合并自动发 commit 卡片到 PR group `oc_05471855...`，完全脱离 Zapier；同时新增 4 个环境变量配置入口 |
+| [#2566](https://github.com/Vispie-AI/VisPie_backend/pull/2566) | 2026-04-28 | feat | ✅ | feat(amy): show trace_id in shadow panels for log correlation | DeepSeek + 未来任何 shadow source 自动显示 trace_id，跟老 OpenClaw shadow panel 风格一致；93 个相关测试 pass |
+| [#2527](https://github.com/Vispie-AI/VisPie_backend/pull/2527) | 2026-04-27 | misc | ✅ | chore(amy): disable OpenClaw Opus 4.6 shadow — keep DeepSeek shadow only | OpenClaw shadow 停止发送，双写风险在生产层面消除，回滚只需翻转同一行 |
+| [#2524](https://github.com/Vispie-AI/VisPie_backend/pull/2524) | 2026-04-26 | fix | ✅ | fix(amy): v3 — explicit shadow tool deny-list (config gates bypassed in prod) | 89 个测试通过，pinning 测试确保危险工具不会被意外恢复到 shadow agent |
+| [#2522](https://github.com/Vispie-AI/VisPie_backend/pull/2522) | 2026-04-26 | feat | ✅ | feat(amy): DeepSeek shadow v2 — full sandboxed AgentLoop with tools | 82 个测试通过，DeepSeek shadow 现可进行多轮工具调用，费用自动计入每日/周/月报告 |
+| [#2515](https://github.com/Vispie-AI/VisPie_backend/pull/2515) | 2026-04-26 | misc | ✅ | docs(amy): close DeepSeek shadow v1 SPEC — deployed + lessons learned | v2 (full sandboxed AgentLoop) 与未来 Gemini judge / GPT 选手作者可直接复用经验单，节省下一轮 review；docs-only，git diff 仅 1 文件 +47/-13 |
+| [#2514](https://github.com/Vispie-AI/VisPie_backend/pull/2514) | 2026-04-26 | feat | ✅ | feat(amy): DeepSeek V4-Pro shadow panel — v1 single-turn | v1 single-turn 验证端到端管线；13 fleet 共用镜像但其他 12 个容器短路；7 新+70 老测试全过；v2 sandboxed AgentLoop 留作 follow-up |
+| [#2506](https://github.com/Vispie-AI/VisPie_backend/pull/2506) | 2026-04-26 | fix | ✅ | fix(auto-amy): switch weekly cost card to purple | daily 靛/weekly 紫/monthly 绿三档颜色清晰可分；41/41 测试通过；立即热修 prod `/opt/amy/scripts` 让用户当天看到效果 |
+| [#2500](https://github.com/Vispie-AI/VisPie_backend/pull/2500) | 2026-04-26 | feat | ✅ | feat(auto-amy): weekly + monthly cost reports | 周报蓝（5/9 deploy）/月报绿同管线产出，daily 行为零变化；README 列三套 cron + 故障排查；新增 21 测试 |
+| [#2396](https://github.com/Vispie-AI/VisPie_backend/pull/2396) | 2026-04-23 | fix | ✅ | fix(vio-liveness): match plain 'node index.js' for vio-gateway L2 check | vio-gateway 存活监控准确率恢复正常，误报问题消除 |
+| [#2395](https://github.com/Vispie-AI/VisPie_backend/pull/2395) | 2026-04-23 | feat | ✅ | feat(monitoring): extend liveness monitoring to Vio (dynamic + rollup) | Amy 和 Vio 均纳入统一存活监控，多服务健康状态汇总可见 |
+| [#2379](https://github.com/Vispie-AI/VisPie_backend/pull/2379) | 2026-04-22 | feat | ✅ | feat(auto-amy): track Gemini + Nova Micro + embedding costs | LLM全链路成本实现完整监控，不再存在未追踪的模型调用盲区 |
+| [#2376](https://github.com/Vispie-AI/VisPie_backend/pull/2376) | 2026-04-22 | fix | ✅ | fix(auto-amy): apply 1.1x US inference-profile multiplier | 成本追踪数据与实际AWS账单对齐，提升计费准确性 |
+| [#2356](https://github.com/Vispie-AI/VisPie_backend/pull/2356) | 2026-04-21 | fix | ✅ | fix(auto-amy): correct Bedrock pricing — Opus was 3x too high | 每日 API 成本报告数据准确，不再虚报使用费用 |
+| [#2355](https://github.com/Vispie-AI/VisPie_backend/pull/2355) | 2026-04-21 | feat | ✅ | feat(auto-amy): daily API cost report → Lark webhook | 团队每日自动收到全舰队 API 成本报告，成本追踪反馈闭环正式形成 |
+| [#2354](https://github.com/Vispie-AI/VisPie_backend/pull/2354) | 2026-04-21 | feat | ✅ | feat(auto-amy): extend UsageMeter to full fleet (13 agents + amy + eva) | 全舰队所有 LLM 调用均被记录，为每日成本报告提供完整数据来源 |
+| [#2353](https://github.com/Vispie-AI/VisPie_backend/pull/2353) | 2026-04-21 | fix | ✅ | fix(auto-amy): hook streaming path + cache-aware pricing | Mitchell 生产环境 LLM 调用被正确记录，成本追踪管道正常运行 |
+| [#2352](https://github.com/Vispie-AI/VisPie_backend/pull/2352) | 2026-04-21 | fix | 🚫 | fix(auto-amy): hook streaming path + cache-aware pricing | 此 PR 已关闭，相关修复由 #2353 最终落地 |
+| [#2351](https://github.com/Vispie-AI/VisPie_backend/pull/2351) | 2026-04-21 | feat | ✅ | feat(auto-amy): wire Mitchell Bedrock calls into UsageMeter | Mitchell 生产环境 LLM 调用开始产生 usage_events 记录，成本追踪管道正式打通 |
+| [#2350](https://github.com/Vispie-AI/VisPie_backend/pull/2350) | 2026-04-21 | fix | ✅ | fix(deploy): poll FastAPI healthcheck instead of racing 15s sleep | 消除部署竞态条件，Unified Deployment CI 稳定通过 |
+| [#2349](https://github.com/Vispie-AI/VisPie_backend/pull/2349) | 2026-04-21 | misc | ✅ | chore(ci): remove 4 dead/deprecated workflow files | CI 配置更整洁，减少误触发风险，仓库维护成本降低 |
+| [#2282](https://github.com/Vispie-AI/VisPie_backend/pull/2282) | 2026-04-20 | fix | 🚫 | fix(daily-report): retry once on HTTP 4xx from Lark send_lark_card | 最小化改动，消除瞬时 4xx 导致日报丢失的场景；PR 关闭未合并，待后续决策 |
+| [#2241](https://github.com/Vispie-AI/VisPie_backend/pull/2241) | 2026-04-18 | feat | ✅ | feat(daily-report): integrate Amy liveness into George AI daily card | 19 个单元测试全通过；日报卡片可一眼区分"业务平静"与"容器宕机"，信息误导率显著降低 |
+| [#2228](https://github.com/Vispie-AI/VisPie_backend/pull/2228) | 2026-04-17 | fix | ✅ | fix(monitoring): add 'liveness' probe_type + correct L2 process check | liveness 探针数据正常入库，L2 进程检测 100% 可靠 |
+| [#2227](https://github.com/Vispie-AI/VisPie_backend/pull/2227) | 2026-04-17 | feat | ✅ | feat(monitoring): liveness-based alerter + persistent dedup | 告警误报率大幅降低，冷却窗口跨进程生效，监控可靠性质的提升 |
+| [#2226](https://github.com/Vispie-AI/VisPie_backend/pull/2226) | 2026-04-17 | feat | 🚫 | feat(monitoring): add monitoring_alert_dedup table (migration) | feat(monitoring): add monitoring_alert_dedup table (migration) |
+| [#2225](https://github.com/Vispie-AI/VisPie_backend/pull/2225) | 2026-04-17 | fix | ✅ | fix(vizzy-lark): render headings & tables inside collapsible panels | 13 个单元测试全通过；折叠面板内容可读性大幅提升 |
+| [#2224](https://github.com/Vispie-AI/VisPie_backend/pull/2224) | 2026-04-17 | fix | ✅ | fix(nanobot/feishu): render tables & headings in final streamed card | nanobot 最终回复卡片渲染效果与 amy-prod/eva-prod 一致 |
+| [#2177](https://github.com/Vispie-AI/VisPie_backend/pull/2177) | 2026-04-16 | feat | ✅ | feat(alerter): Synthetic Health Alerter — every-15-min bot availability monitoring | 建立系统健康自动监控基础设施 |
+| [#2176](https://github.com/Vispie-AI/VisPie_backend/pull/2176) | 2026-04-16 | fix | ✅ | fix(migration): correct down_revision for error_reason migration | 数据库迁移链恢复正常，无多头分叉 |
+| [#2175](https://github.com/Vispie-AI/VisPie_backend/pull/2175) | 2026-04-16 | fix | ✅ | fix(shadow): notify OpenClaw on error/cancel + extend cardCache TTL | 所有路径下 shadow 面板均能正确更新，消除永久卡死问题 |
+| [#2174](https://github.com/Vispie-AI/VisPie_backend/pull/2174) | 2026-04-16 | feat | ✅ | feat(monitoring): add error_reason fields and drop unused indexes (PR #1) | 监控数据具备错误溯源能力，数据库存储优化约 1 GB |
+| [#2143](https://github.com/Vispie-AI/VisPie_backend/pull/2143) | 2026-04-15 | fix | ✅ | fix(shadow): preserve trace_id across queue drain for shadow-done fan-out | 多消息并发场景下所有 shadow 面板均能正常解锁 |
+| [#2140](https://github.com/Vispie-AI/VisPie_backend/pull/2140) | 2026-04-15 | fix | ✅ | fix(shadow): raise shadow response display cap 1500 → 4000 chars | shadow 面板完整展示，用户体验显著改善 |
+| [#2056](https://github.com/Vispie-AI/VisPie_backend/pull/2056) | 2026-04-13 | feat | 🔀 | feat(monitoring): add error_reason tracking to SLA probes | feat(monitoring): add error_reason tracking to SLA probes |
+| [#2027](https://github.com/Vispie-AI/VisPie_backend/pull/2027) | 2026-04-12 | misc | ✅ | docs: add bilingual system map for auto-amy architecture | 系统架构知识文档化，降低团队新成员理解成本 |
+| [#2024](https://github.com/Vispie-AI/VisPie_backend/pull/2024) | 2026-04-11 | fix | ✅ | fix(vizzy-lark): align elapsed_sec timing with nanobot for fair shadow A/B | A/B 性能对比数据更客观准确 |
+| [#2023](https://github.com/Vispie-AI/VisPie_backend/pull/2023) | 2026-04-11 | fix | ✅ | fix(nanobot): align context window and max output tokens with OpenClaw | 消除 A/B 比较中最大的两项系统性偏差 |
+| [#2017](https://github.com/Vispie-AI/VisPie_backend/pull/2017) | 2026-04-11 | fix | ✅ | fix(nanobot): use env var for bot_name in feedback — fixes stale card data | feedback 记录 bot_name 完全准确，旧卡片不再污染数据 |
+| [#1969](https://github.com/Vispie-AI/VisPie_backend/pull/1969) | 2026-04-11 | fix | ✅ | fix(nanobot): use AGENT_NAME as bot_name fallback in feedback records | feedback 数据中 agent 归因准确，支持后续分析 |
