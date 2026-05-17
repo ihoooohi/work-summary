@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-14 | 共 81 个 PR（已合并 76 · 关闭未合并 4 · 待合并 1）
-> 最后更新：2026-05-14
+> 统计周期：2026-04-11 ~ 2026-05-17 | 共 84 个 PR（已合并 79 · 关闭未合并 3 · 待合并 0）
+> 最后更新：2026-05-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -285,6 +285,18 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3429](https://github.com/Vispie-AI/VisPie_backend/pull/3429) feat(amy): wire LangfuseHook into nanobot agent loop + fix pkg install
+- **日期**：2026-05-17 | **状态**：✅ 已合并
+- **问题**：第一阶段仅添加脚手架，Langfuse 未接入 agent 循环，且 Dockerfile 缺少依赖包。
+- **修复**：新增 LangfuseHook 并接入 Lark 消息处理器，修复 Dockerfile 中 langfuse 包未安装问题。
+- **成果**：每次 LLM 调用均生成含 user_id/session_id 的 trace，设置三个环境变量即可启用，不影响其余 12 个 bot。
+
+### [#3428](https://github.com/Vispie-AI/VisPie_backend/pull/3428) feat(amy): add Langfuse v2 self-host scaffold for LLM observability
+- **日期**：2026-05-17 | **状态**：✅ 已合并
+- **问题**：Amy nanobot 缺乏 LLM 调用可观测性，无法追踪 Prompt 数据与 token 成本。
+- **修复**：引入 Langfuse v2 自托管 scaffold，部署双容器服务栈并添加无副作用初始化模块。
+- **成果**：未配置环境变量时完全无操作，合并至主线不影响生产，为第二阶段埋点奠定基础。
+
 ### [#3122](https://github.com/Vispie-AI/VisPie_backend/pull/3122) feat(vio-gateway): auto-register chat_route on first ISV cross-app webhook
 - **日期**：2026-05-09 | **状态**：✅ 已合并
 - **问题**：ISV 机器人可加入任意群组，运营无法提前在 `chat_routes` 中枚举所有 `chat_id`，首条消息因无路由而静默丢弃。
@@ -442,6 +454,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#3430](https://github.com/Vispie-AI/VisPie_backend/pull/3430) chore(amy-deploy): inject LANGFUSE_* env vars into amy-nanobot
+- **日期**：2026-05-17 | **状态**：✅ 已合并
+- **问题**：CI/CD 部署时 heredoc 覆盖手动注入的 LANGFUSE 环境变量，每次部署后链路追踪失效。
+- **修复**：在部署 workflow 的 heredoc 中写入三个 LANGFUSE 变量，值来自 GitHub Repo 变量/密钥。
+- **成果**：每次自动部署后 amy-nanobot 均持久读取 LANGFUSE 配置，其他 12 个 bot 不受影响。
 
 ### [#3312](https://github.com/Vispie-AI/VisPie_backend/pull/3312) ci(mitchell): inject AMY_COST_REPORT_WEBHOOK from repo Variable on every deploy
 - **日期**：2026-05-14 | **状态**：✅ 已合并
