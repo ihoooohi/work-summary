@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-17 | 共 84 个 PR（已合并 79 · 关闭未合并 3 · 待合并 0）
-> 最后更新：2026-05-17
+> 统计周期：2026-04-11 ~ 2026-05-18 | 共 85 个 PR（已合并 80 · 关闭未合并 3 · 待合并 0）
+> 最后更新：2026-05-18
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -284,6 +284,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#3450](https://github.com/Vispie-AI/VisPie_backend/pull/3450) feat(amy): Lark open_id 解析为显示名
+- **日期**：2026-05-18 | **状态**：✅ 已合并
+- **问题**：Langfuse User 标签显示原始 open_id，无法识别具体用户。
+- **修复**：新增含 TTL 缓存的解析器，将 open_id 映射为「姓名(ou_短码)」，失败回退原值。
+- **成果**：Langfuse 用户标签变为可读，API 故障时追踪写入不中断。
 
 ### [#3429](https://github.com/Vispie-AI/VisPie_backend/pull/3429) feat(amy): wire LangfuseHook into nanobot agent loop + fix pkg install
 - **日期**：2026-05-17 | **状态**：✅ 已合并
