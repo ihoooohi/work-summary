@@ -1,13 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-18 | 共 85 个 PR（已合并 80 · 关闭未合并 3 · 待合并 0）
-> 最后更新：2026-05-18
+> 统计周期：2026-04-11 ~ 2026-05-19 | 共 95 个 PR（已合并 87 · 关闭未合并 6 · 待合并 0）
+> 最后更新：2026-05-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#3558](https://github.com/Vispie-AI/VisPie_backend/pull/3558) fix(ci/amy-codex): drop sudo on git+docker (ubuntu user has perms)
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：CI 工作流中 sudo 执行 git 命令导致 root 无 SSH 密钥而鉴权失败。
+- **修复**：去掉 git fetch/reset 和 docker 命令前的 sudo，与 nanobot 部署流程保持一致。
+- **成果**：amy-codex 的 CI 自动部署流水线可正常拉取代码并构建镜像。
+
+### [#3557](https://github.com/Vispie-AI/VisPie_backend/pull/3557) fix(ci/amy-codex): drop sudo on git+docker (ubuntu user has perms)
+- **日期**：2026-05-19 | **状态**：🚫 已关闭
+- **问题**：CI 工作流中 sudo git 命令因 root 无 SSH 密钥而触发权限拒绝错误。
+- **修复**：移除 git 和 docker 命令前的 sudo 前缀（已在 #3558 以干净分支重新提交）。
+- **成果**：PR 因历史冲突关闭，修复内容由 #3558 合入主干。
+
+### [#3555](https://github.com/Vispie-AI/VisPie_backend/pull/3555) fix(amy-codex): pipe prompt on stdin + isolate auth volume
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：多词 prompt 通过命令行参数传入时触发 clap 解析错误，且共享 OAuth 卷存在令牌竞争导致刷新失败。
+- **修复**：将 prompt 改为通过 stdin 传入，并为 amy-codex 挂载独立 Docker 卷以隔离认证文件。
+- **成果**：amy-codex 可正确接收完整提示词并完成端到端 smoke test。
+
+### [#3554](https://github.com/Vispie-AI/VisPie_backend/pull/3554) fix(amy-codex): pipe prompt on stdin + isolate auth volume
+- **日期**：2026-05-19 | **状态**：🚫 已关闭
+- **问题**：codex exec 不支持多词 positional 参数，且两个容器共享 OAuth 卷导致令牌刷新竞争。
+- **修复**：切换为 stdin 传参并隔离认证卷（已在 #3555 以干净分支重新提交）。
+- **成果**：PR 因分支冲突关闭，有效修复已通过 #3555 合入主干。
+
+### [#3550](https://github.com/Vispie-AI/VisPie_backend/pull/3550) fix(amy-codex): drop --ask-for-approval from codex exec args
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：`--ask-for-approval` 是 codex 根命令参数，误传给 codex exec 导致退出码 2，每次 shadow 调用均失败。
+- **修复**：从 codex exec 参数列表中删除该标志及无用环境变量 CODEX_APPROVAL_POLICY。
+- **成果**：amy-codex 端到端 smoke test 可正常触发 Codex 模型调用。
+
+### [#3546](https://github.com/Vispie-AI/VisPie_backend/pull/3546) fix(amy-codex): drop --ask-for-approval from codex exec args
+- **日期**：2026-05-19 | **状态**：🚫 已关闭
+- **问题**：codex exec 不识别 --ask-for-approval 参数，导致所有 shadow 调用在到达模型前即失败。
+- **修复**：移除错误标志（已在 #3550 以干净分支重新提交）。
+- **成果**：PR 因分支状态关闭，有效修复已在 #3550 合并入主干。
 ### [#3298](https://github.com/Vispie-AI/VisPie_backend/pull/3298) fix(vio): hide feedback buttons by default for ISV apps (avoids code:200340)
 - **日期**：2026-05-14 | **状态**：✅ 已合并
 - **问题**：Lark ISV/store app 有独立 Callback Configuration URL slot，未配置时点反馈按钮报 `code:200340` 错误，vio-test 用户每次点都失败。
@@ -285,6 +320,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3559](https://github.com/Vispie-AI/VisPie_backend/pull/3559) feat(amy-codex): reuse nanobot's Codex OAuth token via on-disk translation
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：amy-codex 需要独立的 device-auth 流程，且两端共享刷新令牌存在 OAuth 竞争导致 401 错误。
+- **修复**：容器启动及每次 /run 调用时自动将 nanobot 的 OAuth 格式转换为 Codex CLI 原生格式，并将 last_refresh 置为当前时间阻止 CLI 自行刷新。
+- **成果**：amy-codex 复用 nanobot 的已刷新令牌，端到端 smoke test 首次成功返回真实模型响应。
+
+### [#3545](https://github.com/Vispie-AI/VisPie_backend/pull/3545) feat(amy-codex): Codex CLI framework shadow alongside DeepSeek
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：现有 shadow 仅替换 LLM 提供商，无法对比 Codex CLI 框架本身的 agent 行为与 nanobot 框架的差异。
+- **修复**：新增 amy-codex sidecar 容器（FastAPI + codex exec），并在 nanobot_server.py 中接入独立 shadow 触发门，支持与 DeepSeek shadow 并行运行。
+- **成果**：可在相同用户消息下同时运行 Codex CLI 与 nanobot 框架的 shadow 对比，Lark 卡片展示双路 shadow 面板。
 ### [#3450](https://github.com/Vispie-AI/VisPie_backend/pull/3450) feat(amy): Lark open_id 解析为显示名
 - **日期**：2026-05-18 | **状态**：✅ 已合并
 - **问题**：Langfuse User 标签显示原始 open_id，无法识别具体用户。
@@ -461,6 +507,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#3560](https://github.com/Vispie-AI/VisPie_backend/pull/3560) ci(amy-nanobot): inject AMY_CODEX_SHADOW + AMY_CODEX_URL env
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：nanobot_server.py 中控制 amy-codex shadow 触发的环境变量未注入 CI 部署配置，功能无法在生产中启用。
+- **修复**：在 amy-nanobot 的 CI 工作流中添加 AMY_CODEX_SHADOW=true 和 AMY_CODEX_URL 两个环境变量。
+- **成果**：amy-nanobot 部署后自动开启 Codex shadow，Lark 消息可触发 🔬 Shadow: codex-cli 面板。
+
+### [#3556](https://github.com/Vispie-AI/VisPie_backend/pull/3556) ci(amy-codex): dedicated deploy workflow
+- **日期**：2026-05-19 | **状态**：✅ 已合并
+- **问题**：amy-codex 相关源文件的变更未触发任何自动部署，EC2 宿主机长期停留在 #3545 的提交状态。
+- **修复**：新增专用 GitHub Actions 工作流，监听 amy-codex 相关路径变更后 SSH 登录 EC2 执行构建和部署脚本。
+- **成果**：amy-codex sidecar 可随代码变更自动部署，健康检查通过后完成持续交付闭环。
 ### [#3430](https://github.com/Vispie-AI/VisPie_backend/pull/3430) chore(amy-deploy): inject LANGFUSE_* env vars into amy-nanobot
 - **日期**：2026-05-17 | **状态**：✅ 已合并
 - **问题**：CI/CD 部署时 heredoc 覆盖手动注入的 LANGFUSE 环境变量，每次部署后链路追踪失效。
