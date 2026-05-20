@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-19 | 共 95 个 PR（已合并 87 · 关闭未合并 6 · 待合并 0）
-> 最后更新：2026-05-19
+> 统计周期：2026-04-11 ~ 2026-05-20 | 共 100 个 PR（已合并 92 · 关闭未合并 6 · 待合并 0）
+> 最后更新：2026-05-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#3633](https://github.com/Vispie-AI/VisPie_backend/pull/3633) fix(openclaw-base): install long as root so NODE_PATH actually resolves it
+- **日期**：2026-05-20 | **状态**：✅ 已合并
+- **问题**：#3630中全局安装`long`因`USER openclaw`切换落入用户目录，不在`NODE_PATH`扫描路径内，模块仍无法解析。
+- **修复**：将`npm install -g long`移至`USER root`阶段执行，确保包安装在全局路径且`NODE_PATH`可识别。
+- **成果**：`long`模块现在可通过`NODE_PATH`正确解析，OpenClaw容器启动稳定，依赖问题彻底修复。
+
+### [#3630](https://github.com/Vispie-AI/VisPie_backend/pull/3630) fix(openclaw-base): install long to NODE_PATH as baileys transitive shim
+- **日期**：2026-05-20 | **状态**：✅ 已合并
+- **问题**：OpenClaw的Slack扩展通过baileys传递依赖引入`long`，pnpm符号链接布局无法正确提升该包，启动时报`Cannot find module 'long'`。
+- **修复**：在Dockerfile中全局安装`long`并将路径加入`NODE_PATH`，绕过pnpm符号链接提升失败的问题。
+- **成果**：OpenClaw容器可正确找到`long`模块，Slack扩展不再因传递依赖缺失而崩溃启动。
 
 ### [#3558](https://github.com/Vispie-AI/VisPie_backend/pull/3558) fix(ci/amy-codex): drop sudo on git+docker (ubuntu user has perms)
 - **日期**：2026-05-19 | **状态**：✅ 已合并
@@ -320,6 +332,18 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3595](https://github.com/Vispie-AI/VisPie_backend/pull/3595) feat(amy-codex): show reasoning effort in shadow panel label
+- **日期**：2026-05-20 | **状态**：✅ 已合并
+- **问题**：操作人员无法从Lark卡片直观看出Amy Codex影子回答使用了哪个推理强度档位。
+- **修复**：在Lark影子卡片标签中展示当前`reasoning_effort`档位（如xhigh/high/medium等）。
+- **成果**：操作人员可一眼判断Codex影子答案的推理强度来源，提升问题排查效率。
+
+### [#3594](https://github.com/Vispie-AI/VisPie_backend/pull/3594) feat(amy-codex): expose reasoning_effort env, default xhigh
+- **日期**：2026-05-20 | **状态**：✅ 已合并
+- **问题**：Amy Codex缺少推理强度开关，无法灵活控制Codex CLI在框架对比阶段的推理深度。
+- **修复**：新增`AMY_CODEX_REASONING_EFFORT`环境变量，支持six档位（none到xhigh），默认值为xhigh。
+- **成果**：Codex CLI代理可以最高推理强度运行Phase 1对比，操作人员也可按需降低档位节省资源。
+
 ### [#3559](https://github.com/Vispie-AI/VisPie_backend/pull/3559) feat(amy-codex): reuse nanobot's Codex OAuth token via on-disk translation
 - **日期**：2026-05-19 | **状态**：✅ 已合并
 - **问题**：amy-codex 需要独立的 device-auth 流程，且两端共享刷新令牌存在 OAuth 竞争导致 401 错误。
@@ -506,6 +530,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#3596](https://github.com/Vispie-AI/VisPie_backend/pull/3596) ci(amy-nanobot): include amy_codex_shadow.py in deploy path filter
+- **日期**：2026-05-20 | **状态**：✅ 已合并
+- **问题**：CI路径过滤器仅监听`deepseek_shadow.py`，`amy_codex_shadow.py`变更后nanobot镜像不会自动重建。
+- **修复**：将`amy_codex_shadow.py`加入CI部署路径过滤器，确保影子客户端变更能触发自动重建流程。
+- **成果**：Amy Codex相关改动现在能正确触发nanobot镜像自动构建，持续集成覆盖更加完整。
 
 ### [#3560](https://github.com/Vispie-AI/VisPie_backend/pull/3560) ci(amy-nanobot): inject AMY_CODEX_SHADOW + AMY_CODEX_URL env
 - **日期**：2026-05-19 | **状态**：✅ 已合并
