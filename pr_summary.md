@@ -1,13 +1,42 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-20 | 共 100 个 PR（已合并 92 · 关闭未合并 6 · 待合并 0）
-> 最后更新：2026-05-20
+> 统计周期：2026-04-11 ~ 2026-05-21 | 共 113 个 PR（已合并 105 · 关闭未合并 6 · 待合并 0）
+> 最后更新：2026-05-21
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#3728](https://github.com/Vispie-AI/VisPie_backend/pull/3728) fix(amy-codex): roll codex bucket back to 0% pending feature parity
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：Codex桶在30%实流量下暴露出反馈按钮缺失、Lark文档工具未挂载等功能差距。
+- **修复**：将fleet.json中ab_split.percent由30回滚至0，暂停实流量直至功能对齐完成。
+- **成果**：真实用户流量恢复全量走nanobot桶，codex基础设施保留，回滚仅改一处配置。
+
+### [#3727](https://github.com/Vispie-AI/VisPie_backend/pull/3727) fix(amy-codex): ab_split.target double-appended path = 404
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：Day 6上线后网关将请求转发至/lark/webhook/lark/webhook（路径重复），amy-codex返回404导致bot无响应。
+- **修复**：从fleet.json的ab_split.target中去掉多余的/lark/webhook前缀。
+- **成果**：路由路径恢复正确，codex桶请求成功到达目标端点。
+
+### [#3726](https://github.com/Vispie-AI/VisPie_backend/pull/3726) fix(amy-codex): land ab_split on fleet.json (actual source of truth)
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：Day 6 PR修改了routes.json，但网关部署流程实际通过fleet.json生成routes.json，导致ab_split未真正生效。
+- **修复**：将相同的ab_split配置同步写入fleet.json（真正的配置源）。
+- **成果**：ab_split配置在正式部署中真正落地，A/B分流开关按预期运行。
+
+### [#3696](https://github.com/Vispie-AI/VisPie_backend/pull/3696) fix(amy-codex): hard-code main Amy app_id, only read app_secret from CI
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：GitHub Secret AMY_LARK_APP_ID实际存储的是amy-fin的app_id，错误使用导致Lark卡片通过错误租户凭证发送，破坏"用户只见一个Bot"的目标。
+- **修复**：将main Amy的app_id硬编码到部署Workflow中，只保留app_secret读取自CI Secrets。
+- **成果**：amy-codex容器使用正确的Amy身份发送消息，与SPEC §A.1设计保持一致。
+
+### [#3695](https://github.com/Vispie-AI/VisPie_backend/pull/3695) fix(amy-codex): add httpx to requirements
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：Day 1新增的lark_client.py依赖httpx，但requirements.txt未声明，导致容器健康检查失败（ModuleNotFoundError）。
+- **修复**：在requirements.txt中固定httpx==0.28.1，与amy-nanobot保持版本一致。
+- **成果**：amy-codex容器可正常启动并通过健康检查，服务恢复可用。
 ### [#3633](https://github.com/Vispie-AI/VisPie_backend/pull/3633) fix(openclaw-base): install long as root so NODE_PATH actually resolves it
 - **日期**：2026-05-20 | **状态**：✅ 已合并
 - **问题**：#3630中全局安装`long`因`USER openclaw`切换落入用户目录，不在`NODE_PATH`扫描路径内，模块仍无法解析。
@@ -332,6 +361,41 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3725](https://github.com/Vispie-AI/VisPie_backend/pull/3725) feat(amy-codex): Day 6 — 30% A/B cutover + post-verify + RUNBOOK
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：Day 1-5管道全部合并部署后，需正式开启A/B流量并建立观测与回滚机制。
+- **修复**：将ab_split.percent从0调整为30，新增后验证脚本amy_codex_post_verify.py与运维手册RUNBOOK.md。
+- **成果**：30%真实Amy流量路由至codex桶，A/B实验正式启动，具备一键回滚能力。
+
+### [#3724](https://github.com/Vispie-AI/VisPie_backend/pull/3724) feat(amy-codex): Day 5 — daily judge + followup detector + dashboard doc
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：A/B两桶的回复质量缺乏自动化评判与用户跟进行为检测，无法支撑SPEC D.2/D.3层评估。
+- **修复**：新增独立可cron运行的每日Gemini评判脚本、5分钟跟进检测脚本及Langfuse仪表盘文档。
+- **成果**：评估管道Layer 2/3就绪，可按天积累judge数据对比两桶回复质量。
+
+### [#3722](https://github.com/Vispie-AI/VisPie_backend/pull/3722) feat(amy-codex): Day 4 — Langfuse tracing on both buckets
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：A/B两桶缺乏统一的可观测性，无法在同一Langfuse实例中对比延迟、成本与错误率。
+- **修复**：amy-codex新增langfuse_client封装及webhook追踪，amy-nanobot的LangfuseHook增加桶参数，均向同一自托管Langfuse v3写入追踪数据。
+- **成果**：两桶Trace同步上报，运维可在Langfuse中进行并排对比分析。
+
+### [#3720](https://github.com/Vispie-AI/VisPie_backend/pull/3720) feat(amy-codex): Day 3 — amy-gateway ab_split + nanobot bucket footer
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：A/B路由逻辑尚未在网关实现，nanobot桶也缺少桶标签，无法对用户透明展示所在桶。
+- **修复**：amy-gateway基于SHA1哈希实现确定性A/B分桶路由，nanobot回复卡片渲染桶Footer（开关默认关闭）。
+- **成果**：Day 3管道就绪，ab_split开关可一行配置切换，两桶均有可视化桶标签。
+
+### [#3718](https://github.com/Vispie-AI/VisPie_backend/pull/3718) feat(amy-codex): Day 2 — MCP memory_search + Amy workspace + identity context
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：amy-codex缺少记忆检索能力、Amy工作区文件访问及身份上下文注入，无法复现nanobot的核心对话能力。
+- **修复**：通过官方Python SDK接入MCP memory_search，只读挂载Amy工作区至/amy-workspace，并将SOUL/USER/DAO等身份上下文注入到codex提示词前缀。
+- **成果**：codex桶具备记忆、工作区访问与身份感知能力，Day 2里程碑完成。
+
+### [#3691](https://github.com/Vispie-AI/VisPie_backend/pull/3691) feat(amy-codex): Day 1 — /lark/webhook A/B bucket target
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：amy-codex容器尚不具备接收Lark Webhook事件的能力，无法作为A/B实验的目标端点。
+- **修复**：新增POST /lark/webhook端点，立即ACK后通过BackgroundTask异步处理，含bot自循环过滤、幂等消息ID检测及桶Footer标注。
+- **成果**：amy-codex可独立接收并处理Lark事件，Day 1零流量安全就绪，经代码审查后加固7项问题。
 ### [#3595](https://github.com/Vispie-AI/VisPie_backend/pull/3595) feat(amy-codex): show reasoning effort in shadow panel label
 - **日期**：2026-05-20 | **状态**：✅ 已合并
 - **问题**：操作人员无法从Lark卡片直观看出Amy Codex影子回答使用了哪个推理强度档位。
@@ -531,6 +595,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#3669](https://github.com/Vispie-AI/VisPie_backend/pull/3669) docs(amy-codex): SPEC v2 — E2 use raw open_id, drop hashing
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：SPEC v1要求对open_id进行SHA256哈希存入Langfuse，但在私有部署环境下哈希增加了调试成本而无实际安全收益。
+- **修复**：更新SPEC为v2，E2改为直接存储raw open_id，同步修正D.1字段名（user_id_hash→user_open_id）和会话聚合规则。
+- **成果**：Langfuse用户追踪更便于运维debug，跨系统与nanobot日志的关联不再依赖反向哈希表。
+
+### [#3668](https://github.com/Vispie-AI/VisPie_backend/pull/3668) docs(amy-codex): SPEC for A/B bucketing + evaluation framework
+- **日期**：2026-05-21 | **状态**：✅ 已合并
+- **问题**：amy-codex A/B实验技术方案经多轮对齐后需要一份完整SPEC文档锁定所有设计决策，避免后续实施时重复讨论。
+- **修复**：新增SPEC文档，锁定P1-P4（工具/卡片/流量/对照桶）与E1-E3（评判模型/用户ID/每日judge量）共7项关键决策。
+- **成果**：后续实施PR均可引用本SPEC的模块ID，4层评估管道（自动指标→用户信号→Gemini评判→人工标注）设计完整落地。
 ### [#3596](https://github.com/Vispie-AI/VisPie_backend/pull/3596) ci(amy-nanobot): include amy_codex_shadow.py in deploy path filter
 - **日期**：2026-05-20 | **状态**：✅ 已合并
 - **问题**：CI路径过滤器仅监听`deepseek_shadow.py`，`amy_codex_shadow.py`变更后nanobot镜像不会自动重建。
