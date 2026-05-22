@@ -1,13 +1,36 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-21 | 共 113 个 PR（已合并 105 · 关闭未合并 6 · 待合并 0）
-> 最后更新：2026-05-21
+> 统计周期：2026-04-11 ~ 2026-05-22 | 共 122 个 PR（已合并 114 · 关闭未合并 6 · 待合并 0）
+> 最后更新：2026-05-22
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#3746](https://github.com/Vispie-AI/VisPie_backend/pull/3746) fix(amy-nanobot): retry update_card on transient httpx errors
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：Lark `update_card` 在 TLS 握手超时时直接失败，导致成功的 nanobot 响应被覆盖为空白错误卡片。
+- **修复**：为 `update_card` 添加指数退避重试（最多 3 次），并在顶层异常处理中改用异常类名显示错误信息。
+- **成果**：避免因短暂网络抖动将成功操作（如充值）误报为错误，防止用户重复提交。
+
+### [#3745](https://github.com/Vispie-AI/VisPie_backend/pull/3745) fix(amy-codex): tool guide — feishu-doc skill actually supports --action create
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：身份提示词错误指引 codex 通过 curl 创建飞书文档，而技能脚本已原生支持 `--action create`。
+- **修复**：更新 `identity.py` 工具指引，将 `--action create` 作为正式选项并说明创建→追加内容的完整链路。
+- **成果**：codex 可直接调用飞书文档技能创建文档，消除了幻觉返回"已完成"而不实际执行的风险。
+
+### [#3744](https://github.com/Vispie-AI/VisPie_backend/pull/3744) fix(amy-codex): include skills/common/ so feishu-doc can require feishu-client
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：PR #3743 部署后，feishu-doc 技能在启动时因缺少 `skills/common/feishu-client.js` 而崩溃。
+- **修复**：在 Dockerfile 中补充 `COPY project_amy/shared/skills/common /skills/common` 一行。
+- **成果**：feishu-doc 技能在 amy-codex 容器中可正常加载并执行飞书文档操作。
+
+### [#3742](https://github.com/Vispie-AI/VisPie_backend/pull/3742) fix(gateway): card.action.trigger must skip ab_split routing
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：Lark 按钮点击回调经过 `resolveAbSplit()` 路由，会被分配到无卡片处理器的 amy-codex，导致反馈按钮失效。
+- **修复**：在 `lark-webhook.ts` 中提前检测 `isCardAction`，跳过 ab_split 路由逻辑，将所有回调固定发往 nanobot。
+- **成果**：codex 分桶用户的反馈按钮点击可正确到达 nanobot 的 `handle_card_action`，卡片状态更新正常。
 ### [#3728](https://github.com/Vispie-AI/VisPie_backend/pull/3728) fix(amy-codex): roll codex bucket back to 0% pending feature parity
 - **日期**：2026-05-21 | **状态**：✅ 已合并
 - **问题**：Codex桶在30%实流量下暴露出反馈按钮缺失、Lark文档工具未挂载等功能差距。
@@ -361,6 +384,35 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3779](https://github.com/Vispie-AI/VisPie_backend/pull/3779) feat(amy-codex): pilot switch buttons (codex ⇄ nanobot, runtime opt-in/opt-out)
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：飞行员用户在 codex 与 nanobot 之间切换需要修改 fleet.json 并等待 PR 合并，无法实时操作。
+- **修复**：在 amy-codex 和 nanobot 卡片上为飞行员添加切换按钮，通过容器间 HTTP 转发实现运行时路由切换。
+- **成果**：飞行员可一键切换 AI 框架，下条消息立即生效，大幅降低 A/B 测试调试成本。
+
+### [#3774](https://github.com/Vispie-AI/VisPie_backend/pull/3774) feat(amy-codex): expand pilot — add George Gui + Zane Wang to codex bucket
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：codex 飞行员仅 Zuocan Ying 一人，端到端测试覆盖面不足。
+- **修复**：在 `fleet.json` 的 `sender_overrides` 中新增 George Gui 和 Zane Wang 的 open_id，路由至 amy-codex 容器。
+- **成果**：codex 飞行员扩展至 3 人，ab_split.percent 保持为 0，其余用户不受影响。
+
+### [#3764](https://github.com/Vispie-AI/VisPie_backend/pull/3764) feat(amy-codex): stability tuning — high effort, 300s timeout, collapsible Activity
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：飞行员首次测试"写飞书文档"时，因 180s 超时加 `xhigh` 推理耗尽预算，导致 0 次工具调用即结束。
+- **修复**：将默认推理强度从 `xhigh` 改为 `high`，超时提升至 300s，Activity 区域改为可折叠面板。
+- **成果**：飞书文档等多步任务可在约 60s 内完成，卡片 UX 与 nanobot 保持一致。
+
+### [#3747](https://github.com/Vispie-AI/VisPie_backend/pull/3747) feat(amy-codex): pilot routing — Zuocan Ying → codex bucket via sender_overrides
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：ab_split.percent 设为 0 后，无法在保持其余用户走 nanobot 的同时对 codex 进行端到端测试。
+- **修复**：在 `fleet.json` 的 `sender_overrides` 中添加 Zuocan Ying 的 open_id，使其绕过 ab_split 直接路由到 amy-codex。
+- **成果**：飞行员可独立验证反馈按钮、Doctor 链接、飞书文档技能等所有 codex 功能，不影响生产流量。
+
+### [#3743](https://github.com/Vispie-AI/VisPie_backend/pull/3743) feat(amy-codex): feedback buttons + Doctor link + feishu-doc skill (parity gaps 1-3)
+- **日期**：2026-05-22 | **状态**：✅ 已合并
+- **问题**：30% A/B 测试期间发现 codex 分桶缺少反馈按钮、Activity Doctor 链接和飞书文档技能，与 nanobot 存在明显功能差距。
+- **修复**：移植 `build_feedback_buttons`、`build_trace_debug_footer`，并在 Dockerfile 中集成 feishu-doc Node 技能及对应环境变量。
+- **成果**：codex 分桶与 nanobot 卡片功能达到同等水平，具备重新启动 A/B 测试的前置条件。
 ### [#3725](https://github.com/Vispie-AI/VisPie_backend/pull/3725) feat(amy-codex): Day 6 — 30% A/B cutover + post-verify + RUNBOOK
 - **日期**：2026-05-21 | **状态**：✅ 已合并
 - **问题**：Day 1-5管道全部合并部署后，需正式开启A/B流量并建立观测与回滚机制。
