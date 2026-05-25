@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-22 | 共 122 个 PR（已合并 114 · 关闭未合并 6 · 待合并 0）
-> 最后更新：2026-05-22
+> 统计周期：2026-04-11 ~ 2026-05-25 | 共 123 个 PR（已合并 115 · 关闭未合并 6 · 待合并 0）
+> 最后更新：2026-05-25
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -384,6 +384,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3832](https://github.com/Vispie-AI/VisPie_backend/pull/3832) feat: Langfuse agent eval P0
+- **日期**：2026-05-25 | **状态**：✅ 已合并
+- **问题**：fleet 缺 Langfuse 集成，用户反馈无法转为 trace 评分。
+- **修复**：注入密钥，trace_id 串联反馈按钮，新增 DB 字段。
+- **成果**：11 个机器人接入，反馈自动写分，历史数据可回填。
 ### [#3779](https://github.com/Vispie-AI/VisPie_backend/pull/3779) feat(amy-codex): pilot switch buttons (codex ⇄ nanobot, runtime opt-in/opt-out)
 - **日期**：2026-05-22 | **状态**：✅ 已合并
 - **问题**：飞行员用户在 codex 与 nanobot 之间切换需要修改 fleet.json 并等待 PR 合并，无法实时操作。
