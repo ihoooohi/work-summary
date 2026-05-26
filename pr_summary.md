@@ -1,12 +1,54 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-25 | 共 123 个 PR（已合并 115 · 关闭未合并 6 · 待合并 0）
-> 最后更新：2026-05-25
+> 统计周期：2026-04-11 ~ 2026-05-26 | 共 133 个 PR（已合并 124 · 关闭未合并 7 · 待合并 0）
+> 最后更新：2026-05-26
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#3877](https://github.com/Vispie-AI/VisPie_backend/pull/3877) fix(amy-codex): inject reply parent text into prompt server-side
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：`lark_webhook.py` 只读取 `content.text`，未提取 `parent_id`，引用消息上下文完全丢失，Codex 产生幻觉回复"I don't see the quoted message"。
+- **修复**：在 Python 层服务端获取父消息文本，以 `[reply_to: …]` 块形式预注入提示词，绕过对模型主动工具调用的依赖。
+- **成果**：Amy-Codex 在 Lark 引用回复场景下可正确感知被引用内容，消除了因上下文缺失导致的回复漂移。
+
+### [#3872](https://github.com/Vispie-AI/VisPie_backend/pull/3872) fix(vio): close langfuse-tracer rollout gap on existing tenants
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：#3864/#3868 合并后 langfuse-tracer 对全部 22 个租户均未生效，排查发现三层独立缺陷：注入脚本未注册钩子、并行子 shell 未导出环境变量、rsync 未将钩子目录同步至 JFS。
+- **修复**：独立添加 langfuse-tracer 的幂等注入块、显式 `export LANGFUSE_*` 变量、并在 rsync 后校验目标目录是否存在。
+- **成果**：langfuse-tracer 在 StudyX 和 SheSaid 租户上成功激活，Langfuse 可正常接收 Vio 对话追踪数据。
+
+### [#3868](https://github.com/Vispie-AI/VisPie_backend/pull/3868) fix(vio): replace heredoc with echo block for Langfuse .env upsert
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：#3864 在 YAML run-block 中使用 heredoc，bash 要求终止符须在第 0 列，缩进导致终止符被误读，部署静默成功但容器从未重建。
+- **修复**：将 heredoc 替换为花括号分组的 `echo` 块重定向写文件，消除缩进约束并添加注释防止再次踩坑。
+- **成果**：vio-studyx 和 vio-shesaid 容器在后续部署中正确重建，LANGFUSE_* 环境变量成功注入。
+
+### [#3863](https://github.com/Vispie-AI/VisPie_backend/pull/3863) fix(amy-prompt): remove .env.merged hallucination in fleet AGENTS.md
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：舰队 AGENTS.md 指示 Amy 从不存在的 `.env.merged` 读取 API 密钥，6 天内造成 15 次工具调用失败，占全部 ERROR 级观测的 18.5%。
+- **修复**：删除 AGENTS.md 中 `.env.merged` 相关条目，将密钥来源说明更新为 `docker run -e` 注入和 GitHub Variables。
+- **成果**：消除最高频工具调用错误，每次迭代节省约 40K prompt token 和 7–10s 延迟。
+
+### [#3859](https://github.com/Vispie-AI/VisPie_backend/pull/3859) fix(amy-codex): heartbeat card refresh + anti-realtime-hallucination guard
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：纯推理轮次（无工具调用）因卡片更新仅依赖 exec/tool 标记而冻结不动；同时 Codex 在零工具调用下伪造了实时天气数据"28°C 小雨"。
+- **修复**：引入后台 heartbeat 任务每 3 秒渲染工作卡片，在系统提示中明确列出 Codex 无法获取的实时信息类型并添加气候知识豁免条款。
+- **成果**：用户在纯推理轮次也能看到卡片定时刷新，Amy 在被问及实时数据时能正确声明无法获取。
+
+### [#3858](https://github.com/Vispie-AI/VisPie_backend/pull/3858) fix(amy-codex): heartbeat card refresh + anti-realtime-hallucination guard
+- **日期**：2026-05-26 | **状态**：🚫 已关闭
+- **问题**：#3855 部署后纯推理轮次卡片静止不动，且 Codex 幻觉生成实时天气数据，两个 bug 需同时修复。
+- **修复**：提交了 heartbeat 后台任务和 prompt 加固方案，但因与 #3855 squash-merge 产生冲突，本 PR 被关闭并由 rebased 副本 #3859 替代。
+- **成果**：作为过渡 PR 推动了 heartbeat 机制和反幻觉 prompt 的最终落地（由 #3859 实际合并）。
+
+### [#3855](https://github.com/Vispie-AI/VisPie_backend/pull/3855) fix(amy-codex): stream codex stdout + fix Activity 0-call counter
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：Activity 面板始终显示"0 calls"（正则未匹配 Codex CLI 实际输出格式），且 `proc.communicate()` 阻塞导致复杂任务期间用户只能看到静态思考卡片长达 30–120 秒。
+- **修复**：将 `_run_codex` 改为逐行流式读取 stdout，新增 `^(?:exec|tool)\b` 正则，通过 `on_progress` 回调限速触发 Lark 卡片更新（默认间隔 3 秒）。
+- **成果**：工具调用计数准确，用户在长耗时任务中可实时看到卡片从"思考中"变为"进行中"并刷新工具数量。
 
 ### [#3746](https://github.com/Vispie-AI/VisPie_backend/pull/3746) fix(amy-nanobot): retry update_card on transient httpx errors
 - **日期**：2026-05-22 | **状态**：✅ 已合并
@@ -383,6 +425,24 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#3876](https://github.com/Vispie-AI/VisPie_backend/pull/3876) feat(amy-codex): expose lark-messages skill to fix reply-to drift
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：Amy-Codex 容器工具面仅有文件系统工具，引用回复时无法获取父消息内容，Codex 误用 /workspace 残留文件产生严重上下文漂移，输出了与实际任务毫不相关的 Manus Canvas 分析。
+- **修复**：在 Dockerfile 中 COPY lark-messages 技能并安装依赖，在提示词头部注入可用技能清单，引导 Codex 优先调用 `lark-messages --message_id` 获取引用上下文。
+- **成果**：Amy-Codex 容器具备主动查询 Lark 历史消息的能力，为服务端进一步加固（#3877）提供工具基础。
+
+### [#3875](https://github.com/Vispie-AI/VisPie_backend/pull/3875) feat(amy-codex): resolve Lark open_id to display name in Langfuse traces
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：amy-codex Langfuse 追踪的 `user_id` 字段显示原始 `ou_…` open_id，导致 Langfuse Users/Sessions 面板完全不可读。
+- **修复**：在 `lark_client.py` 中新增带 1 小时 TTL 缓存的异步 `resolve_user_display_name`，调用飞书 Contact API 将 open_id 解析为显示名，失败时兜底返回原始 open_id 确保不阻断追踪。
+- **成果**：Langfuse 用户列表显示可读的姓名，open_id 仍保存在 metadata 中供精确查询，与 nanobot 路径行为对齐。
+
+### [#3864](https://github.com/Vispie-AI/VisPie_backend/pull/3864) feat(vio): langfuse-tracer hook for StudyX + SheSaid observability
+- **日期**：2026-05-26 | **状态**：✅ 已合并
+- **问题**：Vio 租户（StudyX、SheSaid）缺乏对话级可观测性，无法在 Langfuse 中追踪用户消息和工具调用链路，影响问题排查和效果分析。
+- **修复**：新增 OpenClaw `langfuse-tracer` 钩子，监听 agent:bootstrap/notification/tool 事件，每条用户消息生成一条 Langfuse trace（工具调用为子 span），通过白名单仅对 studyx 和 shesaid 生效，fire-and-forget 设计不影响代理性能。
+- **成果**：StudyX 和 SheSaid 对话数据可在 Langfuse 实时可视化，支持按 agent_slug/platform/chat_id 过滤分析。
 
 ### [#3832](https://github.com/Vispie-AI/VisPie_backend/pull/3832) feat: Langfuse agent eval P0
 - **日期**：2026-05-25 | **状态**：✅ 已合并
