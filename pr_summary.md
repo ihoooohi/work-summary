@@ -1,13 +1,36 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-26 | 共 133 个 PR（已合并 124 · 关闭未合并 7 · 待合并 0）
-> 最后更新：2026-05-26
+> 统计周期：2026-04-11 ~ 2026-05-27 | 共 138 个 PR（已合并 128 · 关闭未合并 7 · 待合并 1）
+> 最后更新：2026-05-27
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#3908](https://github.com/Vispie-AI/VisPie_backend/pull/3908) fix(vio): register correct OpenClaw event names for langfuse-tracer
+- **日期**：2026-05-27 | **状态**：✅ 已合并
+- **问题**：Hook 注册了错误的事件名 `notification:receive/send`，OpenClaw 从未将消息事件分发给该 Hook，追踪始终为 0。
+- **修复**：将 HOOK.md 事件名改为 OpenClaw 实际派发的 `message:received/sent`，并补充 sessionKey 回退逻辑。
+- **成果**：彻底关闭从 #3864 延续的 Bug 链，studyx/shesaid 的 Langfuse 追踪正式接通。
+
+### [#3906](https://github.com/Vispie-AI/VisPie_backend/pull/3906) fix(amy-codex): parse codex --json event stream for accurate tool count
+- **日期**：2026-05-27 | **状态**：✅ 已合并
+- **问题**：Activity 卡片始终显示"0 calls"，Langfuse 核查 66/66 条记录 tool_count 均为 0，确认为展示层 Bug。
+- **修复**：改用 `codex exec --json` 解析 JSONL 事件流，以 `item.completed` 类型统计工具调用数，保留旧格式回退。
+- **成果**：工具调用次数准确上报，Activity 卡片与 Langfuse metadata.tool_count 均显示正确数值。
+
+### [#3905](https://github.com/Vispie-AI/VisPie_backend/pull/3905) fix(vio): correct OpenClaw event field mapping in langfuse-tracer
+- **日期**：2026-05-27 | **状态**：✅ 已合并
+- **问题**：sessionKey 取值路径错误导致每条消息都提前返回，Hook 加载正常但 Langfuse 追踪仍为 0。
+- **修复**：将 sessionKey 读取改为 `event.sessionKey`，并修正 received/sent 两类事件的上下文字段名。
+- **成果**：字段映射修正后，studyx/shesaid 的消息事件可正常生成 Langfuse Trace。
+
+### [#3901](https://github.com/Vispie-AI/VisPie_backend/pull/3901) fix(vio): use cp not rsync in sync_hooks (JuiceFS EPERM)
+- **日期**：2026-05-27 | **状态**：✅ 已合并
+- **问题**：`sync_hooks` 使用 `rsync -a` 时，JuiceFS 以 EPERM 拒绝 chown/chmod 调用，新 Hook 实际从未写入租户工作区。
+- **修复**：将 rsync 替换为 `cp -rf`，仅复制内容不保留属性，并加入写入验证与逐 Hook 错误上报。
+- **成果**：langfuse-tracer 成功同步至所有租户 workspace/hooks，解决 #3864/#3872 以来的部署失败链。
 ### [#3877](https://github.com/Vispie-AI/VisPie_backend/pull/3877) fix(amy-codex): inject reply parent text into prompt server-side
 - **日期**：2026-05-26 | **状态**：✅ 已合并
 - **问题**：`lark_webhook.py` 只读取 `content.text`，未提取 `parent_id`，引用消息上下文完全丢失，Codex 产生幻觉回复"I don't see the quoted message"。
@@ -426,6 +449,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3887](https://github.com/Vispie-AI/VisPie_backend/pull/3887) Pet-nutrition video agent (hackathon demo)
+- **日期**：2026-05-27 | **状态**：🔀 待合并
+- **问题**：需要一个能将品牌 URL 转换为 30–60s 竖版付费社媒视频的端到端演示 Pipeline。
+- **修复**：实现五阶段流水线（策略师→导演→生成→剪辑→评审），前端通过 SSE 实时驱动各面板，QC 由 Gemini 多模态打分。
+- **成果**：Hackathon 演示可运行，Demo Stub 模式下无需 API Key 即可在约 30 秒内完成全流程。
 ### [#3876](https://github.com/Vispie-AI/VisPie_backend/pull/3876) feat(amy-codex): expose lark-messages skill to fix reply-to drift
 - **日期**：2026-05-26 | **状态**：✅ 已合并
 - **问题**：Amy-Codex 容器工具面仅有文件系统工具，引用回复时无法获取父消息内容，Codex 误用 /workspace 残留文件产生严重上下文漂移，输出了与实际任务毫不相关的 Manus Canvas 分析。
