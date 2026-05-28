@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-27 | 共 138 个 PR（已合并 128 · 关闭未合并 7 · 待合并 1）
-> 最后更新：2026-05-27
+> 统计周期：2026-04-11 ~ 2026-05-28 | 共 141 个 PR（已合并 131 · 关闭未合并 7 · 待合并 1）
+> 最后更新：2026-05-28
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#3925](https://github.com/Vispie-AI/VisPie_backend/pull/3925) fix(amy-codex): re-derive prior_messages from Lark chat history
+- **日期**：2026-05-28 | **状态**：✅ 已合并
+- **问题**：amy-codex 每次响应均为冷启动，`prior_messages` 被硬编码为空列表，导致对话无历史上下文。
+- **修复**：从 Lark `/im/v1/messages` 接口拉取近期消息，构建时序化的 `prior_messages` 注入 Codex 提示。
+- **成果**：Amy 可跨轮次正确引用历史对话，"你怎么知道的？" 等追问问题得以准确回答。
 ### [#3908](https://github.com/Vispie-AI/VisPie_backend/pull/3908) fix(vio): register correct OpenClaw event names for langfuse-tracer
 - **日期**：2026-05-27 | **状态**：✅ 已合并
 - **问题**：Hook 注册了错误的事件名 `notification:receive/send`，OpenClaw 从未将消息事件分发给该 Hook，追踪始终为 0。
@@ -449,6 +454,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#3940](https://github.com/Vispie-AI/VisPie_backend/pull/3940) feat(amy-codex): auto-reset codex session after 30min of chat idle
+- **日期**：2026-05-28 | **状态**：✅ 已合并
+- **问题**：PR #3931 引入会话续连后，空闲数小时的对话仍会恢复旧线程，导致模型携带过期上下文污染。
+- **修复**：为 `chat_id → thread_id` 映射增加 30 分钟空闲过期机制，超时后自动冷启动新 Codex 会话。
+- **成果**：用户重返时获得全新会话，消除陈旧上下文污染，同时正常连续多轮对话体验不受影响。
 ### [#3887](https://github.com/Vispie-AI/VisPie_backend/pull/3887) Pet-nutrition video agent (hackathon demo)
 - **日期**：2026-05-27 | **状态**：🔀 待合并
 - **问题**：需要一个能将品牌 URL 转换为 30–60s 竖版付费社媒视频的端到端演示 Pipeline。
@@ -740,6 +750,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#3931](https://github.com/Vispie-AI/VisPie_backend/pull/3931) refactor(amy-codex): use Codex native session resume, drop Lark history fetch
+- **日期**：2026-05-28 | **状态**：✅ 已合并
+- **问题**：PR #3925 通过重新拉取 Lark 消息重建上下文，但 Codex CLI 已原生支持会话续连，属于重复造轮子。
+- **修复**：改用 `codex exec resume <session_id>` 续接原生 Codex 会话，删除 Lark 历史拉取相关代码 127 行。
+- **成果**：上下文保真度更高（含中间工具调用记录），代码量显著减少，整体架构更简洁。
 ### [#3669](https://github.com/Vispie-AI/VisPie_backend/pull/3669) docs(amy-codex): SPEC v2 — E2 use raw open_id, drop hashing
 - **日期**：2026-05-21 | **状态**：✅ 已合并
 - **问题**：SPEC v1要求对open_id进行SHA256哈希存入Langfuse，但在私有部署环境下哈希增加了调试成本而无实际安全收益。
