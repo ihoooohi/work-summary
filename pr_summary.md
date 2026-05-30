@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-28 | 共 141 个 PR（已合并 131 · 关闭未合并 7 · 待合并 1）
-> 最后更新：2026-05-28
+> 统计周期：2026-04-11 ~ 2026-05-30 | 共 142 个 PR（已合并 132 · 关闭未合并 7 · 待合并 1）
+> 最后更新：2026-05-30
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4030](https://github.com/Vispie-AI/VisPie_backend/pull/4030) fix(amy-lark): auto-refresh tenant_access_token on 99991663 for card send/update
+- **日期**：2026-05-30 | **状态**：✅ 已合并
+- **问题**：Lark 长任务超过 token 有效期后，send_card/update_card 未自动刷新令牌，连续触发 47 次 99991663 错误，卡片卡死在执行中状态。
+- **修复**：在 update_card 和 send_card 中各加外层 range(2) token 刷新重试，与内层 range(3) 网络重试正交，新增 test_card_token_retry.py 覆盖 9 个场景。
+- **成果**：彻底消除第三次同类卡片卡死复现，9 项新测试全部通过，53 项回归测试无回归。
 
 ### [#3925](https://github.com/Vispie-AI/VisPie_backend/pull/3925) fix(amy-codex): re-derive prior_messages from Lark chat history
 - **日期**：2026-05-28 | **状态**：✅ 已合并
