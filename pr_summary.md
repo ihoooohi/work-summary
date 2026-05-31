@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-30 | 共 142 个 PR（已合并 132 · 关闭未合并 7 · 待合并 1）
-> 最后更新：2026-05-30
+> 统计周期：2026-04-11 ~ 2026-05-31 | 共 146 个 PR（已合并 135 · 关闭未合并 8 · 待合并 1）
+> 最后更新：2026-05-31
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#4051](https://github.com/Vispie-AI/VisPie_backend/pull/4051) fix(shadow-judge): switch fair-judge to Gemini (DeepSeek key out of balance)
+- **日期**：2026-05-31 | **状态**：✅ 已合并
+- **问题**：DeepSeek 余额耗尽，fair-judge 全量返回 `error`，shadow arena 裁判层瘫痪。
+- **修复**：切换为 Gemini，模型名改读 `GEMINI_JUDGE_MODEL` env，workflow 中 `JUDGE_BACKEND` 改为 repo variable。
+- **成果**：实测 Gemini 正常返回 verdict，裁判层恢复，后端和模型均可无代码变更切换。
+
+### [#4047](https://github.com/Vispie-AI/VisPie_backend/pull/4047) fix(monitoring): vio-liveness skips ephemeral *-staging tenants
+- **日期**：2026-05-31 | **状态**：🚫 已关闭
+- **问题**：CI 短暂创建的 staging 容器被采集入库，销毁后约 1 小时触发虚假 `liveness_silent` 告警。
+- **修复**：在采集层以 `-staging($|-)` 正则过滤 staging 租户，使其不写入 DB 和自动发现。
+- **成果**：staging 容器完全排除于监控链路，虚假告警消除，不误伤含 staging 子串的真实租户名。
 ### [#4030](https://github.com/Vispie-AI/VisPie_backend/pull/4030) fix(amy-lark): auto-refresh tenant_access_token on 99991663 for card send/update
 - **日期**：2026-05-30 | **状态**：✅ 已合并
 - **问题**：Lark 长任务超过 token 有效期后，send_card/update_card 未自动刷新令牌，连续触发 47 次 99991663 错误，卡片卡死在执行中状态。
@@ -460,6 +471,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#4050](https://github.com/Vispie-AI/VisPie_backend/pull/4050) feat(amy): cut Multica skill friction — one-shot recipe + anti-detour rules
+- **日期**：2026-05-31 | **状态**：✅ 已合并
+- **问题**：Amy 创建单个 Multica issue 需 15 次工具调用，技能文档引导不足导致反复绕路。
+- **修复**：将技能文档重写为行动优先，提供直接可用的 curl 示例，并明确列出禁止绕路规则。
+- **成果**：显式覆盖常见误操作路径，LLM 绕路概率降低，单次创建工单所需调用数大幅减少。
+
+### [#4045](https://github.com/Vispie-AI/VisPie_backend/pull/4045) feat(amy): give Amy a Multica issue-creation skill + token
+- **日期**：2026-05-31 | **状态**：✅ 已合并
+- **问题**：Amy 缺少 Multica API 令牌和技能文档，无法自主在 vizzy 工作区创建任务工单。
+- **修复**：注入 `MULTICA_API_TOKEN` 至部署流程，并新增 multica 技能描述 API 合约与字段枚举。
+- **成果**：Amy 可用现有 shell/web_fetch 操作 Multica，技能通过环境变量门控，令牌缺失时自动隐藏。
 ### [#3940](https://github.com/Vispie-AI/VisPie_backend/pull/3940) feat(amy-codex): auto-reset codex session after 30min of chat idle
 - **日期**：2026-05-28 | **状态**：✅ 已合并
 - **问题**：PR #3931 引入会话续连后，空闲数小时的对话仍会恢复旧线程，导致模型携带过期上下文污染。
