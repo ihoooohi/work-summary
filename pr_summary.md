@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-05-31 | 共 146 个 PR（已合并 135 · 关闭未合并 8 · 待合并 1）
-> 最后更新：2026-05-31
+> 统计周期：2026-04-11 ~ 2026-06-02 | 共 149 个 PR（已合并 137 · 关闭未合并 8 · 待合并 2）
+> 最后更新：2026-06-02
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4135](https://github.com/Vispie-AI/VisPie_backend/pull/4135) fix(amy): expose scraper creds to exec env + fix Langfuse trace observability
+- **日期**：2026-06-02 | **状态**：✅ 已合并
+- **问题**：ExecTool 白名单缺少爬虫 API Key，#4115 的容器注入未完全生效；Langfuse trace 输入取最旧消息且工具 span 缺失 args/result。
+- **修复**：将三个爬虫 Key 加入 exec 环境白名单；修正 trace.input 取最新用户消息；工具事件附加 args/result 供追踪钩子使用。
+- **成果**：exec 正确传递爬虫凭证，Langfuse trace 输入与工具调用信息准确，有机视频计划排障效率显著提升。
+
+### [#4115](https://github.com/Vispie-AI/VisPie_backend/pull/4115) fix(amy-nanobot): inject social-scraper API keys (RAPIDAPI/TIKHUB/YOUTUBE) into .env.nanobot
+- **日期**：2026-06-02 | **状态**：✅ 已合并
+- **问题**：部署脚本 heredoc 未将三个社交爬虫 API Key 写入 .env.nanobot，导致 social-scraper 技能无凭证，有机视频计划退化为通用网页搜索。
+- **修复**：在 .env.nanobot heredoc 中补充 RAPIDAPI_KEY、TIKHUB_API_KEY、YOUTUBE_API_KEY，与 LANGFUSE_* 同模式注入，无新建密钥。
+- **成果**：重新部署后 amy-nanobot 可调用 TikTok/YouTube 爬虫，有机视频排名分析恢复正常。
 
 ### [#4051](https://github.com/Vispie-AI/VisPie_backend/pull/4051) fix(shadow-judge): switch fair-judge to Gemini (DeepSeek key out of balance)
 - **日期**：2026-05-31 | **状态**：✅ 已合并
@@ -777,6 +789,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#4134](https://github.com/Vispie-AI/VisPie_backend/pull/4134) docs(amy-framework-eval): framework A/B eval SPEC v0.3 + smoke runner
+- **日期**：2026-06-02 | **状态**：🔀 待合并
+- **问题**：缺少对 Amy 框架（codex CLI vs nanobot）A/B 评测方法论的系统文档，评测管道搭建缺乏依据。
+- **修复**：沉淀 SPEC v0.3 方法论文档及 smoke_runner.py 参考脚本，明确离线沙盒台与在线 shadow 两条路径及三层判分逻辑。
+- **成果**：评测方法论落地 git，为 20 任务数据集正式 runner 提供规范，无生产代码变更。
 
 ### [#3931](https://github.com/Vispie-AI/VisPie_backend/pull/3931) refactor(amy-codex): use Codex native session resume, drop Lark history fetch
 - **日期**：2026-05-28 | **状态**：✅ 已合并
