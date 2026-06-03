@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-02 | 共 149 个 PR（已合并 137 · 关闭未合并 8 · 待合并 2）
-> 最后更新：2026-06-02
+> 统计周期：2026-04-11 ~ 2026-06-03 | 共 154 个 PR（已合并 142 · 关闭未合并 8 · 待合并 2）
+> 最后更新：2026-06-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#4188](https://github.com/Vispie-AI/VisPie_backend/pull/4188) fix(nanobot): deliver message tool text content — it was silently dropped
+- **日期**：2026-06-03 | **状态**：✅ 已合并
+- **问题**：nanobot _drain_outbound只遍历media附件，msg.content文本从未发送；loop.py的防重复发送机制也将最终文本丢弃，Lark文档链接从未到达用户。
+- **修复**：在lark/client.py新增send_text_message，nanobot_server.py的_drain_outbound先发content文本再发媒体附件。
+- **成果**：修复影响全部13个fleet机器人，message tool文本内容从此正常送达用户，无双发问题。
+
+### [#4187](https://github.com/Vispie-AI/VisPie_backend/pull/4187) fix(creative-agent): deliver Lark doc link only + accept en/em-dash timestamps
+- **日期**：2026-06-03 | **状态**：✅ 已合并
+- **问题**：用户反馈创作方案应只发Lark文档链接而非markdown附件；两次实测中em-dash时间戳触发门禁误报浪费一轮检查。
+- **修复**：SKILL.md及wrapper改为只发送Lark文档链接，filming_timestamps正则接受连字符及全角破折号变体。
+- **成果**：en-dash格式好样本通过测试，回归全部通过，用户交付体验更简洁直接。
+
+### [#4186](https://github.com/Vispie-AI/VisPie_backend/pull/4186) fix(creative-agent): parameterize gate format count + --help + doc URL delivery
+- **日期**：2026-06-03 | **状态**：✅ 已合并
+- **问题**：发布门禁对format数量硬编码≥6，用户要求5个format时Amy无法通过门禁并违反铁规则绕过校验。
+- **修复**：self-check.js添加--formats N参数，publish-gameplan.sh增加--help及正整数校验，SKILL.md明确合法退出路径防止绕过行为。
+- **成果**：5格式文档使用--formats 5可通过，非法参数正确退出，首次实测完整pipeline运行成功。
 ### [#4135](https://github.com/Vispie-AI/VisPie_backend/pull/4135) fix(amy): expose scraper creds to exec env + fix Langfuse trace observability
 - **日期**：2026-06-02 | **状态**：✅ 已合并
 - **问题**：ExecTool 白名单缺少爬虫 API Key，#4115 的容器注入未完全生效；Langfuse trace 输入取最旧消息且工具 span 缺失 args/result。
@@ -483,6 +500,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#4189](https://github.com/Vispie-AI/VisPie_backend/pull/4189) feat(creative-agent): Part 2 paid competitor-ad intelligence — backend endpoint repair + paid pipeline + gate mode
+- **日期**：2026-06-03 | **状态**：✅ 已合并
+- **问题**：Amy付费创作方案只读HTML广告文案未逐帧分析视频；后端API路径和参数与Provider不符导致404或参数被静默忽略。
+- **修复**：修复广告客户端路径和参数命名，新增pull-competitor-ads.py付费广告拉取脚本，self-check.js支持--mode paid，SKILL.md新增有机/付费意图分叉逻辑。
+- **成果**：付费模式测试14/14通过，有机模式回归不变，每个Format现包含广告库链接和Why top证明及帧分析。
+
+### [#4185](https://github.com/Vispie-AI/VisPie_backend/pull/4185) feat(creative-agent): pipeline-driven gameplan grounding — entry pipeline + publish gate
+- **日期**：2026-06-03 | **状态**：✅ 已合并
+- **问题**：Amy生成的创作方案使用通用知识而非实际视频分析，两个生产日志证明doc-only方式双向失效。
+- **修复**：新增pull-viral-videos.py入口pipeline和publish-gameplan.sh发布门禁脚本，改写SKILL.md为157行操作卡，强制正确路径最短、错误路径硬退出。
+- **成果**：self-check测试13/13通过，发布门禁拦截不达标内容，实测从67s/2工具提升至331s/30工具的完整分析。
 ### [#4050](https://github.com/Vispie-AI/VisPie_backend/pull/4050) feat(amy): cut Multica skill friction — one-shot recipe + anti-detour rules
 - **日期**：2026-05-31 | **状态**：✅ 已合并
 - **问题**：Amy 创建单个 Multica issue 需 15 次工具调用，技能文档引导不足导致反复绕路。
