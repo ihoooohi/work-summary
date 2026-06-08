@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-03 | 共 154 个 PR（已合并 142 · 关闭未合并 8 · 待合并 2）
-> 最后更新：2026-06-03
+> 统计周期：2026-04-11 ~ 2026-06-08 | 共 155 个 PR（已合并 143 · 关闭未合并 8 · 待合并 2）
+> 最后更新：2026-06-08
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -500,6 +500,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#4275](https://github.com/Vispie-AI/VisPie_backend/pull/4275) feat: user_dissatisfaction LLM-as-judge for Amy fleet
+- **日期**：2026-06-07 | **状态**：✅ 已合并
+- **问题**：Amy 对话无法自动识别用户不满信号。
+- **修复**：Langfuse 新增 LLM-as-judge 评估器，对 trace 打分 0–1。
+- **成果**：回测 30 条全部通过，精确率 100%，阈值 0.5。
 ### [#4189](https://github.com/Vispie-AI/VisPie_backend/pull/4189) feat(creative-agent): Part 2 paid competitor-ad intelligence — backend endpoint repair + paid pipeline + gate mode
 - **日期**：2026-06-03 | **状态**：✅ 已合并
 - **问题**：Amy付费创作方案只读HTML广告文案未逐帧分析视频；后端API路径和参数与Provider不符导致404或参数被静默忽略。
