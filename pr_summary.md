@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-08 | 共 155 个 PR（已合并 143 · 关闭未合并 8 · 待合并 2）
-> 最后更新：2026-06-08
+> 统计周期：2026-04-11 ~ 2026-06-09 | 共 156 个 PR（已合并 143 · 关闭未合并 8 · 待合并 3）
+> 最后更新：2026-06-09
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -823,6 +823,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#4376](https://github.com/Vispie-AI/VisPie_backend/pull/4376) docs(amy-framework-eval): industry practice review x project audit (mid-term)
+- **日期**：2026-06-09 | **状态**：🔀 待合并
+- **问题**：Amy 框架评估规范（SPEC v0.5）缺乏与业界主流实践的系统性对比验证。
+- **修复**：调研 8 个行业一手资料，逐条审计 SPEC v0.5 与 offline_runner 的设计与执行。
+- **成果**：核心设计与 2026 年业界实践一致，明确标出评委标定集、负向任务等待补充的优先差距项。
 ### [#4134](https://github.com/Vispie-AI/VisPie_backend/pull/4134) docs(amy-framework-eval): framework A/B eval SPEC v0.3 + smoke runner
 - **日期**：2026-06-02 | **状态**：🔀 待合并
 - **问题**：缺少对 Amy 框架（codex CLI vs nanobot）A/B 评测方法论的系统文档，评测管道搭建缺乏依据。
