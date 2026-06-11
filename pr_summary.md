@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-09 | 共 156 个 PR（已合并 143 · 关闭未合并 8 · 待合并 3）
-> 最后更新：2026-06-09
+> 统计周期：2026-04-11 ~ 2026-06-11 | 共 158 个 PR（已合并 145 · 关闭未合并 8 · 待合并 3）
+> 最后更新：2026-06-11
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -500,6 +500,12 @@
 
 ## 二、新功能开发（feat:）
 
+### [#4428](https://github.com/Vispie-AI/VisPie_backend/pull/4428) feat(eva-nanobot): wire eva into self-hosted Langfuse
+- **日期**：2026-06-11 | **状态**：✅ 已合并
+- **问题**：eva-nanobot 未接入 Langfuse，导致 ClickHouse 中无任何 eva-lark-message 追踪记录，监控存在盲区。
+- **修复**：在 eva 部署工作流中注入3个 Langfuse 环境变量，复用现有 AMY_LANGFUSE_* 仓库密钥，连接同一自托管 Langfuse 项目。
+- **成果**：eva 容器启动后自动开启 Langfuse 客户端，后续 Lark 消息均以 eva-lark-message 为名称记录追踪，与 amy-nanobot 实现清晰分离。
+
 ### [#4275](https://github.com/Vispie-AI/VisPie_backend/pull/4275) feat: user_dissatisfaction LLM-as-judge for Amy fleet
 - **日期**：2026-06-07 | **状态**：✅ 已合并
 - **问题**：Amy 对话无法自动识别用户不满信号。
@@ -822,6 +828,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#4425](https://github.com/Vispie-AI/VisPie_backend/pull/4425) docs(amy-framework-eval): audit table sync — negative tasks now aligned
+- **日期**：2026-06-11 | **状态**：✅ 已合并
+- **问题**：第3节审计表中，负样本任务（3任务×3轮）已于06-10上线，但表格仍显示为"未对齐"状态。
+- **修复**：将负样本任务迁移至"已对齐"分区（14/5/2），同步更新标题摘要及数据集规模引用。
+- **成果**：框架评估文档与实际代码实现保持一致，审计记录准确完整。
 
 ### [#4376](https://github.com/Vispie-AI/VisPie_backend/pull/4376) docs(amy-framework-eval): industry practice review x project audit (mid-term)
 - **日期**：2026-06-09 | **状态**：🔀 待合并
