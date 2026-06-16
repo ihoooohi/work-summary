@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-11 | 共 158 个 PR（已合并 145 · 关闭未合并 8 · 待合并 3）
-> 最后更新：2026-06-11
+> 统计周期：2026-04-11 ~ 2026-06-16 | 共 160 个 PR（已合并 145 · 关闭未合并 8 · 待合并 5）
+> 最后更新：2026-06-16
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4587](https://github.com/Vispie-AI/VisPie_backend/pull/4587) fix(monitoring): stop liveness_silent paging for retired amy-prod shadow
+- **日期**：2026-06-16 | **状态**：🔀 待合并
+- **问题**：amy-prod 影子容器（OpenClaw shadow，端口 18789）已被有意下线，R4 liveness_silent 规则仍每 30 分钟触发 Critical 告警。
+- **修复**：将 `amy` 从 `CRITICAL_SILENT_AGENTS` 列表移除，同步更新合成健康告警测试，新增 `test_amy_shadow_silent_does_not_page`。
+- **成果**：amy-prod 影子栈停止页面告警，vio-gateway 及用户侧 amy-nanobot 监控均不受影响。
 
 ### [#4188](https://github.com/Vispie-AI/VisPie_backend/pull/4188) fix(nanobot): deliver message tool text content — it was silently dropped
 - **日期**：2026-06-03 | **状态**：✅ 已合并
@@ -828,6 +834,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#4580](https://github.com/Vispie-AI/VisPie_backend/pull/4580) test: eva merge capability check (20260616-130018)
+- **日期**：2026-06-16 | **状态**：🔀 待合并
+- **问题**：EvaVizzylabs GitHub App 重建（app_id 4065336）后需验证 eva 合并能力是否正常恢复。
+- **修复**：创建专用测试 PR，以新安装 ID（140586344）验证合并权限是否生效。
+- **成果**：合并能力测试 PR 已就绪，验证通过后可安全合并或关闭，无业务代码变更。
 
 ### [#4425](https://github.com/Vispie-AI/VisPie_backend/pull/4425) docs(amy-framework-eval): audit table sync — negative tasks now aligned
 - **日期**：2026-06-11 | **状态**：✅ 已合并
