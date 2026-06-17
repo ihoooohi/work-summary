@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-16 | 共 160 个 PR（已合并 145 · 关闭未合并 8 · 待合并 5）
-> 最后更新：2026-06-16
+> 统计周期：2026-04-11 ~ 2026-06-17 | 共 161 个 PR（已合并 145 · 关闭未合并 8 · 待合并 6）
+> 最后更新：2026-06-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4610](https://github.com/Vispie-AI/VisPie_backend/pull/4610) fix(deploy): point amy-nanobot at rebuilt AmyVizzylabs GitHub App
+- **日期**：2026-06-17 | **状态**：🔀 待合并
+- **问题**：旧版 AmyVizzylabs GitHub App（App ID `2793033`）被删除，amy-nanobot 失去推送和开 PR 能力。
+- **修复**：更新部署工作流，将 App ID、Installation ID 及私钥文件名替换为新建 GitHub App 的配置。
+- **成果**：下次部署不再回退到已删除的旧 App，amy-nanobot 推送与合并权限恢复正常。
 
 ### [#4587](https://github.com/Vispie-AI/VisPie_backend/pull/4587) fix(monitoring): stop liveness_silent paging for retired amy-prod shadow
 - **日期**：2026-06-16 | **状态**：🔀 待合并
