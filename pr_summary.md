@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-17 | 共 161 个 PR（已合并 145 · 关闭未合并 8 · 待合并 6）
-> 最后更新：2026-06-17
+> 统计周期：2026-04-11 ~ 2026-06-18 | 共 163 个 PR（已合并 146 · 关闭未合并 8 · 待合并 7）
+> 最后更新：2026-06-18
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4696](https://github.com/Vispie-AI/VisPie_backend/pull/4696) fix(feishu-doc): wire `fetch <url>` command + use live LARK_* credentials
+- **日期**：2026-06-18 | **状态**：✅ 已合并
+- **问题**：feishu-doc 技能的 `fetch <url>` CLI 入口从未接入，且 `auth.js` 使用已失效的 `FEISHU_APP_*` 凭证，导致 Amy 无法读取任何飞书表格。
+- **修复**：在 `index.js` 新增 `fetchByUrl()` 及 `fetch <url>` 分支并分发至各读取器，`auth.js` 改为优先读取容器内有效的 `LARK_APP_*` 凭证。
+- **成果**：Amy 可正常读取飞书 Wiki/Sheet，经真实容器验证认证通过并返回 Markdown 表格。
 
 ### [#4610](https://github.com/Vispie-AI/VisPie_backend/pull/4610) fix(deploy): point amy-nanobot at rebuilt AmyVizzylabs GitHub App
 - **日期**：2026-06-17 | **状态**：🔀 待合并
@@ -840,6 +846,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#4699](https://github.com/Vispie-AI/VisPie_backend/pull/4699) ci(amy): sync shared/skills via SSM instead of SSH-broken deploy
+- **日期**：2026-06-18 | **状态**：🔀 待合并
+- **问题**：Amy EC2 安全组封锁 SSH:22，`vizbot-deploy-amy.yml` 的技能同步步骤自 2026-06-17 起全部超时失败，已合并的技能变更悄然未到达机器人。
+- **修复**：新增 `vizbot-sync-amy-skills.yml`，改用 SSM + S3 中转方案打包并 rsync 同步 `shared/skills`，支持 `dry_run` 模式预览变更。
+- **成果**：技能同步不再依赖 SSH，可在任意时间通过 workflow_dispatch 安全执行，已有 rsync/SSM 方案可作参照。
 
 ### [#4580](https://github.com/Vispie-AI/VisPie_backend/pull/4580) test: eva merge capability check (20260616-130018)
 - **日期**：2026-06-16 | **状态**：🔀 待合并
