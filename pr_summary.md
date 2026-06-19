@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-18 | 共 163 个 PR（已合并 146 · 关闭未合并 8 · 待合并 7）
-> 最后更新：2026-06-18
+> 统计周期：2026-04-11 ~ 2026-06-19 | 共 164 个 PR（已合并 146 · 关闭未合并 8 · 待合并 8）
+> 最后更新：2026-06-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4713](https://github.com/Vispie-AI/VisPie_backend/pull/4713) fix(nanobot): forward LARK_APP_ID/LARK_APP_SECRET to exec env
+- **日期**：2026-06-19 | **状态**：🔀 待合并
+- **问题**：exec env 白名单缺 Lark 凭证，密钥轮换后飞书技能报认证失败。
+- **修复**：`shell.py` `_build_env` 补加 `LARK_APP_ID/SECRET`。
+- **成果**：子进程直读运行时凭证，不再依赖 config.json 过期密钥。
 
 ### [#4696](https://github.com/Vispie-AI/VisPie_backend/pull/4696) fix(feishu-doc): wire `fetch <url>` command + use live LARK_* credentials
 - **日期**：2026-06-18 | **状态**：✅ 已合并
