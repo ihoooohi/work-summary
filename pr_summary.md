@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-19 | 共 164 个 PR（已合并 146 · 关闭未合并 8 · 待合并 8）
-> 最后更新：2026-06-19
+> 统计周期：2026-04-11 ~ 2026-06-20 | 共 166 个 PR（已合并 148 · 关闭未合并 8 · 待合并 8）
+> 最后更新：2026-06-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#4746](https://github.com/Vispie-AI/VisPie_backend/pull/4746) fix(monitoring): drop decommissioned amy from liveness safety-net
+- **日期**：2026-06-20 | **状态**：✅ 已合并
+- **问题**：Lark运营频道因`amy`存活探针cron被注释导致`liveness_silent`告警每30分钟触发一次，持续约3.8天。
+- **修复**：将`amy`从`CRITICAL_AGENTS_ALWAYS`中移除，保留在`CRITICAL_SILENT_AGENTS`，并新增回归测试。
+- **成果**：告警在下次Prefect运行后停止，52个测试全部通过，`vio-gateway`成为唯一强制监控项。
 ### [#4713](https://github.com/Vispie-AI/VisPie_backend/pull/4713) fix(nanobot): forward LARK_APP_ID/LARK_APP_SECRET to exec env
 - **日期**：2026-06-19 | **状态**：🔀 待合并
 - **问题**：exec env 白名单缺 Lark 凭证，密钥轮换后飞书技能报认证失败。
@@ -853,6 +858,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#4747](https://github.com/Vispie-AI/VisPie_backend/pull/4747) ci(amy): use OIDC role for skills-sync AWS auth
+- **日期**：2026-06-20 | **状态**：✅ 已合并
+- **问题**：`vizbot-sync-amy-skills.yml`的AWS认证步骤误用已弃用的静态密钥，导致CI运行时报"security token invalid"错误。
+- **修复**：将AWS认证改为OIDC角色假设（`role-to-assume`），并添加`id-token: write`权限，与`vizbot-sync-amy-host-scripts.yml`保持一致。
+- **成果**：skills-sync工作流AWS认证恢复正常，CI可成功推送技能文件至S3。
 ### [#4699](https://github.com/Vispie-AI/VisPie_backend/pull/4699) ci(amy): sync shared/skills via SSM instead of SSH-broken deploy
 - **日期**：2026-06-18 | **状态**：🔀 待合并
 - **问题**：Amy EC2 安全组封锁 SSH:22，`vizbot-deploy-amy.yml` 的技能同步步骤自 2026-06-17 起全部超时失败，已合并的技能变更悄然未到达机器人。
