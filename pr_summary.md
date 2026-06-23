@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-20 | 共 166 个 PR（已合并 148 · 关闭未合并 8 · 待合并 8）
-> 最后更新：2026-06-20
+> 统计周期：2026-04-11 ~ 2026-06-23 | 共 167 个 PR（已合并 149 · 关闭未合并 8 · 待合并 8）
+> 最后更新：2026-06-23
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4805](https://github.com/Vispie-AI/VisPie_backend/pull/4805) fix(nanobot): pre-post thinking card before Hatchet dispatch
+- **日期**：2026-06-23 | **状态**：✅ 已合并
+- **问题**：Hatchet云调度延迟期间（延迟最高265秒），"🧠 Thinking"思考卡片需等待数十秒才出现，严重影响用户体验。
+- **修复**：将思考卡片发送从Hatchet任务内部提前至`_flush_batch`的分发前预发送，任务通过`prepost_card_id`复用该卡片。
+- **成果**：卡片展示与Hatchet调度延迟解耦，消息发送后即可即时看到思考卡片，并保证失败软降级和向后兼容。
 
 ### [#4746](https://github.com/Vispie-AI/VisPie_backend/pull/4746) fix(monitoring): drop decommissioned amy from liveness safety-net
 - **日期**：2026-06-20 | **状态**：✅ 已合并
