@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-23 | 共 167 个 PR（已合并 149 · 关闭未合并 8 · 待合并 8）
-> 最后更新：2026-06-23
+> 统计周期：2026-04-11 ~ 2026-06-24 | 共 172 个 PR（已合并 153 · 关闭未合并 8 · 待合并 9）
+> 最后更新：2026-06-24
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#4914](https://github.com/Vispie-AI/VisPie_backend/pull/4914) fix(reelcraft): synthesize start frame for prompt-only clips so kling i2v can render
+- **日期**：2026-06-24 | **状态**：✅ 已合并
+- **问题**：纯提示词片段调用 Kling 图转视频模型时因缺少 `start_image_url` 触发 HTTP 422 错误，且失败被静默吞没，前端无任何错误提示。
+- **修复**：对无起始帧节点先通过默认图像模型合成 9:16 开场帧再传入视频生成；`generateMissing` 在 200 响应中检测 `status=error` 并向前端抛出提示。
+- **成果**：生产环境互动剧失败分支（5 个卡住片段）恢复正常生成，前端错误不再静默，现有全流程无回归。
 
 ### [#4805](https://github.com/Vispie-AI/VisPie_backend/pull/4805) fix(nanobot): pre-post thinking card before Hatchet dispatch
 - **日期**：2026-06-23 | **状态**：✅ 已合并
@@ -535,6 +541,24 @@
 
 ## 二、新功能开发（feat:）
 
+### [#4925](https://github.com/Vispie-AI/VisPie_backend/pull/4925) feat(reelcraft): condition generate_missing_clips on locked visual references
+- **日期**：2026-06-24 | **状态**：✅ 已合并
+- **问题**：`generate_missing_clips` 仅依赖提示文本合成开场帧，导致跨分支角色外貌漂移，已锁定的 Cast & Sets 参考图从未被读取。
+- **修复**：检测到 `visual_references` artifact 时，将角色与场景参考图注入开场帧生成（nano-banana）及 Kling 的 `elements` 参数，无参考时回退原有流程。
+- **成果**：手动图谱路径实现"锁参考→帧以参考为条件→视频保持角色一致"全链路机制，现有流程无回归。
+
+### [#4924](https://github.com/Vispie-AI/VisPie_backend/pull/4924) feat(reelcraft): manual visual-reference lock endpoint (Gemini-free) → Cast & Sets
+- **日期**：2026-06-24 | **状态**：✅ 已合并
+- **问题**：现有 `lock_visual_references` 依赖已禁用的 Gemini 接口且写入随机 art_id，导致 Cast & Sets 面板通过固定 id 查询时找不到任何参考图。
+- **修复**：新增 `POST /sessions/{id}/visual-references` 端点，不依赖 Gemini，基于锚节点帧生成角色与场景参考图，并以固定 id `visual_references` 写入 artifact。
+- **成果**：手动构建的游戏可通过该接口生成并在 Cast & Sets 面板展示参考图，为片段生成提供视觉一致性基础。
+
+### [#4923](https://github.com/Vispie-AI/VisPie_backend/pull/4923) feat(reelcraft): Cast & Sets reference-image panel + Storyboard crash fix
+- **日期**：2026-06-24 | **状态**：✅ 已合并
+- **问题**：Canvas 编辑器中角色/场景参考图不可见，且 `/storyboard/{id}` 在无 `*_refs` 字段时抛出 `TypeError: s.character_refs is not iterable` 白屏崩溃。
+- **修复**：新增 `CastSetsPanel.tsx` 展示角色与场景参考缩略图，`Storyboard.tsx` 增加空值守卫，`lib/visualRefs.ts` 提供防御性 normalizer（含 6 个单测）。
+- **成果**：故事板页面不再崩溃，Cast & Sets 选项卡可展示参考图，空状态有明确提示。
+
 ### [#4428](https://github.com/Vispie-AI/VisPie_backend/pull/4428) feat(eva-nanobot): wire eva into self-hosted Langfuse
 - **日期**：2026-06-11 | **状态**：✅ 已合并
 - **问题**：eva-nanobot 未接入 Langfuse，导致 ClickHouse 中无任何 eva-lark-message 追踪记录，监控存在盲区。
@@ -863,6 +887,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#4919](https://github.com/Vispie-AI/VisPie_backend/pull/4919) ci(amy-nanobot): inject Supabase creds for creator CPM billing
+- **日期**：2026-06-24 | **状态**：🔀 待合并
+- **问题**：Amy 无 Supabase 凭据，无法获取 Creatify 视频/CPM 数据，37 次工具迭代后因无数据可用而输出空响应。
+- **修复**：在部署 workflow heredoc 中注入移动端与提交同步两个 Supabase 项目的 4 个 service_role 环境变量。
+- **成果**：部署后 Amy 可连接 Creatify 数据源解锁数据连通性，业务账单逻辑另行跟进；secrets 尚未设置时注入空值，无副作用。
 
 ### [#4747](https://github.com/Vispie-AI/VisPie_backend/pull/4747) ci(amy): use OIDC role for skills-sync AWS auth
 - **日期**：2026-06-20 | **状态**：✅ 已合并
