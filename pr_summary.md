@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-24 | 共 172 个 PR（已合并 153 · 关闭未合并 8 · 待合并 9）
-> 最后更新：2026-06-24
+> 统计周期：2026-04-11 ~ 2026-06-25 | 共 174 个 PR（已合并 155 · 关闭未合并 8 · 待合并 9）
+> 最后更新：2026-06-25
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#4951](https://github.com/Vispie-AI/VisPie_backend/pull/4951) fix(amy-nanobot): point GitHub App creds at rebuilt app 4073428
+- **日期**：2026-06-25 | **状态**：✅ 已合并
+- **问题**：Amy 无法审批或合并 PR，因 GitHub App ID 仍指向已于 06-17 删除的旧应用，token 铸造 404 失败。
+- **修复**：将部署配置中的 GITHUB_APP_ID 和 GITHUB_INSTALLATION_ID 更新为新应用 4073428 及其安装 ID 140788856。
+- **成果**：Amy 的 GitHub 操作恢复正常，下次 redeploy 不再回退到失效凭据。
+
+### [#4948](https://github.com/Vispie-AI/VisPie_backend/pull/4948) fix(eva-nanobot): route Eva through codex/gpt-5.5 instead of denied Bedrock
+- **日期**：2026-06-25 | **状态**：✅ 已合并
+- **问题**：Eva-nanobot 因 DenyAllBedrock 策略于 06-14 生效，所有 Bedrock 调用被显式拒绝，Eva 无法响应。
+- **修复**：将 Eva 的 LLM_MODEL 改为 openai-codex/gpt-5.5 并挂载 codex-shared-token 卷，与 Amy 配置对齐。
+- **成果**：Eva 恢复正常对话，Bedrock 仅保留为 fallback，配置与 Amy 保持一致。
 ### [#4914](https://github.com/Vispie-AI/VisPie_backend/pull/4914) fix(reelcraft): synthesize start frame for prompt-only clips so kling i2v can render
 - **日期**：2026-06-24 | **状态**：✅ 已合并
 - **问题**：纯提示词片段调用 Kling 图转视频模型时因缺少 `start_image_url` 触发 HTTP 422 错误，且失败被静默吞没，前端无任何错误提示。
