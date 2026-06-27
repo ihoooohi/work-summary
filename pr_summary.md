@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-25 | 共 174 个 PR（已合并 155 · 关闭未合并 8 · 待合并 9）
-> 最后更新：2026-06-25
+> 统计周期：2026-04-11 ~ 2026-06-27 | 共 179 个 PR（已合并 158 · 关闭未合并 9 · 待合并 10）
+> 最后更新：2026-06-27
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#5051](https://github.com/Vispie-AI/VisPie_backend/pull/5051) revert(reelcraft): #5042 one-click Start (landed in disabled code path)
+- **日期**：2026-06-27 | **状态**：🚫 已关闭
+- **问题**：#5042 添加的一键 Start 按钮位于 `!graphWorkspaceActive` 分支，因 `graphWorkspaceActive` 硬编码为 `true` 而永远不会执行，新增 UI 完全无法展示。
+- **修复**：回退 #5042 的全部改动，恢复 `Create.tsx` 及 `ProductionChain` 组件至合并前状态，保持 master 分支整洁。
+- **成果**：清除了无效代码，为在真正的 `GraphWorkspace` 界面重新实现该功能铺平道路。
 ### [#4951](https://github.com/Vispie-AI/VisPie_backend/pull/4951) fix(amy-nanobot): point GitHub App creds at rebuilt app 4073428
 - **日期**：2026-06-25 | **状态**：✅ 已合并
 - **问题**：Amy 无法审批或合并 PR，因 GitHub App ID 仍指向已于 06-17 删除的旧应用，token 铸造 404 失败。
@@ -552,6 +557,29 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5057](https://github.com/Vispie-AI/VisPie_backend/pull/5057) feat(reelcraft): oiioii-style Studio — left agent chat + right staged workflow
+- **日期**：2026-06-27 | **状态**：✅ 已合并
+- **问题**：Reelcraft 使用决策图画布作为创作界面，缺乏类似 oiioii 的分阶段可视化工作流和对话式 AI 引导，用户无法直观了解生产进度。
+- **修复**：新增 `Studio.tsx` 组件为默认创作界面，左侧为 Reelcraft Agent 对话区，右侧为脚本→角色→场景→分镜→视频五阶段面板，并新增后端 `/api/sessions/{id}/script` 接口。
+- **成果**：用户可通过单一界面完成全流程创作，决策图编辑器保留切换入口，tsc strict + vite 构建通过。
+
+### [#5056](https://github.com/Vispie-AI/VisPie_backend/pull/5056) feat(reelcraft): state-aware primary CTA (kill Publish redundancy + blank-canvas misleading)
+- **日期**：2026-06-27 | **状态**：🔀 待合并
+- **问题**：#5053 新增的"Make the full video"按钮在空白画布时误导用户点击空占位符，在已发布状态下又与 Publish 功能重复，体验不佳。
+- **修复**：将主 CTA 改为状态感知，空白画布时禁用并提示粘贴链接，有图无片段时触发渲染+发布，已渲染时显示"Publish & play"，已发布时显示"Republish update"。
+- **成果**：主按钮始终指向用户当前真实的下一步操作，消除了误导与冗余，tsc strict + vite 构建通过。
+
+### [#5053](https://github.com/Vispie-AI/VisPie_backend/pull/5053) feat(reelcraft): one-click "Make the full video" + visible chain (GraphWorkspace)
+- **日期**：2026-06-27 | **状态**：✅ 已合并
+- **问题**：#5042 的一键生成功能错误添加到未生效的代码分支，真正的创作入口 `GraphWorkspace` 仍缺乏一键完成和链路可视化功能。
+- **修复**：回退 #5042 并在 `GraphWorkspace.tsx` 中重新实现，添加"Make the full video"按钮和脚本·图片·视频·发布四阶段进度条，复用现有处理器和接口无需后端改动。
+- **成果**：用户在真实创作界面可一键完成渲染和发布，生产链状态实时可见，tsc strict + vite 构建通过。
+
+### [#5042](https://github.com/Vispie-AI/VisPie_backend/pull/5042) feat(reelcraft): one-click Start + visible script→images→videos chain
+- **日期**：2026-06-27 | **状态**：✅ 已合并
+- **问题**：Reelcraft 缺少端到端的一键启动入口，默认 CONFIRM 模式需多次确认，且进度条仅有 9 个点状指示，用户无法看到脚本、图片、视频的生产过程。
+- **修复**：在 `Create.tsx` 新增显眼的"Start"主按钮（强制 AUTO 模式全流程执行），并添加 `ProductionChain` 组件展示脚本摘要、参考图缩略图和视频切片预览，不改动现有 `PipelineStepBar`。
+- **成果**：用户可一键启动完整视频生产流程，生产链三阶段可视，前端仅读取现有接口无需后端变更，tsc strict + vite 构建通过。
 ### [#4925](https://github.com/Vispie-AI/VisPie_backend/pull/4925) feat(reelcraft): condition generate_missing_clips on locked visual references
 - **日期**：2026-06-24 | **状态**：✅ 已合并
 - **问题**：`generate_missing_clips` 仅依赖提示文本合成开场帧，导致跨分支角色外貌漂移，已锁定的 Cast & Sets 参考图从未被读取。
