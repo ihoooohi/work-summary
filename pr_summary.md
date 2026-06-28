@@ -1,12 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-27 | 共 179 个 PR（已合并 158 · 关闭未合并 9 · 待合并 10）
-> 最后更新：2026-06-27
+> 统计周期：2026-04-11 ~ 2026-06-28 | 共 184 个 PR（已合并 162 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-06-28
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5063](https://github.com/Vispie-AI/VisPie_backend/pull/5063) fix(reelcraft): agent silently stops responding to follow-ups after a deploy (SDK resume hang)
+- **日期**：2026-06-28 | **状态**：🔀 待合并
+- **问题**：Cloud Run 每次部署启动新实例磁盘为空，SDK 会话文件丢失导致 agent 对后续消息无响应。
+- **修复**：仅在当前进程内恢复 SDK 会话，跨重启的上下文由每轮状态前导文本承载。
+- **成果**：follow-up 消息与 continue/retry 操作不再挂起，agent 可正常响应后续对话。
+
+### [#5062](https://github.com/Vispie-AI/VisPie_backend/pull/5062) fix(reelcraft): lock_visual_references saves refs under fixed art_id (Studio Characters/Scenes empty)
+- **日期**：2026-06-28 | **状态**：✅ 已合并
+- **问题**：agent 工具保存视觉参考时未指定固定 art_id，Studio 角色与场景面板读取固定 ID 时 404 显示空白。
+- **修复**：将 visual_references artifact 改为以固定 art_id="visual_references" 写入，保证各消费方均可命中。
+- **成果**：Studio Characters 和 Scenes 阶段正常展示角色与场景内容，Cast & Sets 面板数据一致。
+
+### [#5061](https://github.com/Vispie-AI/VisPie_backend/pull/5061) fix(reelcraft): lock_visual_references works without a source video (text mode)
+- **日期**：2026-06-28 | **状态**：✅ 已合并
+- **问题**：纯文本输入模式下 lock_visual_references 强依赖源视频而报错，导致流水线卡死在脚本阶段无法产出图片或视频。
+- **修复**：将源视频改为可选，无源视频时跳过帧提取，直接从分析描述生成角色与场景参考。
+- **成果**：文字创作模式全流程可跑通，图片与视频片段正常生成，视频模式行为不受影响。
 
 ### [#5051](https://github.com/Vispie-AI/VisPie_backend/pull/5051) revert(reelcraft): #5042 one-click Start (landed in disabled code path)
 - **日期**：2026-06-27 | **状态**：🚫 已关闭
@@ -556,6 +574,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5060](https://github.com/Vispie-AI/VisPie_backend/pull/5060) feat(reelcraft): temporary Claude fallback for text LLM (Gemini/Vertex billing blocked)
+- **日期**：2026-06-28 | **状态**：✅ 已合并
+- **问题**：Gemini API Key 项目计费禁用、Vertex 计费拖欠，两条文本生成通道均不可用。
+- **修复**：新增 GEMINI_CLIENT_MODE=anthropic 配置，将文本 LLM 调用临时路由至 Claude（Anthropic SDK）。
+- **成果**：文字故事流水线端到端可运行，待 Gemini 计费恢复后一键切回，无需代码回滚。
+
+### [#5059](https://github.com/Vispie-AI/VisPie_backend/pull/5059) feat(reelcraft): "+ New project" sidebar button (oiioii-style)
+- **日期**：2026-06-28 | **状态**：✅ 已合并
+- **问题**：侧边栏缺少新建项目入口，用户只能通过外部表单或直接访问 URL 才能创建新项目。
+- **修复**：在 Logo 下方添加"+ New project"按钮，点击后自动创建会话并跳转至 Studio 编辑器，失败时降级至 /create。
+- **成果**：用户可在应用内一键新建项目，Recents 列表随之刷新，体验与 oiioii 侧边栏一致。
 
 ### [#5057](https://github.com/Vispie-AI/VisPie_backend/pull/5057) feat(reelcraft): oiioii-style Studio — left agent chat + right staged workflow
 - **日期**：2026-06-27 | **状态**：✅ 已合并
