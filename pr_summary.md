@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-28 | 共 184 个 PR（已合并 162 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-06-28
+> 统计周期：2026-04-11 ~ 2026-06-29 | 共 188 个 PR（已合并 166 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-06-29
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5087](https://github.com/Vispie-AI/VisPie_backend/pull/5087) fix(reelcraft): auto-fall back to Claude for text calls when Vertex is denied
+- **日期**：2026-06-29 | **状态**：✅ 已合并
+- **问题**：#5081 将客户端切换为 Vertex 模式后，SA 缺少 aiplatform.user 权限导致全部文本和视频调用均返回 403，整条流水线中断。
+- **修复**：在 _generate_with_retry 中识别 Vertex 鉴权失败，纯文本调用自动降级至 Claude，多模态视频调用仍报错提示授权缺失。
+- **成果**：SA 未授权期间文本模式经由 Claude 恢复正常，SA 授权后自动切回 Vertex，无需手动切换模式。
 
 ### [#5063](https://github.com/Vispie-AI/VisPie_backend/pull/5063) fix(reelcraft): agent silently stops responding to follow-ups after a deploy (SDK resume hang)
 - **日期**：2026-06-28 | **状态**：🔀 待合并
@@ -574,6 +580,24 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5088](https://github.com/Vispie-AI/VisPie_backend/pull/5088) feat(reelcraft): interactive game player + publish in the Studio Video stage
+- **日期**：2026-06-29 | **状态**：✅ 已合并
+- **问题**：Studio 的 Video 阶段缺乏可交互的游戏预览，用户无法在发布前体验分支决策流程。
+- **修复**：在 Video 阶段引入与图编辑器相同的 GamePlayer 组件，通过新增 studioGame.ts 从会话数据构建 GameFull 并支持点击决策分支。
+- **成果**：用户可在 Studio 内即时预览多结局交互游戏并一键发布至 Feed，纯前端改动无需后端变更。
+
+### [#5081](https://github.com/Vispie-AI/VisPie_backend/pull/5081) feat(reelcraft): restore source-video analysis via Vertex (inline ingestion)
+- **日期**：2026-06-29 | **状态**：✅ 已合并
+- **问题**：Studio 临时切换为 Claude 文本通道，无法对 TikTok/Reel 源视频进行多模态分析，故事解析仅依赖字幕文字。
+- **修复**：切换至 Vertex AI 并新增内联摄取路径（Part.from_bytes），为视频分析恢复多模态能力，超限视频通过 ffmpeg 降采样后内联传输。
+- **成果**：Studio 可真实"观看"源视频生成风格手册和旁白档案，Staging 部署后验证即生效，Prod 在下次 v* 标签推送时同步。
+
+### [#5069](https://github.com/Vispie-AI/VisPie_backend/pull/5069) feat(reelcraft): Decision Path stage + path-layered Video (remix Studio)
+- **日期**：2026-06-29 | **状态**：✅ 已合并
+- **问题**：Studio 工作流缺少分支决策可视化，Video 阶段以平铺网格展示片段，无法直观体现多结局游戏的路径结构。
+- **修复**：新增 Decision Path 阶段以 DAG 展示开局→决策→胜利/失败分支，并将 Video 阶段改为按决策路径分泳道排列，纯前端改动复用现有 /storyboard 和 /clips 端点。
+- **成果**：用户可清晰看到完整分支路径结构，Studio 正式定位为 TikTok 混剪交互视频工具，8 项单元测试全部通过。
 
 ### [#5060](https://github.com/Vispie-AI/VisPie_backend/pull/5060) feat(reelcraft): temporary Claude fallback for text LLM (Gemini/Vertex billing blocked)
 - **日期**：2026-06-28 | **状态**：✅ 已合并
