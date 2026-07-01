@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-06-29 | 共 188 个 PR（已合并 166 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-06-29
+> 统计周期：2026-04-11 ~ 2026-07-01 | 共 193 个 PR（已合并 171 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-01
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5118](https://github.com/Vispie-AI/VisPie_backend/pull/5118) fix(reelcraft): stop the Studio Video Play-in-feed CTA from clipping off-screen
+- **日期**：2026-07-01 | **状态**：✅ 已合并
+- **问题**：Studio 视频阶段的"在 Feed 中播放"按钮因父容器缺少 `min-w-0` 被推出视口右侧，导致按钮被裁剪不可见。
+- **修复**：为右侧内容列添加 `min-w-0`，按钮头部改为 `justify-between` + `flex-wrap`，窄面板时自动换行显示。
+- **成果**：按钮在各屏幕尺寸下均可见，纯布局修复，构建通过。
 
 ### [#5087](https://github.com/Vispie-AI/VisPie_backend/pull/5087) fix(reelcraft): auto-fall back to Claude for text calls when Vertex is denied
 - **日期**：2026-06-29 | **状态**：✅ 已合并
@@ -580,6 +586,30 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5117](https://github.com/Vispie-AI/VisPie_backend/pull/5117) feat(reelcraft): make legacy decision-tree games playable on the Feed
+- **日期**：2026-07-01 | **状态**：✅ 已合并
+- **问题**：Feed 可玩性校验仅支持 decision_graph，Studio 流水线生成的 decision_tree 游戏发布后无法在 Feed 播放。
+- **修复**：扩展 `storage/games.py` 和前端 `playable.ts` 的可玩性判断逻辑，兼容含合法 decisions 数组的传统树形游戏。
+- **成果**：White Wolf Alpha 等 decision_tree 游戏现可在 Feed 正常显示并播放，互动视频发布链路打通。
+
+### [#5116](https://github.com/Vispie-AI/VisPie_backend/pull/5116) feat(reelcraft): make Studio the default create surface (matches demo)
+- **日期**：2026-07-01 | **状态**：✅ 已合并
+- **问题**：`/create` 路由默认落到图形编辑器，与互动 Agent Demo 的引导式 Studio 界面不一致。
+- **修复**：将 `/create` 默认视图从 graph 改回 studio，图形编辑器保留为一键切换选项，单行改动。
+- **成果**：新用户访问 `/create` 直接进入引导式 Studio，与 Demo 展示效果一致。
+
+### [#5115](https://github.com/Vispie-AI/VisPie_backend/pull/5115) feat(reelcraft): reshape Studio create surface toward the interactive-agent demo
+- **日期**：2026-07-01 | **状态**：✅ 已合并
+- **问题**：Studio 创建界面风格与互动 Agent Demo 存在差异，缺少引导式起始选项和阶段标题。
+- **修复**：改造 `Studio.tsx`，添加上传视频 / 上传脚本 / 从零开始三种引导入口，并在右侧各阶段面板上方加入 Demo 风格标题。
+- **成果**：Studio 界面外观与交互流程与 Demo 保持一致，纯前端改动，构建通过。
+
+### [#5109](https://github.com/Vispie-AI/VisPie_backend/pull/5109) feat(reelcraft): OpenRouter fallback for video AND image when fal.ai fails
+- **日期**：2026-07-01 | **状态**：✅ 已合并
+- **问题**：fal.ai 余额耗尽（403）或发生 5xx 错误时，视频渲染直接失败，缺乏自动降级机制。
+- **修复**：新增 `integrations/openrouter_video.py`，fal.ai 失败时自动切换至 OpenRouter → Seedance 2.0 重渲染，支持音频审核失败自动重试。
+- **成果**：视频渲染链路实现自愈，端到端验证生成 1.19MB MP4，5 项单测全部通过。
 
 ### [#5088](https://github.com/Vispie-AI/VisPie_backend/pull/5088) feat(reelcraft): interactive game player + publish in the Studio Video stage
 - **日期**：2026-06-29 | **状态**：✅ 已合并
