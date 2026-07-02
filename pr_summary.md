@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-01 | 共 193 个 PR（已合并 171 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-01
+> 统计周期：2026-04-11 ~ 2026-07-02 | 共 195 个 PR（已合并 173 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-02
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#5159](https://github.com/Vispie-AI/VisPie_backend/pull/5159) fix(amy): crash-proof Bitable cell extraction + webhook non-JSON guard
+- **日期**：2026-07-02 | **状态**：✅ 已合并
+- **问题**：Amy 从 Lark Bitable 读取候选人数据时，对数字/时间戳字段执行文本路径导致 `'float' object is not subscriptable` 崩溃，且 webhook 遇到非 JSON payload 时返回 500 并触发 Lark 重试风暴。
+- **修复**：新增 `flattenCell()`/`plainFields()` 辅助函数覆盖所有单元格类型并支持 `--plain` 标志；为 `parse_message` 增加非 JSON 保护，异常时返回 `None` 而非抛出。
+- **成果**：Bitable 提取不再崩溃，webhook 500 错误消除，接口向后兼容，并附 19 个单元测试覆盖。
 ### [#5118](https://github.com/Vispie-AI/VisPie_backend/pull/5118) fix(reelcraft): stop the Studio Video Play-in-feed CTA from clipping off-screen
 - **日期**：2026-07-01 | **状态**：✅ 已合并
 - **问题**：Studio 视频阶段的"在 Feed 中播放"按钮因父容器缺少 `min-w-0` 被推出视口右侧，导致按钮被裁剪不可见。
@@ -587,6 +592,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5160](https://github.com/Vispie-AI/VisPie_backend/pull/5160) feat(reelcraft): focused start modal + find-able Close in the graph editor
+- **日期**：2026-07-02 | **状态**：✅ 已合并
+- **问题**：ReelCraft 启动引导选项与空白工作区同屏显示导致界面信息过载，预览面板的关闭按钮藏于工具栏末端难以发现。
+- **修复**：将启动引导改为居中遮罩模态框，选择后再展示工作区；将关闭按钮移至预览面板右上角并添加文字标签和边框。
+- **成果**：P1 首屏专注度与 P0 关闭可见性均已修复，仅改动前端两个文件，构建通过无回归。
 ### [#5117](https://github.com/Vispie-AI/VisPie_backend/pull/5117) feat(reelcraft): make legacy decision-tree games playable on the Feed
 - **日期**：2026-07-01 | **状态**：✅ 已合并
 - **问题**：Feed 可玩性校验仅支持 decision_graph，Studio 流水线生成的 decision_tree 游戏发布后无法在 Feed 播放。
