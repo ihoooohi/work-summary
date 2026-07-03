@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-02 | 共 195 个 PR（已合并 173 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-02
+> 统计周期：2026-04-11 ~ 2026-07-03 | 共 198 个 PR（已合并 176 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5196](https://github.com/Vispie-AI/VisPie_backend/pull/5196) fix(reelcraft): apply edited graph JSON when graph not yet persisted
+- **日期**：2026-07-03 | **状态**：✅ 已合并
+- **问题**：在图尚未持久化（仅前端缓冲区）的会话中点击 Apply，PATCH 端点返回 404"No decision graph imported"错误，在 staging 会话 `c30542cf` 上已复现。
+- **修复**：`applyGraphJson` 改为复用已有 `saveGraph`，该函数在图未持久化时自动先 POST 创建再 PATCH 更新，净减 18 行冗余代码。
+- **成果**：无论图是否已持久化，编辑后点击 Apply 均可正常保存并刷新画布，彻底消除 404 报错。
 
 ### [#5159](https://github.com/Vispie-AI/VisPie_backend/pull/5159) fix(amy): crash-proof Bitable cell extraction + webhook non-JSON guard
 - **日期**：2026-07-02 | **状态**：✅ 已合并
@@ -591,6 +597,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5197](https://github.com/Vispie-AI/VisPie_backend/pull/5197) feat(reelcraft): full-graph JSON replace — edit any field, not just 5
+- **日期**：2026-07-03 | **状态**：✅ 已合并
+- **问题**：图编辑器"Edit → Apply"流程仅持久化 5 个字段，`source_video`/`sheet`/`scene_snap` 等顶层字段无法通过手动编辑保存。
+- **修复**：后端新增 `PUT /api/sessions/{id}/decision-graph` 实现全量替换，前端 `applyGraphJson` 改为提交完整 JSON 对象，`session_id` 由服务端强制覆盖。
+- **成果**：渲染图 JSON 中所有字段均可手动编辑并持久化，所见即所得，同时兼容图未持久化场景（无 404）。
+
+### [#5194](https://github.com/Vispie-AI/VisPie_backend/pull/5194) feat(reelcraft): editable Rendered-graph JSON (edit + apply, not just copy)
+- **日期**：2026-07-03 | **状态**：✅ 已合并
+- **问题**：图编辑器的"渲染图"JSON 面板为只读，用户无法直接修改，需借助 AI 助手操作，体验繁琐。
+- **修复**：新增"Edit → 文本框 → Apply"流程，本地校验 JSON 格式（必须含 `nodes` 数组），复用已有 PATCH 端点提交全量更新，无需后端改动。
+- **成果**：用户可直接手动编辑渲染图 JSON 并即时刷新画布，不再依赖 AI 助手；Schema 视图保持只读，错误 JSON 显示行内提示不提交请求。
 
 ### [#5160](https://github.com/Vispie-AI/VisPie_backend/pull/5160) feat(reelcraft): focused start modal + find-able Close in the graph editor
 - **日期**：2026-07-02 | **状态**：✅ 已合并
