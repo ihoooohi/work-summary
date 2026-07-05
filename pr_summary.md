@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-03 | 共 198 个 PR（已合并 176 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-03
+> 统计周期：2026-04-11 ~ 2026-07-05 | 共 202 个 PR（已合并 180 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-05
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5251](https://github.com/Vispie-AI/VisPie_backend/pull/5251) fix(reelcraft): graph clips render silent — end caption/audio mismatch
+- **日期**：2026-07-05 | **状态**：✅ 已合并
+- **问题**：Blood Money 剧情 clip 的 AI 生成音频与字幕内容不一致，Seedance 2.0 默认开启音频并自行捏造台词。
+- **修复**：为 generate_video 新增 generate_audio 参数，graph clip 生成时默认静音（False），接口层可按需覆盖。
+- **成果**：剧情 clip 以静音方式渲染，字幕与画面一致，音画矛盾问题彻底消除。
+
+### [#5247](https://github.com/Vispie-AI/VisPie_backend/pull/5247) fix(amy): codex-dispatch recipe — verified dispatch path that can actually run
+- **日期**：2026-07-05 | **状态**：✅ 已合并
+- **问题**：Amy 的 codex-dispatch 技能分发路径从未成功运行，7 条记录均无 Session Link，48 小时日志零分发标记。
+- **修复**：重写 SKILL.md 文档，修正超时参数、本地仓库路径、git token 获取及 codex 执行目录共五处缺陷，并在生产容器上端到端验证。
+- **成果**：分发链路完整可用，Amy 可成功执行 codex 任务并提交 PR，需重新部署镜像后生效。
 
 ### [#5196](https://github.com/Vispie-AI/VisPie_backend/pull/5196) fix(reelcraft): apply edited graph JSON when graph not yet persisted
 - **日期**：2026-07-03 | **状态**：✅ 已合并
@@ -597,6 +609,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5252](https://github.com/Vispie-AI/VisPie_backend/pull/5252) feat(nanobot-server): wire CronService so the cron tool + scheduler actually run
+- **日期**：2026-07-05 | **状态**：✅ 已合并
+- **问题**：自定义 nanobot_server.py 从未初始化 CronService，cron 工具未注册、定时任务从未执行，Amy 日报任务创建 9 天后仍无一次触发。
+- **修复**：仿照官方 CLI 接线方式将 CronService 集成进服务器启动流程，触发消息通过 Hatchet→Lark 通道回传至原始对话。
+- **成果**：全舰队 nanobot 获得可用的定时调度能力，Amy pm-routine 日报任务在下次部署后自动生效。
+
+### [#5248](https://github.com/Vispie-AI/VisPie_backend/pull/5248) feat(reelcraft): clip subtitle/caption overlay
+- **日期**：2026-07-05 | **状态**：✅ 已合并
+- **问题**：ReelCraft 视频 clip 节点缺少字幕功能，GamePlayer 无字幕图层，schema 也无 caption 字段。
+- **修复**：在类型定义、图编辑器预览、发布接口及 GamePlayer 播放器中新增可选 caption 字段，决策弹层出现时字幕自动隐藏。
+- **成果**：用户可在 clip 节点配置字幕，播放时底部居中展示，不干扰交互决策按钮操作。
 
 ### [#5197](https://github.com/Vispie-AI/VisPie_backend/pull/5197) feat(reelcraft): full-graph JSON replace — edit any field, not just 5
 - **日期**：2026-07-03 | **状态**：✅ 已合并
