@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-05 | 共 202 个 PR（已合并 180 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-05
+> 统计周期：2026-04-11 ~ 2026-07-06 | 共 205 个 PR（已合并 183 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-06
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5275](https://github.com/Vispie-AI/VisPie_backend/pull/5275) revert(reelcraft): remove clip-render throttle — fal parallelizes better unthrottled
+- **日期**：2026-07-06 | **状态**：✅ 已合并
+- **问题**：#5273 引入的 Semaphore(3) 节流使 4 片段批次耗时超 25 分钟并触发 Seedance 回退，性能反而变差。
+- **修复**：回退 #5273，移除并发节流，恢复完全并行模式，由 fal 平台自身队列进行并行调度。
+- **成果**：5 片段批次不节流完成仅需约 382 秒（全 Veo），批量渲染恢复高效并避免 Seedance 回退。
+
+### [#5273](https://github.com/Vispie-AI/VisPie_backend/pull/5273) fix(reelcraft): throttle concurrent clip renders (keep batch on fal/Veo)
+- **日期**：2026-07-06 | **状态**：✅ 已合并
+- **问题**：`generate_missing_clips` 无限并发触发所有缺失片段，超出 fal.ai 并发上限后失败并回退到不支持唇形同步的 Seedance。
+- **修复**：引入 Semaphore(3) 限制最大并发数，确保批量渲染请求不超出 fal 平台限额。
+- **成果**：防止并发超限导致的回退问题，保证唇形同步质量（后被 #5275 回退）。
 
 ### [#5251](https://github.com/Vispie-AI/VisPie_backend/pull/5251) fix(reelcraft): graph clips render silent — end caption/audio mismatch
 - **日期**：2026-07-05 | **状态**：✅ 已合并
@@ -609,6 +621,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5270](https://github.com/Vispie-AI/VisPie_backend/pull/5270) feat(amy): verify-feedback via the Requests table — field watcher + pm-routine routine
+- **日期**：2026-07-06 | **状态**：✅ 已合并
+- **问题**：核查人员在 Requests 表"Verify Feedback"字段填写意见后，Amy 无法自动感知并触发后续处理流程。
+- **修复**：新增服务端字段监听器（≤3 分钟轮询），检测到反馈后触发 pm-routine 分类处理（反馈→Brand Reply）。
+- **成果**：核查反馈流程实现闭环自动化，减少人工通知环节，提升工单处理效率。
 
 ### [#5252](https://github.com/Vispie-AI/VisPie_backend/pull/5252) feat(nanobot-server): wire CronService so the cron tool + scheduler actually run
 - **日期**：2026-07-05 | **状态**：✅ 已合并
