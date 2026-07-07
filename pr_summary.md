@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-06 | 共 205 个 PR（已合并 183 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-06
+> 统计周期：2026-04-11 ~ 2026-07-07 | 共 207 个 PR（已合并 185 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-07
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -622,6 +622,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5311](https://github.com/Vispie-AI/VisPie_backend/pull/5311) feat(reelcraft-dashboard): show clip captions in review playtest player
+- **日期**：2026-07-07 | **状态**：✅ 已合并
+- **问题**：评审仪表盘的 MiniPlayer 播放器未显示字幕，审核人员在回放预览中看不到任何字幕内容。
+- **修复**：为 `clipMediaFor`/`legacyClipMedia` 补充 `caption` 字段，并在 MiniPlayer 中添加底部居中的字幕覆盖层。
+- **成果**：审核人员现可在回放测试时看到视频字幕，与发布版本的 GamePlayer 展示效果保持一致。
+
+### [#5297](https://github.com/Vispie-AI/VisPie_backend/pull/5297) feat(backend): read-only creator-earnings passthrough for Amy
+- **日期**：2026-07-07 | **状态**：✅ 已合并
+- **问题**：Amy 智能体需要读取创作者提现/收益数据，但直接注入 Supabase service-role key 会使 LLM 获得全库读写权限。
+- **修复**：新增两个只读透传接口（表白名单限制），token 鉴权留存于后端，Amy 通过 `X-Creator-Earnings-Token` 发起查询。
+- **成果**：Amy 可安全读取提现及收益数据，密钥不暴露于 LLM 上下文，且可随时撤销访问权限。
 ### [#5270](https://github.com/Vispie-AI/VisPie_backend/pull/5270) feat(amy): verify-feedback via the Requests table — field watcher + pm-routine routine
 - **日期**：2026-07-06 | **状态**：✅ 已合并
 - **问题**：核查人员在 Requests 表"Verify Feedback"字段填写意见后，Amy 无法自动感知并触发后续处理流程。
