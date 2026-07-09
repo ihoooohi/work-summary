@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-07 | 共 207 个 PR（已合并 185 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-07
+> 统计周期：2026-04-11 ~ 2026-07-09 | 共 209 个 PR（已合并 187 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-09
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5362](https://github.com/Vispie-AI/VisPie_backend/pull/5362) fix(frontend-internal): pin Sourcing Email Blast + creator-pool to app FastAPI
+- **日期**：2026-07-09 | **状态**：✅ 已合并
+- **问题**：内部前端 Sourcing Email Blast 工具生产环境完全失效，Sender Profile 下拉为空，所有 API 请求均因路由未切换到 ECS 而 404。
+- **修复**：在 `ECS_PINNED_ROUTES` 中新增两条固定条目，将 `/api/v1/creator-pool/` 和 `/api/internal_only/sourcing-email-blast/` 固定指向 `app.vizzylabs.ai/fastapi` 旧版后端。
+- **成果**：邮件发送页面恢复正常，发件人列表和活动导入接口均返回 200，本地验证通过后合并生效。
 
 ### [#5275](https://github.com/Vispie-AI/VisPie_backend/pull/5275) revert(reelcraft): remove clip-render throttle — fal parallelizes better unthrottled
 - **日期**：2026-07-06 | **状态**：✅ 已合并
@@ -621,6 +627,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5365](https://github.com/Vispie-AI/VisPie_backend/pull/5365) feat(amy): feedback field renamed to '💬 Comment to Amy' + pm-routine schema refresh
+- **日期**：2026-07-09 | **状态**：✅ 已合并
+- **问题**：团队希望看板反馈体验接近评论，但原生 Bitable 评论对机器人不可见（三次实验验证），需通过字段改名提升易用性。
+- **修复**：将 `Verify Feedback` 字段重命名为 `💬 Comment to Amy`，Watcher 兼容新旧名称，并同步刷新 pm-routine 技能文档及看板字段结构。
+- **成果**：Amy 可正常读取并清除 `💬 Comment to Amy` 字段内容，零停机切换，合并后 amy-nanobot 自动重部署生效。
 
 ### [#5311](https://github.com/Vispie-AI/VisPie_backend/pull/5311) feat(reelcraft-dashboard): show clip captions in review playtest player
 - **日期**：2026-07-07 | **状态**：✅ 已合并
