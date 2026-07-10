@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-09 | 共 209 个 PR（已合并 187 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-09
+> 统计周期：2026-04-11 ~ 2026-07-10 | 共 210 个 PR（已合并 188 · 关闭未合并 9 · 待合并 11）
+> 最后更新：2026-07-10
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -627,6 +627,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5396](https://github.com/Vispie-AI/VisPie_backend/pull/5396) feat(amy): 💬 Comment to Amy works on any record status
+- **日期**：2026-07-10 | **状态**：✅ 已合并
+- **问题**：监听器仅轮询"待验证/PR审查"状态，其他状态的评论指令被静默忽略。
+- **修复**：监听器改为响应所有状态，非验证场景走通用指令流程并归档到 Brief。
+- **成果**：任意状态记录均可通过"💬 Comment to Amy"字段发送指令，Amy 正确响应。
 
 ### [#5365](https://github.com/Vispie-AI/VisPie_backend/pull/5365) feat(amy): feedback field renamed to '💬 Comment to Amy' + pm-routine schema refresh
 - **日期**：2026-07-09 | **状态**：✅ 已合并
