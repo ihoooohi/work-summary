@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-10 | 共 210 个 PR（已合并 188 · 关闭未合并 9 · 待合并 11）
-> 最后更新：2026-07-10
+> 统计周期：2026-04-11 ~ 2026-07-11 | 共 216 个 PR（已合并 188 · 关闭未合并 15 · 待合并 11）
+> 最后更新：2026-07-11
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#5422](https://github.com/Vispie-AI/VisPie_backend/pull/5422) fix(amy-codex): don't crash the turn on >64KB codex --json event lines
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：amy-codex 在解析超过 64KB 的 codex --json 流式事件行时触发分块长度异常，导致对话轮次崩溃。
+- **修复**：扩大流式读取器的行大小上限，消除超长行引发的分隔符解析错误。
+- **成果**：codex 10% 桶用户不再因超长事件行遭遇红色错误卡片。
 ### [#5362](https://github.com/Vispie-AI/VisPie_backend/pull/5362) fix(frontend-internal): pin Sourcing Email Blast + creator-pool to app FastAPI
 - **日期**：2026-07-09 | **状态**：✅ 已合并
 - **问题**：内部前端 Sourcing Email Blast 工具生产环境完全失效，Sender Profile 下拉为空，所有 API 请求均因路由未切换到 ECS 而 404。
@@ -628,6 +633,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5426](https://github.com/Vispie-AI/VisPie_backend/pull/5426) feat(reelcraft): timed subtitle cues + manual caption editor (V1)
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：字幕来源分散（视频模型烧录、ASR 轨道、LLM 脚本），无法统一控制，导致字幕跳字或整段丢失。
+- **修复**：引入带时间戳的字幕 cue 系统，并新增前端手动字幕编辑器（V1）。
+- **成果**：用户可精确控制每条字幕的出现时机，解决"间谍"和"Blood Money"反馈的字幕错乱问题。
+
+### [#5421](https://github.com/Vispie-AI/VisPie_backend/pull/5421) feat(ci): monitor + nightly TTL cleanup for personal dev envs (viral-to-game-dev-*)
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：个人云端 Dev 环境（viral-to-game-dev-*）无监控、无 TTL 清理，长期占用 Cloud Run 资源。
+- **修复**：添加 CI 监控流水线和每晚定时清理任务，自动回收超期个人 Dev 环境。
+- **成果**：团队云端 Dev 环境资源使用可见并受控，避免资源浪费。
 ### [#5396](https://github.com/Vispie-AI/VisPie_backend/pull/5396) feat(amy): 💬 Comment to Amy works on any record status
 - **日期**：2026-07-10 | **状态**：✅ 已合并
 - **问题**：监听器仅轮询"待验证/PR审查"状态，其他状态的评论指令被静默忽略。
@@ -1110,6 +1126,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#5444](https://github.com/Vispie-AI/VisPie_backend/pull/5444) ci(amy-codex): run rev-parse as ubuntu too (dubious-ownership guard)
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：SSM 部署迁移第三层：git rev-parse 以 root 身份运行触发 dubious ownership 报错，部署失败。
+- **修复**：将 rev-parse 步骤也切换为 ubuntu 用户执行，消除 Git 目录所有权校验失败。
+- **成果**：SSM 部署链路（#5442→#5443→本 PR）三层全部打通，amy-codex 部署流程恢复正常。
+
+### [#5443](https://github.com/Vispie-AI/VisPie_backend/pull/5443) ci(amy-codex): fetch repo over HTTPS with github.token (host has no SSH key)
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：SSM 传输成功后，宿主机缺少 SSH 密钥导致 git pull 走 git@github.com 失败。
+- **修复**：将仓库拉取方式从 SSH 改为 HTTPS 并注入 github.token 鉴权。
+- **成果**：消除 SSH 密钥依赖，amy-codex 部署的仓库同步步骤成功通过。
+
+### [#5442](https://github.com/Vispie-AI/VisPie_backend/pull/5442) ci(amy-codex): migrate deploy transport from SSH to SSM send-command
+- **日期**：2026-07-11 | **状态**：🚫 已关闭
+- **问题**：vizbot-deploy-amy-codex.yml 通过 EC2 Instance Connect + SSH 22 端口部署，安全组于 2026-06-17 关闭 22 端口后每次部署均失败。
+- **修复**：将部署传输从 SSH 迁移至 AWS SSM send-command，绕过端口 22 限制。
+- **成果**：amy-codex 自动化部署通道重新通畅，不再依赖开放 22 端口。
 ### [#4919](https://github.com/Vispie-AI/VisPie_backend/pull/4919) ci(amy-nanobot): inject Supabase creds for creator CPM billing
 - **日期**：2026-06-24 | **状态**：🔀 待合并
 - **问题**：Amy 无 Supabase 凭据，无法获取 Creatify 视频/CPM 数据，37 次工具迭代后因无数据可用而输出空响应。
