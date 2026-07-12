@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-11 | 共 216 个 PR（已合并 188 · 关闭未合并 15 · 待合并 11）
-> 最后更新：2026-07-11
+> 统计周期：2026-04-11 ~ 2026-07-12 | 共 217 个 PR（已合并 189 · 关闭未合并 15 · 待合并 11）
+> 最后更新：2026-07-12
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -632,6 +632,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5505](https://github.com/Vispie-AI/VisPie_backend/pull/5505) feat(reelcraft): auto-fill timed captions from dialogue on studio publish
+- **日期**：2026-07-12 | **状态**：✅ 已合并
+- **问题**：v0.3.54 上线后禁止字幕烧录，但 AI 发布流水线从未设置 meta.captions，导致 Studio 发布的所有游戏完全无字幕显示。
+- **修复**：在 studio/publishing.py 新增 _dialogue_to_cues 等辅助函数，发布时从已有对话数据自动生成字符加权定时字幕，并优先保留手动编辑的字幕。
+- **成果**：Studio AI 游戏发布后可正常显示整句切换的定时字幕，手动字幕不受影响，静默片段字幕为空，无前端改动。
 
 ### [#5426](https://github.com/Vispie-AI/VisPie_backend/pull/5426) feat(reelcraft): timed subtitle cues + manual caption editor (V1)
 - **日期**：2026-07-11 | **状态**：🚫 已关闭
