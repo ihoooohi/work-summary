@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-12 | 共 217 个 PR（已合并 189 · 关闭未合并 15 · 待合并 11）
-> 最后更新：2026-07-12
+> 统计周期：2026-04-11 ~ 2026-07-13 | 共 220 个 PR（已合并 192 · 关闭未合并 15 · 待合并 11）
+> 最后更新：2026-07-13
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5566](https://github.com/Vispie-AI/VisPie_backend/pull/5566) fix(standup-digest): restore correct standup group id and English digest
+- **日期**：2026-07-13 | **状态**：✅ 已合并
+- **问题**：standup 摘要群组 ID 被误改，语言配置被改为非英文，导致摘要发送至错误群组。
+- **修复**：还原正确群组 ID 与英文语言设置，保留 DEFAULT_BASE_APP 重命名。
+- **成果**：摘要正确发送，secret_scan 及 dry-run 验证均通过。
 
 ### [#5422](https://github.com/Vispie-AI/VisPie_backend/pull/5422) fix(amy-codex): don't crash the turn on >64KB codex --json event lines
 - **日期**：2026-07-11 | **状态**：🚫 已关闭
@@ -1131,6 +1137,18 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#5550](https://github.com/Vispie-AI/VisPie_backend/pull/5550) ci(reelcraft-careers): smoke-test /career without trailing slash
+- **日期**：2026-07-13 | **状态**：✅ 已合并
+- **问题**：部署工作流烟雾测试断言 `/career/`，FastAPI 返回 308 重定向导致测试失败。
+- **修复**：将断言路径改为 `/career`，与 FastAPI 路由行为一致。
+- **成果**：烟雾测试通过，新版服务正常部署上线。
+
+### [#5549](https://github.com/Vispie-AI/VisPie_backend/pull/5549) ci(reelcraft-careers): add Cloud Run deploy workflow so agents can ship it
+- **日期**：2026-07-13 | **状态**：✅ 已合并
+- **问题**：reelcraft-careers 仅支持手动 gcloud 部署，Amy 缺少工具和权限无法自动发布内容。
+- **修复**：新增 GitHub Actions 工作流，基于 Workload Identity Federation 支持 push 触发与手动调度，无需新增密钥。
+- **成果**：Amy 可通过 workflow_dispatch 自主部署 reelcraft.art/career，代理发布闭环打通。
 
 ### [#5444](https://github.com/Vispie-AI/VisPie_backend/pull/5444) ci(amy-codex): run rev-parse as ubuntu too (dubious-ownership guard)
 - **日期**：2026-07-11 | **状态**：🚫 已关闭
