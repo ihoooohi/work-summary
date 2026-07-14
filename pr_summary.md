@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-13 | 共 220 个 PR（已合并 192 · 关闭未合并 15 · 待合并 11）
-> 最后更新：2026-07-13
+> 统计周期：2026-04-11 ~ 2026-07-14 | 共 221 个 PR（已合并 192 · 关闭未合并 15 · 待合并 12）
+> 最后更新：2026-07-14
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5616](https://github.com/Vispie-AI/VisPie_backend/pull/5616) fix(nanobot): keep exception type in Codex error logs, fail fast on timeouts
+- **日期**：2026-07-14 | **状态**：🔀 待合并
+- **问题**：Codex 超时异常的 str() 为空，导致错误日志无法识别超时类型，重试逻辑将其误判为致命错误。
+- **修复**：空错误消息时回退到异常类名输出，并将 httpx 超时异常标记为不可重试以快速失败。
+- **成果**：错误日志可诊断，用户不再因超时被迫多轮等待（最坏情况从 40 分钟降至一次 600 秒）。
 
 ### [#5566](https://github.com/Vispie-AI/VisPie_backend/pull/5566) fix(standup-digest): restore correct standup group id and English digest
 - **日期**：2026-07-13 | **状态**：✅ 已合并
