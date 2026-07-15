@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-14 | 共 221 个 PR（已合并 192 · 关闭未合并 15 · 待合并 12）
-> 最后更新：2026-07-14
+> 统计周期：2026-04-11 ~ 2026-07-15 | 共 223 个 PR（已合并 193 · 关闭未合并 16 · 待合并 12）
+> 最后更新：2026-07-15
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -645,6 +645,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5694](https://github.com/Vispie-AI/VisPie_backend/pull/5694) feat(studio): manual subtitle-cue editor in the node Script tab
+- **日期**：2026-07-15 | **状态**：✅ 已合并
+- **问题**：Studio 替换 /create 入口后图形编辑器不可达，创作者无法手动编辑视频字幕，发布时仅能自动从对话推导字幕。
+- **修复**：在 Studio 节点编辑器 Script 标签页新增字幕卡片（en/zh 国际化），支持添加/删除带时间戳字幕行，并扩展 POST /sessions/{sid}/script/update 接口接收 captions 字段存入故事板与决策树。
+- **成果**：发布优先级改为手动字幕 > clips_bundle > 对话推导，vitest 1172 条全通过，变基合并到 master（取代 #5693）。
+
+### [#5693](https://github.com/Vispie-AI/VisPie_backend/pull/5693) feat(studio): manual subtitle-cue editor in the node Script tab
+- **日期**：2026-07-15 | **状态**：🚫 已关闭
+- **问题**：Studio 上线后字幕编辑入口完全缺失，用户无法控制视频字幕内容与时间节点。
+- **修复**：在 Script 标签页添加字幕卡片，支持手动定义带时间戳字幕行并通过 Save script 保存，后端同步扩展 captions 字段校验与存储逻辑。
+- **成果**：vitest 930 条通过，但因 #5694（含 i18n 及变基）发布后此 PR 被关闭取代。
 ### [#5505](https://github.com/Vispie-AI/VisPie_backend/pull/5505) feat(reelcraft): auto-fill timed captions from dialogue on studio publish
 - **日期**：2026-07-12 | **状态**：✅ 已合并
 - **问题**：v0.3.54 上线后禁止字幕烧录，但 AI 发布流水线从未设置 meta.captions，导致 Studio 发布的所有游戏完全无字幕显示。
