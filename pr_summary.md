@@ -1,12 +1,42 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-15 | 共 223 个 PR（已合并 193 · 关闭未合并 16 · 待合并 12）
-> 最后更新：2026-07-15
+> 统计周期：2026-04-11 ~ 2026-07-17 | 共 230 个 PR（已合并 200 · 关闭未合并 16 · 待合并 12）
+> 最后更新：2026-07-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5802](https://github.com/Vispie-AI/VisPie_backend/pull/5802) fix(reelcraft-daily-report): default digest model to Haiku, harden JSON extraction
+- **日期**：2026-07-17 | **状态**：✅ 已合并
+- **问题**：Sonnet 5 默认开启思考模式，1200 token 预算全被思考块耗尽，JSON 正则无内容可匹配，日报摘要持续回退失败。
+- **修复**：将默认摘要模型切换为 `claude-haiku-4-5-20251001`（无默认思考），并强化 JSON 提取逻辑与 `max_tokens` 设置。
+- **成果**：日报中文摘要可稳定生成，不再因思考块导致 JSON 提取失败。
+
+### [#5801](https://github.com/Vispie-AI/VisPie_backend/pull/5801) fix(reelcraft-daily-report): parse text blocks from thinking-capable model responses
+- **日期**：2026-07-17 | **状态**：✅ 已合并
+- **问题**：Sonnet 响应以思考块开头，解析器假设 `content[0]` 为文本块，`KeyError 'text'` 导致摘要再次回退。
+- **修复**：修改解析器合并所有 `type=="text"` 内容块，并添加图片数量日志便于验证卡片附件。
+- **成果**：中文摘要可正确从思考模型响应中提取，Lark 卡片图片附件路径验证成功。
+
+### [#5800](https://github.com/Vispie-AI/VisPie_backend/pull/5800) fix(reelcraft-daily-report): fetch summary key via WIF + always attach page images
+- **日期**：2026-07-17 | **状态**：✅ 已合并
+- **问题**：仓库 Secret `ANTHROPIC_API_KEY` 密钥轮换后失效（401），LLM 摘要步骤认证失败，首张 Lark 卡片无法生成中文摘要。
+- **修复**：改用 WIF 身份从 GCP Secret Manager 运行时读取 `viral-to-game-anthropic-key`，并确保卡片始终附带页面截图。
+- **成果**：LLM 摘要认证问题从根源修复，页面图片稳定附加到每张 Lark 日报卡片。
+
+### [#5726](https://github.com/Vispie-AI/VisPie_backend/pull/5726) fix(studio): make the self-drawn scroll thumb draggable
+- **日期**：2026-07-16 | **状态**：✅ 已合并
+- **问题**：Studio 聊天列隐藏原生滚动条并绘制自定义滑块，但滑块设置了 `pointer-events-none` 且无指针事件处理，用户无法拖动滚动。
+- **修复**：为三个自绘滚动滑块添加 `pointerdown`/`pointermove`/`pointerup` 事件处理，实现可拖动交互。
+- **成果**：Studio 聊天列、@弹窗和素材选择器列表的自定义滚动条均可正常拖动。
+
+### [#5717](https://github.com/Vispie-AI/VisPie_backend/pull/5717) fix(studio): three-direction review can't be skipped on the full-script canvas path
+- **日期**：2026-07-16 | **状态**：✅ 已合并
+- **问题**：通过自由探索画布粘贴完整脚本时，三方向评审步骤被跳过，代理直接进入分支生成阶段。
+- **修复**：修复 `_narrative_direction_gate` 漏洞（无制品时直通）及提示层冗余兼容代码，确保所有路径均须完成方向选择。
+- **成果**：无论通过哪种入口添加脚本，三方向评审均不可跳过，流程一致性得到保障。
 
 ### [#5616](https://github.com/Vispie-AI/VisPie_backend/pull/5616) fix(nanobot): keep exception type in Codex error logs, fail fast on timeouts
 - **日期**：2026-07-14 | **状态**：🔀 待合并
@@ -645,6 +675,12 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5798](https://github.com/Vispie-AI/VisPie_backend/pull/5798) feat(reelcraft): daily change report — Lark card with PR digest + staging visual diff
+- **日期**：2026-07-17 | **状态**：✅ 已合并
+- **问题**：团队缺乏自动化机制了解 ReelCraft 每日合并变更和视觉差异，需人工追踪 PR 动态。
+- **修复**：新增定时工作流 `reelcraft-daily-report.yml`（北京时间每日 10:00），通过 Claude API 汇总合并 PR，并用 Playwright 截图对比暂存与生产的视觉差异，结果发送到 Lark 卡片。
+- **成果**：团队每日自动收到包含中文摘要和页面视觉对比的 Lark 卡片，变更可见性显著提升。
+
 ### [#5694](https://github.com/Vispie-AI/VisPie_backend/pull/5694) feat(studio): manual subtitle-cue editor in the node Script tab
 - **日期**：2026-07-15 | **状态**：✅ 已合并
 - **问题**：Studio 替换 /create 入口后图形编辑器不可达，创作者无法手动编辑视频字幕，发布时仅能自动从对话推导字幕。
@@ -1154,6 +1190,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#5718](https://github.com/Vispie-AI/VisPie_backend/pull/5718) test(studio): re-pin script-template assertions after three-direction rewrite
+- **日期**：2026-07-16 | **状态**：✅ 已合并
+- **问题**：PR #5717 重写 `_SCRIPT_TEMPLATE` 后，旧测试固定值与新步骤列表不符，主 CI 出现 1 个用例失败。
+- **修复**：更新测试固定值以匹配新流水线步骤，并新增 `test_script_template_demands_three_directions` 固定三方向评审需求。
+- **成果**：本地 41/41 测试全部通过，主分支 CI 恢复绿色。
 
 ### [#5550](https://github.com/Vispie-AI/VisPie_backend/pull/5550) ci(reelcraft-careers): smoke-test /career without trailing slash
 - **日期**：2026-07-13 | **状态**：✅ 已合并
