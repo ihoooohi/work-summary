@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-17 | 共 230 个 PR（已合并 200 · 关闭未合并 16 · 待合并 12）
-> 最后更新：2026-07-17
+> 统计周期：2026-04-11 ~ 2026-07-18 | 共 233 个 PR（已合并 202 · 关闭未合并 17 · 待合并 12）
+> 最后更新：2026-07-18
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#5832](https://github.com/Vispie-AI/VisPie_backend/pull/5832) fix(amy-nanobot): per-thread session + concurrency (stop cross-thread context bleed)
+- **日期**：2026-07-18 | **状态**：✅ 已合并
+- **问题**：Amy 在群组话题线程间共享会话上下文，导致跨线程内容串扰答非所问。
+- **修复**：将 session_id 及并发表达式由 chat_id 改为 conversation_key，实现每线程独立会话与并发处理。
+- **成果**：各线程拥有独立对话记忆，Stop 按钮可正确取消线程内运行，不同线程可并发执行无阻塞。
 
 ### [#5802](https://github.com/Vispie-AI/VisPie_backend/pull/5802) fix(reelcraft-daily-report): default digest model to Haiku, harden JSON extraction
 - **日期**：2026-07-17 | **状态**：✅ 已合并
@@ -674,6 +680,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#5822](https://github.com/Vispie-AI/VisPie_backend/pull/5822) feat(reelcraft-daily-report): snapshot the public /stories hub
+- **日期**：2026-07-18 | **状态**：✅ 已合并
+- **问题**：ReelCraft 每日截图报告未覆盖公开的 /stories 故事中心页面。
+- **修复**：在 paths.json 中新增 /stories 路径，双视口截图并屏蔽图片与视频内容。
+- **成果**：截图覆盖提升至 12/12，故事中心页面（hero + 分类卡片）完整呈现。
+
+### [#5820](https://github.com/Vispie-AI/VisPie_backend/pull/5820) feat(reelcraft-daily-report): studio (login-gated) snapshots with graceful skip
+- **日期**：2026-07-18 | **状态**：🚫 已关闭
+- **问题**：每日截图报告未覆盖需要登录的 Studio 页面（/create 系列，仅桌面端）。
+- **修复**：新增三条 auth:true 路径，通过真实 UI 登录流程获取会话，凭证缺失时自动跳过。
+- **成果**：设计支持凭证缺失时安全降级，10/13 截图成功，3 条 Studio 路径干净跳过不影响流程。
 
 ### [#5798](https://github.com/Vispie-AI/VisPie_backend/pull/5798) feat(reelcraft): daily change report — Lark card with PR digest + staging visual diff
 - **日期**：2026-07-17 | **状态**：✅ 已合并
