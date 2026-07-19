@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-18 | 共 233 个 PR（已合并 202 · 关闭未合并 17 · 待合并 12）
-> 最后更新：2026-07-18
+> 统计周期：2026-04-11 ~ 2026-07-19 | 共 235 个 PR（已合并 203 · 关闭未合并 17 · 待合并 13）
+> 最后更新：2026-07-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#5983](https://github.com/Vispie-AI/VisPie_backend/pull/5983) fix(monitoring): retire vio-gateway liveness_silent alert (Vio de-prioritized)
+- **日期**：2026-07-19 | **状态**：✅ 已合并
+- **问题**：vio-gateway liveness_silent Critical 告警已连续触发约 21 天，而 Vio 子系统已不再是监控优先级。
+- **修复**：将 vio-gateway 从 CRITICAL_AGENTS_ALWAYS 与 CRITICAL_SILENT_AGENTS 配置中移除，消除持续告警噪音。
+- **成果**：下次 Prefect 定时运行（约 15 分钟内）后告警自动停止，无需手动重部署。
 ### [#5832](https://github.com/Vispie-AI/VisPie_backend/pull/5832) fix(amy-nanobot): per-thread session + concurrency (stop cross-thread context bleed)
 - **日期**：2026-07-18 | **状态**：✅ 已合并
 - **问题**：Amy 在群组话题线程间共享会话上下文，导致跨线程内容串扰答非所问。
@@ -681,6 +686,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#5982](https://github.com/Vispie-AI/VisPie_backend/pull/5982) feat(amy-monitor): daily Amy reliability health card (Hatchet + Langfuse)
+- **日期**：2026-07-19 | **状态**：🔀 待合并
+- **问题**：Amy 可靠性评审为一次性手动脚本，无法持续监控执行质量与延迟。
+- **修复**：将单次评审改造为每日定时健康卡片，整合 Hatchet 执行成功率与 Langfuse 工具错误率，按颜色编码阈值告警。
+- **成果**：已在 web_dev 部署并验证，每日 10:00（上海时间）自动发送健康卡片至运营群。
 ### [#5822](https://github.com/Vispie-AI/VisPie_backend/pull/5822) feat(reelcraft-daily-report): snapshot the public /stories hub
 - **日期**：2026-07-18 | **状态**：✅ 已合并
 - **问题**：ReelCraft 每日截图报告未覆盖公开的 /stories 故事中心页面。
