@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-19 | 共 235 个 PR（已合并 203 · 关闭未合并 17 · 待合并 13）
-> 最后更新：2026-07-19
+> 统计周期：2026-04-11 ~ 2026-07-20 | 共 238 个 PR（已合并 205 · 关闭未合并 17 · 待合并 14）
+> 最后更新：2026-07-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6039](https://github.com/Vispie-AI/VisPie_backend/pull/6039) fix(studio): "not linked"徽章遮挡卡片
+- **日期**：2026-07-20 | **状态**：✅ 已合并
+- **问题**：树视图孤立节点徽章 Y 坐标偏小，被卡片覆盖下半部分。
+- **修复**：translate Y 从 -10 改为 -22，徽章完全位于卡片上方。
+- **成果**：徽章可读，其余节点不受影响。
 
 ### [#5983](https://github.com/Vispie-AI/VisPie_backend/pull/5983) fix(monitoring): retire vio-gateway liveness_silent alert (Vio de-prioritized)
 - **日期**：2026-07-19 | **状态**：✅ 已合并
@@ -685,6 +691,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#6047](https://github.com/Vispie-AI/VisPie_backend/pull/6047) feat(studio): Stop + 移除规划板
+- **日期**：2026-07-20 | **状态**：🔀 待合并
+- **问题**：生成中按钮失效，Pitch 自动生成无用规划板图。
+- **修复**：Stop 中止 SSE 和后台任务；移除规划板前后端逻辑。
+- **成果**：可随时停止，Pitch 仅显文字卡，无图片调用。
+
+### [#6042](https://github.com/Vispie-AI/VisPie_backend/pull/6042) feat(studio): 专家卡计时 + 超时固化
+- **日期**：2026-07-20 | **状态**：✅ 已合并
+- **问题**：专家卡长任务仅显加载圈，超时参数每次部署被重置。
+- **修复**：新增 1s 计时；超时写入工作流 inputs 默认值。
+- **成果**：卡片显灰色计时，超时不再被覆盖。
 
 ### [#5982](https://github.com/Vispie-AI/VisPie_backend/pull/5982) feat(amy-monitor): daily Amy reliability health card (Hatchet + Langfuse)
 - **日期**：2026-07-19 | **状态**：🔀 待合并
