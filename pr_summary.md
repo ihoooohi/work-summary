@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-20 | 共 238 个 PR（已合并 205 · 关闭未合并 17 · 待合并 14）
-> 最后更新：2026-07-20
+> 统计周期：2026-04-11 ~ 2026-07-21 | 共 239 个 PR（已合并 206 · 关闭未合并 17 · 待合并 14）
+> 最后更新：2026-07-21
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -691,6 +691,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#6153](https://github.com/Vispie-AI/VisPie_backend/pull/6153) feat(reelcraft): daily pipeline health report — per-step success rate + durations to Lark
+- **日期**：2026-07-21 | **状态**：✅ 已合并
+- **问题**：ReelCraft 缺少每日流水线健康监控，无法快速发现各步骤成功率下降或耗时异常。
+- **修复**：新增 GitHub Actions 定时任务，每日查询过去 24 小时各步骤成功率与 p50/p95 耗时，并以 Lark 卡片推送到 Alarms 群组。
+- **成果**：每天北京时间 10:05 自动发送流水线健康报告，包含与 7 日基准对比的成功率及失败归因榜单。
 
 ### [#6047](https://github.com/Vispie-AI/VisPie_backend/pull/6047) feat(studio): Stop + 移除规划板
 - **日期**：2026-07-20 | **状态**：🔀 待合并
