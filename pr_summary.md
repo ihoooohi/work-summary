@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-21 | 共 239 个 PR（已合并 206 · 关闭未合并 17 · 待合并 14）
-> 最后更新：2026-07-21
+> 统计周期：2026-04-11 ~ 2026-07-22 | 共 241 个 PR（已合并 208 · 关闭未合并 17 · 待合并 14）
+> 最后更新：2026-07-22
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -692,6 +692,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6175](https://github.com/Vispie-AI/VisPie_backend/pull/6175) feat(reelcraft): developer-debug section on the pipeline health report
+- **日期**：2026-07-22 | **状态**：✅ 已合并
+- **问题**：每日流水线健康卡缺少研发排查信息，难以快速定位失败根因。
+- **修复**：在健康报告卡片中新增"🔧 研发排查"区块，展示最近5条失败用例（含用户邮件、错误摘要及调试深链）。
+- **成果**：运维人员可通过卡片直接跳转 studio 编辑器和 ops 时间线进行故障排查，效率显著提升。
 ### [#6153](https://github.com/Vispie-AI/VisPie_backend/pull/6153) feat(reelcraft): daily pipeline health report — per-step success rate + durations to Lark
 - **日期**：2026-07-21 | **状态**：✅ 已合并
 - **问题**：ReelCraft 缺少每日流水线健康监控，无法快速发现各步骤成功率下降或耗时异常。
@@ -1243,6 +1248,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#6184](https://github.com/Vispie-AI/VisPie_backend/pull/6184) refactor(reelcraft): move the pipeline health report from GitHub Actions cron to Prefect
+- **日期**：2026-07-22 | **状态**：✅ 已合并
+- **问题**：ReelCraft 流水线健康报告运行于 GitHub Actions Cron，存在时间漂移且不符合团队"报告走 Prefect"的规范。
+- **修复**：将报告逻辑迁移至 Prefect Cloud（`flows/reelcraft_pipeline_report/`），配置 09:05（北京时间）CronSchedule，并移除 GitHub Actions 中对应的 cron 工作流。
+- **成果**：每日报告定时精准、与 Prefect 统一管理，合并后工作流自动注册部署并可通过 `workflow_dispatch` 触发验证运行。
 ### [#5718](https://github.com/Vispie-AI/VisPie_backend/pull/5718) test(studio): re-pin script-template assertions after three-direction rewrite
 - **日期**：2026-07-16 | **状态**：✅ 已合并
 - **问题**：PR #5717 重写 `_SCRIPT_TEMPLATE` 后，旧测试固定值与新步骤列表不符，主 CI 出现 1 个用例失败。
