@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-22 | 共 241 个 PR（已合并 208 · 关闭未合并 17 · 待合并 14）
-> 最后更新：2026-07-22
+> 统计周期：2026-04-11 ~ 2026-07-23 | 共 246 个 PR（已合并 213 · 关闭未合并 17 · 待合并 14）
+> 最后更新：2026-07-23
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6297](https://github.com/Vispie-AI/VisPie_backend/pull/6297) fix(e2e): auto-rollback finds last-green revision by name, not image tag
+- **日期**：2026-07-23 | **状态**：✅ 已合并
+- **问题**：自动回滚通过镜像标签查找 Cloud Run 修订版本，但 Cloud Run 将标签解析为摘要，导致匹配失败、回滚从不生效。
+- **修复**：改为通过修订版本名称中内嵌的短 SHA 进行匹配，确保准确定位目标修订版本。
+- **成果**：自动回滚现在可正确切换到最后一个绿色修订版本，自愈功能真正生效。
 
 ### [#6039](https://github.com/Vispie-AI/VisPie_backend/pull/6039) fix(studio): "not linked"徽章遮挡卡片
 - **日期**：2026-07-20 | **状态**：✅ 已合并
@@ -692,6 +698,24 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6275](https://github.com/Vispie-AI/VisPie_backend/pull/6275) feat(ci-cards): auto-rollback staging to last-green on confirmed E2E regression (P1a)
+- **日期**：2026-07-23 | **状态**：✅ 已合并
+- **问题**：E2E 确认回归时，Staging 持续对外提供有缺陷版本，团队无法快速恢复到稳定状态。
+- **修复**：在确认回归后自动将 Staging 流量切回上一个 E2E 通过的修订版本，并通过广播卡片通知团队。
+- **成果**：Staging 可在 E2E 回归确认后自动恢复，通过环境变量控制武装或干跑，默认不影响生产。
+
+### [#6273](https://github.com/Vispie-AI/VisPie_backend/pull/6273) feat(ci-cards): staging deploy → @all broadcast naming the SHA (P1b)
+- **日期**：2026-07-23 | **状态**：✅ 已合并
+- **问题**：Staging 成功部署后团队无法即时得知当前版本的确切 SHA，版本信息依赖人工通报。
+- **修复**：新增 staging-announce 端点，每次 Staging 成功部署后向 PR 群组发送@全员广播卡片并注明 SHA。
+- **成果**：团队可在每次 Staging 部署后立即通过 Lark 群组消息获知当前服务的精确版本号。
+
+### [#6271](https://github.com/Vispie-AI/VisPie_backend/pull/6271) feat(ci-cards): card colour is the end-to-end verdict — white until E2E passes (P0)
+- **日期**：2026-07-23 | **状态**：✅ 已合并
+- **问题**：提交卡片在 CI 通过后立即变绿，E2E 尚未运行，形成"假绿"误导团队认为版本已端到端验证。
+- **修复**：重构卡片聚合逻辑，仅在 E2E 通过后显示绿色，CI 通过但无 E2E 结果时保持白色待定状态。
+- **成果**：绿色卡片现在真正代表"端到端验证通过、可安全推广"，消除了误导性假绿信号。
+
 ### [#6175](https://github.com/Vispie-AI/VisPie_backend/pull/6175) feat(reelcraft): developer-debug section on the pipeline health report
 - **日期**：2026-07-22 | **状态**：✅ 已合并
 - **问题**：每日流水线健康卡缺少研发排查信息，难以快速定位失败根因。
@@ -1247,6 +1271,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#6269](https://github.com/Vispie-AI/VisPie_backend/pull/6269) ci(e2e): trustworthy verdict — exit-code classification + confirmed-red retry (PR0)
+- **日期**：2026-07-23 | **状态**：✅ 已合并
+- **问题**：E2E 检测器约三分之一概率误报红色，将容器崩溃（exit 2）误判为代码回归（exit 1），触发假回滚和错误二分归因。
+- **修复**：通过退出码分类区分真实回归与检测器错误，并对孤立红色结果最多重试三次以确认真正回归。
+- **成果**：E2E 判定结果现在可靠可信，消除了假红触发回滚和二分法误归咎无辜提交的问题。
 
 ### [#6184](https://github.com/Vispie-AI/VisPie_backend/pull/6184) refactor(reelcraft): move the pipeline health report from GitHub Actions cron to Prefect
 - **日期**：2026-07-22 | **状态**：✅ 已合并
