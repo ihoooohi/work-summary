@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-23 | 共 246 个 PR（已合并 213 · 关闭未合并 17 · 待合并 14）
-> 最后更新：2026-07-23
+> 统计周期：2026-04-11 ~ 2026-07-24 | 共 248 个 PR（已合并 213 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-24
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -697,6 +697,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#6333](https://github.com/Vispie-AI/VisPie_backend/pull/6333) feat(e2e-card): session id on the E2E lane links to the run's rendered clips
+- **日期**：2026-07-24 | **状态**：🚫 已关闭
+- **问题**：E2E lane中的session ID只显示为纯文字，无法从卡片追踪对应的渲染结果。
+- **修复**：将session ID改为指向GCS控制台的可点击链接，并将卡片详情字符上限从160扩展至300。
+- **成果**：用户可从提交卡片直接点击查看E2E冒烟产生的渲染片段，便于快速验证。
+
+### [#6331](https://github.com/Vispie-AI/VisPie_backend/pull/6331) feat(ci-cards): staging broadcast headlines the PR number, not the commit SHA
+- **日期**：2026-07-24 | **状态**：🚫 已关闭
+- **问题**：Staging部署广播标题显示的是无意义的commit SHA，难以快速识别对应版本。
+- **修复**：将广播标题改为PR编号（带链接），SHA降为次要信息，查找失败时自动回退至SHA。
+- **成果**：部署广播与Bitable记录保持一致，一眼即可确认staging当前对应哪个PR。
 
 ### [#6275](https://github.com/Vispie-AI/VisPie_backend/pull/6275) feat(ci-cards): auto-rollback staging to last-green on confirmed E2E regression (P1a)
 - **日期**：2026-07-23 | **状态**：✅ 已合并
