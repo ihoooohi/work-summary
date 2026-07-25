@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-24 | 共 248 个 PR（已合并 213 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-24
+> 统计周期：2026-04-11 ~ 2026-07-25 | 共 249 个 PR（已合并 214 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-25
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -698,6 +698,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6357](https://github.com/Vispie-AI/VisPie_backend/pull/6357) feat(e2e-card): session link opens the full session (chat + storyboard + clips) on the e2e viewer
+- **日期**：2026-07-25 | **状态**：✅ 已合并
+- **问题**：E2E 卡片中的 session 链接指向 GCS 原始文件夹，评审者无法查看完整对话流程与故事板。
+- **修复**：将链接改为指向 e2e 查看器服务，同时保留绿色会话数据供事后审阅。
+- **成果**：评审者可直接从卡片链接查看完整会话（对话 + 故事板 + 片段），审核效率显著提升。
 ### [#6333](https://github.com/Vispie-AI/VisPie_backend/pull/6333) feat(e2e-card): session id on the E2E lane links to the run's rendered clips
 - **日期**：2026-07-24 | **状态**：🚫 已关闭
 - **问题**：E2E lane中的session ID只显示为纯文字，无法从卡片追踪对应的渲染结果。
