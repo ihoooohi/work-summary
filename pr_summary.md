@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-25 | 共 249 个 PR（已合并 214 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-25
+> 统计周期：2026-04-11 ~ 2026-07-27 | 共 254 个 PR（已合并 219 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-27
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6435](https://github.com/Vispie-AI/VisPie_backend/pull/6435) fix(engine): drain the span queue before the response — Cloud Run throttles after
+- **日期**：2026-07-27 | **状态**：✅ 已合并
+- **问题**：Cloud Run 在 HTTP 响应返回后立即限速，导致 BatchSpanProcessor 后台导出器冻结，G3~G7 阶段的 Langfuse span 全部丢失。
+- **修复**：在 `run_chain` 的 `finally` 块及两个 pre-run 根节点返回前，调用 `flush_tracing()` 强制清空 span 队列。
+- **成果**：所有阶段 span 在响应前完成导出，Langfuse 轨迹不再截断，同时兼顾了 $0 通道的无操作场景。
+
+### [#6424](https://github.com/Vispie-AI/VisPie_backend/pull/6424) fix(engine): K1 follow-up — five defects from the #6397 review
+- **日期**：2026-07-27 | **状态**：✅ 已合并
+- **问题**：#6397 合并后发现五个缺陷：幂等键因 `studio_session_id` 写入导致重放永久失败、厂商 span 未被隔离、恢复路径未传递 session 键、测试向生产 Langfuse 输出垃圾 span、以及修复 #1 带来的镜像冲突。
+- **修复**：幂等键改用固定身份元组，合并前清除 SDK span 处理器，恢复路径从 `PreRunState` 读取 session，测试统一使用保留 TLD，冲突裁决改为比较身份键而非哈希值。
+- **成果**：五个 P1/P2 缺陷全部消除，回归测试 1349 通过，CI 不再向生产 Langfuse 发送垃圾数据。
 ### [#6297](https://github.com/Vispie-AI/VisPie_backend/pull/6297) fix(e2e): auto-rollback finds last-green revision by name, not image tag
 - **日期**：2026-07-23 | **状态**：✅ 已合并
 - **问题**：自动回滚通过镜像标签查找 Cloud Run 修订版本，但 Cloud Run 将标签解析为摘要，导致匹配失败、回滚从不生效。
@@ -698,6 +709,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6437](https://github.com/Vispie-AI/VisPie_backend/pull/6437) feat(storage): record slow queries application-side — there is no pg_stat_statements to use
+- **日期**：2026-07-27 | **状态**：✅ 已合并
+- **问题**：ReelCraft 完全缺乏慢查询可见性，且 `pg_stat_statements` 需重启共享实例，风险等同于引发锁风暴的操作本身。
+- **修复**：在 `_PGCursor.execute` 和 `connect()` 两个必经点埋入计时器，超阈值（200ms/1000ms）输出含调用位置与端点的结构化 JSON 日志。
+- **成果**：Cloud Run 自动将 JSON 提升为 `jsonPayload`，可直接在 Cloud Logging 查询和配置告警，无需新增基础设施。
+
+### [#6426](https://github.com/Vispie-AI/VisPie_backend/pull/6426) feat(engine): stage tier — Langfuse traces group by creative phase
+- **日期**：2026-07-27 | **状态**：✅ 已合并
+- **问题**：Langfuse 会话中 200+ 个 span 完全扁平无层级，无法区分 Pitch/Script/Assets 等创作阶段，故障排查极为困难。
+- **修复**：引入 `stage_span()` 在生产链的 9 个调用点包裹各 G-stage，利用 OTel 上下文传播将子 span 自动嵌套至阶段节点，无需修改任何叶节点。
+- **成果**：Langfuse 轨迹呈现 `engine.run → G0~G7 → 叶节点` 三层结构，失败阶段标记 ERROR，恢复运行仅展示实际执行的阶段。
 ### [#6357](https://github.com/Vispie-AI/VisPie_backend/pull/6357) feat(e2e-card): session link opens the full session (chat + storyboard + clips) on the e2e viewer
 - **日期**：2026-07-25 | **状态**：✅ 已合并
 - **问题**：E2E 卡片中的 session 链接指向 GCS 原始文件夹，评审者无法查看完整对话流程与故事板。
@@ -1289,6 +1311,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#6404](https://github.com/Vispie-AI/VisPie_backend/pull/6404) chore(studio): drop the retired v2.reelcraft.art domain from shell comments
+- **日期**：2026-07-27 | **状态**：✅ 已合并
+- **问题**：2026-07-22 单域名切换后 `v2.reelcraft.art` 已退役，但代码中 4 处注释仍声称 studio2 运行于该独立域名，误导开发者和 AI Agent。
+- **修复**：仅修改注释，更正为真实的服务端 `shell_selector.serves_v2_shell` 选择机制，并将 station 入口标记为 RETIRED，纯注释改动不涉及任何逻辑。
+- **成果**：代码库中不再有注释声称 v2 域名存活，消除架构误解风险，4 个文件共 +25/-14 行均为注释。
 ### [#6269](https://github.com/Vispie-AI/VisPie_backend/pull/6269) ci(e2e): trustworthy verdict — exit-code classification + confirmed-red retry (PR0)
 - **日期**：2026-07-23 | **状态**：✅ 已合并
 - **问题**：E2E 检测器约三分之一概率误报红色，将容器崩溃（exit 2）误判为代码回归（exit 1），触发假回滚和错误二分归因。
