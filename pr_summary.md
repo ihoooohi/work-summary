@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-27 | 共 254 个 PR（已合并 219 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-27
+> 统计周期：2026-04-11 ~ 2026-07-28 | 共 255 个 PR（已合并 220 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-28
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6465](https://github.com/Vispie-AI/VisPie_backend/pull/6465) fix(studio): make generated media taggable in chat
+- **日期**：2026-07-28 | **状态**：✅ 已合并
+- **问题**：Studio 聊天中生成的关键帧和视频已持久化，但主编辑器目录未聚合、后端来源解析器不接受 `session asset:` 协议。
+- **修复**：在主编辑器 `@` 视觉选择器中暴露持久化的起止关键帧与已渲染视频，并让严格来源解析器支持 `session asset:` 行及中英文标签。
+- **成果**：生成媒体可在聊天中被标记引用，无数据库结构变更，共修改 13 个文件，新增 1,066 行。
 
 ### [#6435](https://github.com/Vispie-AI/VisPie_backend/pull/6435) fix(engine): drain the span queue before the response — Cloud Run throttles after
 - **日期**：2026-07-27 | **状态**：✅ 已合并
