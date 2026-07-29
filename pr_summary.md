@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-28 | 共 255 个 PR（已合并 220 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-28
+> 统计周期：2026-04-11 ~ 2026-07-29 | 共 258 个 PR（已合并 223 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-29
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6504](https://github.com/Vispie-AI/VisPie_backend/pull/6504) fix(studio): restore item asset versions
+- **日期**：2026-07-29 | **状态**：✅ 已合并
+- **问题**：Studio 资产编辑器中，物品类资产的版本恢复功能失效，点击还原时报 `Restore failed`。
+- **修复**：在视觉引用历史还原的校验与交换逻辑中补充 `item_refs`，使物品资产与角色、场景的还原路径一致。
+- **成果**：物品资产可正常还原历史版本，并新增 Photograph 类型回归测试。
+
+### [#6496](https://github.com/Vispie-AI/VisPie_backend/pull/6496) fix(studio): place import notes beside script sections
+- **日期**：2026-07-29 | **状态**：✅ 已合并
+- **问题**：导入备注统一显示在文档顶部横幅，无法与对应脚本段落关联，难以定位问题。
+- **修复**：将分段来源暴露至 Script 文档节，把分段级备注内联到第一个匹配节，文档级备注仍保留在顶部横幅。
+- **成果**：备注精确显示在相关脚本节旁，前后端全量测试（179 文件，1878 用例）全部通过。
+
+### [#6487](https://github.com/Vispie-AI/VisPie_backend/pull/6487) fix(reelcraft): show costs as 10 tokens per USD
+- **日期**：2026-07-29 | **状态**：✅ 已合并
+- **问题**：ReelCraft 未建立面向创作者的独立 Token 计量单位，费用数字与用户直觉（以美元为参考）脱节。
+- **修复**：以 10 Token/USD 为新创作者单位，将 Studio 估价、余额、用量、管理员额度等全部换算，底层信用账本保持不变，并拒绝旧授权要求重新询价。
+- **成果**：Token 展示与美元换算一致（USD 3 → 30 Token），219 项后端测试及 45 项前端测试全部通过。
 ### [#6465](https://github.com/Vispie-AI/VisPie_backend/pull/6465) fix(studio): make generated media taggable in chat
 - **日期**：2026-07-28 | **状态**：✅ 已合并
 - **问题**：Studio 聊天中生成的关键帧和视频已持久化，但主编辑器目录未聚合、后端来源解析器不接受 `session asset:` 协议。
