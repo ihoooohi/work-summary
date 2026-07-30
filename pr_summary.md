@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-29 | 共 258 个 PR（已合并 223 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-29
+> 统计周期：2026-04-11 ~ 2026-07-30 | 共 261 个 PR（已合并 226 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-07-30
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6530](https://github.com/Vispie-AI/VisPie_backend/pull/6530) fix(studio): make uploaded assets editable
+- **日期**：2026-07-30 | **状态**：✅ 已合并
+- **问题**：用户上传的图片在加载后无法编辑，提示词修改无法持久化，删除会波及引用的媒体字节。
+- **修复**：修正上传图片加载逻辑，增加提示词持久化及可逆的重新生成/还原历史，独立实现资源删除。
+- **成果**：后端 139 个测试及前端 1984 个测试全部通过，上传资源现支持完整的编辑与管理操作。
+
+### [#6517](https://github.com/Vispie-AI/VisPie_backend/pull/6517) fix(studio): revise stale prerun for script imports
+- **日期**：2026-07-30 | **状态**：✅ 已合并
+- **问题**：上传 TXT/DOCX 脚本并选择"使用原始内容"后，预运行仍基于旧暂存内容而非完整源文件分析。
+- **修复**：将已接受的 Phase-0 提交绕过旧预运行路径，并将活跃引擎预运行修订为基于完整脚本的版本。
+- **成果**：195 个测试全部通过，修复脚本导入后预运行过期问题并保证 Phase-0 重放的幂等性。
 ### [#6504](https://github.com/Vispie-AI/VisPie_backend/pull/6504) fix(studio): restore item asset versions
 - **日期**：2026-07-29 | **状态**：✅ 已合并
 - **问题**：Studio 资产编辑器中，物品类资产的版本恢复功能失效，点击还原时报 `Restore failed`。
@@ -732,6 +743,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6520](https://github.com/Vispie-AI/VisPie_backend/pull/6520) feat(studio): add project soft delete
+- **日期**：2026-07-30 | **状态**：✅ 已合并
+- **问题**：ReelCraft 项目删除为硬删除，存在误删数据丢失风险且缺乏用户侧确认流程。
+- **修复**：将 DELETE 端点改为软删除（deleted_at 墓碑），并在项目网格中增加带确认的删除按钮。
+- **成果**：后端 167 个测试及前端 1970 个测试全部通过，项目被安全隐藏而非永久销毁。
 ### [#6437](https://github.com/Vispie-AI/VisPie_backend/pull/6437) feat(storage): record slow queries application-side — there is no pg_stat_statements to use
 - **日期**：2026-07-27 | **状态**：✅ 已合并
 - **问题**：ReelCraft 完全缺乏慢查询可见性，且 `pg_stat_statements` 需重启共享实例，风险等同于引发锁风暴的操作本身。
