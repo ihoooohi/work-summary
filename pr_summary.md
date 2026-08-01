@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-07-30 | 共 261 个 PR（已合并 226 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-07-30
+> 统计周期：2026-04-11 ~ 2026-08-01 | 共 265 个 PR（已合并 230 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-08-01
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6563](https://github.com/Vispie-AI/VisPie_backend/pull/6563) fix(reelcraft): send production release cards directly
+- **日期**：2026-08-01 | **状态**：✅ 已合并
+- **问题**：正式发布后通知卡片通过旧 Cloud Run/HMAC 桥接路径发送，导致发布公告无法到达团队。
+- **修复**：移除旧桥接路径，改用 Production GitHub Environment 凭证直接通过 George Lark 应用发卡。
+- **成果**：正式发布后自动推送含版本号、SHA 及最多五条亮点的绿色 Lark 卡片，通知失败不影响发布。
+
+### [#6559](https://github.com/Vispie-AI/VisPie_backend/pull/6559) fix(reelcraft): expose release-card capability
+- **日期**：2026-08-01 | **状态**：✅ 已合并
+- **问题**：端点手动校验请求体导致 FastAPI 未在 OpenAPI 中暴露新字段，兼容性检测始终判定后端为旧版。
+- **修复**：在响应模型中新增 environment 字段作为能力信号，并将 OpenAPI 获取超时调高至 30 秒。
+- **成果**：后端升级后兼容性探测可正确识别新能力，生产通知自动启用。
+
+### [#6558](https://github.com/Vispie-AI/VisPie_backend/pull/6558) fix(reelcraft): guard production card rollout skew
+- **日期**：2026-08-01 | **状态**：✅ 已合并
+- **问题**：后端与 ReelCraft 独立发布，旧版后端不识别新 payload 字段，会将生产通知误渲染为 staging 卡片。
+- **修复**：发送前先探测后端 OpenAPI schema，确认 environment 字段存在后再发送，否则跳过并记录警告。
+- **成果**：灰度期间生产通知不因版本不匹配误发 staging 卡片，且完全不阻塞生产发布流程。
 ### [#6530](https://github.com/Vispie-AI/VisPie_backend/pull/6530) fix(studio): make uploaded assets editable
 - **日期**：2026-07-30 | **状态**：✅ 已合并
 - **问题**：用户上传的图片在加载后无法编辑，提示词修改无法持久化，删除会波及引用的媒体字节。
@@ -1350,6 +1367,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#6557](https://github.com/Vispie-AI/VisPie_backend/pull/6557) ci(reelcraft): announce concise production release highlights
+- **日期**：2026-08-01 | **状态**：✅ 已合并
+- **问题**：staging 有部署通知卡片，但生产发布成功后完全静默，团队无法及时了解发布情况。
+- **修复**：复用现有 HMAC 端点和 George 机器人，在生产 deploy job 成功后发送一张简洁的发布通知卡片。
+- **成果**：生产发布后团队自动收到含版本、SHA 及最多五条核心亮点的 Lark 卡片，且不阻塞发布主流程。
 ### [#6404](https://github.com/Vispie-AI/VisPie_backend/pull/6404) chore(studio): drop the retired v2.reelcraft.art domain from shell comments
 - **日期**：2026-07-27 | **状态**：✅ 已合并
 - **问题**：2026-07-22 单域名切换后 `v2.reelcraft.art` 已退役，但代码中 4 处注释仍声称 studio2 运行于该独立域名，误导开发者和 AI Agent。
