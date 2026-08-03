@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-01 | 共 265 个 PR（已合并 230 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-08-01
+> 统计周期：2026-04-11 ~ 2026-08-03 | 共 269 个 PR（已合并 234 · 关闭未合并 19 · 待合并 14）
+> 最后更新：2026-08-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6583](https://github.com/Vispie-AI/VisPie_backend/pull/6583) fix(reelcraft): stabilize post-merge asset concurrency checks
+- **日期**：2026-08-03 | **状态**：✅ 已合并
+- **问题**：#6577 合并后，SQLite 并发测试因顺序依赖导致两处幂等锁冲突失败。
+- **修复**：SQLite 测试在幂等查询前加写锁以匹配 PostgreSQL 事务锁边界，并行材料测试改用 brief 而非调用顺序选取素材。
+- **成果**：聚焦失败用例重复执行 5 次均通过，完整端点与材料套件 194 个用例全绿。
+
+### [#6577](https://github.com/Vispie-AI/VisPie_backend/pull/6577) fix(reelcraft): make asset generation commits atomic
+- **日期**：2026-08-03 | **状态**：✅ 已合并
+- **问题**：并发生成请求读取旧的全量 JSON 再写回，导致不同请求结果互相覆盖，数据丢失。
+- **修复**：用 PostgreSQL 序列化的逐引用意图/版本行替换整体资产写入，同一引用执行最新意图优先策略并精确去重并发请求。
+- **成果**：真实 PostgreSQL 并发场景及各端点测试均通过，前端 2095 个测试全绿，监控告警定义验证通过。
+
+### [#6569](https://github.com/Vispie-AI/VisPie_backend/pull/6569) fix(amy-lark): normalize card @mention syntax + text fallback on card rejection
+- **日期**：2026-08-03 | **状态**：✅ 已合并
+- **问题**：Amy 回复使用了文本消息 @提及语法，Lark 卡片（code=230099）拒绝渲染，用户等待 10 分钟仍看到进度卡片卡住。
+- **修复**：在统一 sanitize 路径中将文本 @语法转换为卡片 Markdown 格式，卡片被拒绝时回退为纯文本消息发送以确保答案送达。
+- **成果**：28 个相关测试全部通过，端到端回放验证卡片语法转换正确，用户无论卡片是否被接受均可收到最终答案。
 ### [#6563](https://github.com/Vispie-AI/VisPie_backend/pull/6563) fix(reelcraft): send production release cards directly
 - **日期**：2026-08-01 | **状态**：✅ 已合并
 - **问题**：正式发布后通知卡片通过旧 Cloud Run/HMAC 桥接路径发送，导致发布公告无法到达团队。
@@ -760,6 +777,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6573](https://github.com/Vispie-AI/VisPie_backend/pull/6573) feat(reelcraft): let creators replace reference assets
+- **日期**：2026-08-03 | **状态**：✅ 已合并
+- **问题**：创作者无法在不改变引用稳定 ID 的情况下替换角色、场景或道具等参考素材图片。
+- **修复**：新增上传接口允许创作者替换选定引用的图片，替换记录纳入历史可回溯，新 URL 同步流入后续帧重生成与直接引用到视频流程。
+- **成果**：后端 145 个测试、前端 103 个测试全部通过，TypeScript 构建、ESLint 及 i18n 检查均无误。
 ### [#6520](https://github.com/Vispie-AI/VisPie_backend/pull/6520) feat(studio): add project soft delete
 - **日期**：2026-07-30 | **状态**：✅ 已合并
 - **问题**：ReelCraft 项目删除为硬删除，存在误删数据丢失风险且缺乏用户侧确认流程。
