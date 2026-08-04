@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-03 | 共 269 个 PR（已合并 234 · 关闭未合并 19 · 待合并 14）
-> 最后更新：2026-08-03
+> 统计周期：2026-04-11 ~ 2026-08-04 | 共 271 个 PR（已合并 235 · 关闭未合并 19 · 待合并 15）
+> 最后更新：2026-08-04
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -776,6 +776,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#6601](https://github.com/Vispie-AI/VisPie_backend/pull/6601) feat(internal): add AI asset workbench P0
+- **日期**：2026-08-04 | **状态**：✅ 已合并
+- **问题**：内部工具缺少非技术团队自助生成 AI 图片和视频的工作台。
+- **修复**：新增 `/ai-assets` 工作台，支持模型选择、历史记录、GCS 参考图上传和无密钥 Vercel 预览部署。
+- **成果**：内容团队可独立生成并下载 AI 素材，无需工程师介入。
+
+### [#6591](https://github.com/Vispie-AI/VisPie_backend/pull/6591) feat(reelcraft): delete and restore asset versions
+- **日期**：2026-08-04 | **状态**：🔀 待合并
+- **问题**：ReelCraft 缺少对生成和上传的参考图版本进行删除与还原的功能。
+- **修复**：新增幂等版本级删除接口，已应用版本删除时自动晋升最新历史版本并保护最后一版。
+- **成果**：用户可灵活删除资产历史版本，点击还原行为保持不变，媒体对象保持不可变。
 
 ### [#6573](https://github.com/Vispie-AI/VisPie_backend/pull/6573) feat(reelcraft): let creators replace reference assets
 - **日期**：2026-08-03 | **状态**：✅ 已合并
