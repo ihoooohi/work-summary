@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-04 | 共 271 个 PR（已合并 235 · 关闭未合并 19 · 待合并 15）
-> 最后更新：2026-08-04
+> 统计周期：2026-04-11 ~ 2026-08-06 | 共 274 个 PR（已合并 238 · 关闭未合并 19 · 待合并 15）
+> 最后更新：2026-08-06
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6636](https://github.com/Vispie-AI/VisPie_backend/pull/6636) fix(reelcraft): preserve staging provider pin
+- **日期**：2026-08-06 | **状态**：✅ 已合并
+- **问题**：PR #6634 合并后部署快照丢失 byteplus 固定值。
+- **修复**：在可复用部署快照中透传 ref2video 提供商固定参数。
+- **成果**：17 项回归测试通过，staging 配置保留正常。
 ### [#6583](https://github.com/Vispie-AI/VisPie_backend/pull/6583) fix(reelcraft): stabilize post-merge asset concurrency checks
 - **日期**：2026-08-03 | **状态**：✅ 已合并
 - **问题**：#6577 合并后，SQLite 并发测试因顺序依赖导致两处幂等锁冲突失败。
@@ -777,6 +782,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6634](https://github.com/Vispie-AI/VisPie_backend/pull/6634) feat(studio): allow manual asset renaming
+- **日期**：2026-08-06 | **状态**：✅ 已合并
+- **问题**：ReelCraft Studio 资产卡片名称不可编辑。
+- **修复**：名称栏改为内联可编辑，Enter 保存，Escape 取消，拒绝空白名称。
+- **成果**：230 项测试通过，构建与 i18n 校验正常。
+
+### [#6629](https://github.com/Vispie-AI/VisPie_backend/pull/6629) feat(amy): upgrade Codex model to GPT-5.6 Terra
+- **日期**：2026-08-06 | **状态**：✅ 已合并
+- **问题**：Amy 代理 Codex 模型停留在 gpt-5.5，需升级。
+- **修复**：配置更新至 gpt-5.6-terra，同步别名，行为不变。
+- **成果**：live 实测成功，667 项测试通过。
 ### [#6601](https://github.com/Vispie-AI/VisPie_backend/pull/6601) feat(internal): add AI asset workbench P0
 - **日期**：2026-08-04 | **状态**：✅ 已合并
 - **问题**：内部工具缺少非技术团队自助生成 AI 图片和视频的工作台。
