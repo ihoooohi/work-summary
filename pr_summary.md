@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-06 | 共 274 个 PR（已合并 238 · 关闭未合并 19 · 待合并 15）
-> 最后更新：2026-08-06
+> 统计周期：2026-04-11 ~ 2026-08-09 | 共 275 个 PR（已合并 239 · 关闭未合并 19 · 待合并 15）
+> 最后更新：2026-08-09
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -782,6 +782,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6706](https://github.com/Vispie-AI/VisPie_backend/pull/6706) feat(internal): add Vizzylabs Lark gate for AI Asset Studio
+- **日期**：2026-08-09 | **状态**：✅ 已合并
+- **问题**：AI Asset Studio 页面缺乏针对 Vizzylabs 员工的独立 Lark OAuth 鉴权保护。
+- **修复**：为 `/ai-assets` 及其 API 路由添加专属 Lark OAuth 会话门控，其余内部路由维持原有共享密码验证。
+- **成果**：18 项测试通过，支持中英双语 UI 自动切换，用户生成历史绑定至 Lark open_id。
 ### [#6634](https://github.com/Vispie-AI/VisPie_backend/pull/6634) feat(studio): allow manual asset renaming
 - **日期**：2026-08-06 | **状态**：✅ 已合并
 - **问题**：ReelCraft Studio 资产卡片名称不可编辑。
