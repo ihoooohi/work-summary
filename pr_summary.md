@@ -1,13 +1,60 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-09 | 共 275 个 PR（已合并 239 · 关闭未合并 19 · 待合并 15）
-> 最后更新：2026-08-09
+> 统计周期：2026-04-11 ~ 2026-08-10 | 共 283 个 PR（已合并 247 · 关闭未合并 19 · 待合并 15）
+> 最后更新：2026-08-10
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6735](https://github.com/Vispie-AI/VisPie_backend/pull/6735) fix(ai-assets): switch locale immediately
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：AI 资产工作台切换中英文后页面文案未即时刷新，需手动刷页才能生效。
+- **修复**：为语言切换添加响应式失效逻辑，确保消息、模型文案和错误提示立即重新渲染。
+- **成果**：语言切换即时生效，用户 Lark 会话中的语言偏好持久保存，22 个测试全部通过。
+
+### [#6733](https://github.com/Vispie-AI/VisPie_backend/pull/6733) fix(reelcraft): defer draft findings to graph gate
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：候选阶段的外观质量检测结果直接触发 G1 终止，导致合法剧本被错误拒绝。
+- **修复**：将候选阶段发现降级为排名依据，由物化图及其有界修复承担最终质量决策。
+- **成果**：减少了外观误判，保留对假分支、结构错误和 LAW14 的硬性拦截，1736 个测试通过。
+
+### [#6730](https://github.com/Vispie-AI/VisPie_backend/pull/6730) fix(reelcraft): admit residual cosmetic warnings
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：有界重写和修复后残余的相似性警告仍触发 G1 硬性失败，阻断正常生成流程。
+- **修复**：将残余相似性问题降级为软性警告放行，仅保留伪分支、结构校验和 LAW14 的硬失败。
+- **成果**：完成修复后的剧本得以通过质量门控继续生成，1739 个测试通过。
+
+### [#6725](https://github.com/Vispie-AI/VisPie_backend/pull/6725) fix(reelcraft): tokenize CJK branch text
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：中文分支文本在外观质量门控中被折叠为空字符串，导致正常内容被误判为重复。
+- **修复**：对 CJK 文本进行字符级分词后再做相似度检测，ASCII 评分逻辑不受影响。
+- **成果**：中文项目不再因字符折叠触发 COSMETIC_BRANCH 失败，1724 个测试通过。
+
+### [#6721](https://github.com/Vispie-AI/VisPie_backend/pull/6721) fix(reelcraft): recover cosmetic branch failures
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：G1 阶段因外观分支问题持续失败，缺乏有效的有界重试和图修复机制。
+- **修复**：引入最多一次有界重写和一次 savepoint 级图修复，对终止性根节点进行幂等重试。
+- **成果**：G1 外观分支失败后支持有界修复，持久性失败可通过新 Engine 运行重试，1706 个测试通过。
+
+### [#6720](https://github.com/Vispie-AI/VisPie_backend/pull/6720) fix(ci): protect AI asset tenant key
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：AI 资产 Lark 租户密钥存储于可读仓库变量中，存在密钥泄露安全风险。
+- **修复**：将密钥迁移至受保护的 `ai-asset-workbench` 环境 Secret，更新工作流读取方式。
+- **成果**：敏感密钥受环境隔离保护，敏感变量检查脚本通过，主分支安全守卫解除阻断。
+
+### [#6719](https://github.com/Vispie-AI/VisPie_backend/pull/6719) fix(internal): expose safe Lark auth stage errors
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：Lark OAuth 各阶段错误信息不区分，难以判断是 token 交换还是用户信息获取失败。
+- **修复**：区分 token 交换与用户信息查询失败，提供中英双语消息，不暴露 OAuth 密钥或上游数据。
+- **成果**：认证错误定位更精准，租户和 open_id 校验保持失败封闭，22 个测试通过。
+
+### [#6718](https://github.com/Vispie-AI/VisPie_backend/pull/6718) fix(internal): accept standard Lark OAuth token response
+- **日期**：2026-08-10 | **状态**：✅ 已合并
+- **问题**：Lark OAuth v2 返回标准 OAuth 格式（顶层 access_token），代码错误要求 `code: 0` 导致生产认证失败。
+- **修复**：调整 token 解析逻辑以接受标准 Lark OAuth v2 响应格式，保留对显式错误和异常响应的失败封闭。
+- **成果**：生产 Lark OAuth 认证流程恢复正常，20 个测试全部通过。
 ### [#6636](https://github.com/Vispie-AI/VisPie_backend/pull/6636) fix(reelcraft): preserve staging provider pin
 - **日期**：2026-08-06 | **状态**：✅ 已合并
 - **问题**：PR #6634 合并后部署快照丢失 byteplus 固定值。
