@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-10 | 共 283 个 PR（已合并 247 · 关闭未合并 19 · 待合并 15）
-> 最后更新：2026-08-10
+> 统计周期：2026-04-11 ~ 2026-08-11 | 共 286 个 PR（已合并 248 · 关闭未合并 19 · 待合并 17）
+> 最后更新：2026-08-11
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6761](https://github.com/Vispie-AI/VisPie_backend/pull/6761) fix(reelcraft): show completed retry as success
+- **日期**：2026-08-11 | **状态**：🔀 待合并
+- **问题**：已完成的重试任务被错误渲染为红色失败状态，误导用户重复操作。
+- **修复**：将 `retry_generation`、`engine_refused`、HTTP 409 及 `EXECUTION_SUCCEEDED` 统一识别为已完成收据，不改变引擎重试保护逻辑。
+- **成果**：历史重试卡片正确展示成功状态，41 项专项测试及全套 Vitest 测试均通过。
+
+### [#6754](https://github.com/Vispie-AI/VisPie_backend/pull/6754) fix(studio): make thumbnail cache publication atomic
+- **日期**：2026-08-11 | **状态**：🔀 待合并
+- **问题**：并发请求在 Pillow 写入缩略图期间读取到截断文件，不可变缓存将损坏内容固化导致持续显示破损图片。
+- **修复**：引入同键串行锁，渲染至临时路径验证后再用 `os.replace` 原子发布，并追加缓存版本号 `v=2` 绕过旧损坏缓存。
+- **成果**：缩略图写入并发安全，历史损坏缓存自动重建，174 项端点测试及 53 项前端测试全部通过。
 
 ### [#6735](https://github.com/Vispie-AI/VisPie_backend/pull/6735) fix(ai-assets): switch locale immediately
 - **日期**：2026-08-10 | **状态**：✅ 已合并
@@ -828,6 +840,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#6760](https://github.com/Vispie-AI/VisPie_backend/pull/6760) feat(ai-assets): expose every live gateway media model
+- **日期**：2026-08-11 | **状态**：✅ 已合并
+- **问题**：AI 资产工作室未能展示网关目录中的全部在线媒体模型，图像与视频模型覆盖不完整。
+- **修复**：新增 21 个图像和 14 个视频模型合约，支持模型特定参数、双语名称描述及动态隐藏下线模型。
+- **成果**：工作室现支持完整在线媒体模型注册表，26 项专项测试通过、构建无误。
 
 ### [#6706](https://github.com/Vispie-AI/VisPie_backend/pull/6706) feat(internal): add Vizzylabs Lark gate for AI Asset Studio
 - **日期**：2026-08-09 | **状态**：✅ 已合并
