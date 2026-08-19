@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-11 | 共 286 个 PR（已合并 248 · 关闭未合并 19 · 待合并 17）
-> 最后更新：2026-08-11
+> 统计周期：2026-04-11 ~ 2026-08-19 | 共 291 个 PR（已合并 253 · 关闭未合并 19 · 待合并 17）
+> 最后更新：2026-08-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6912](https://github.com/Vispie-AI/VisPie_backend/pull/6912) fix(gateway): expose safe Lark delivery errors
+- **日期**：2026-08-19 | **状态**：✅ 已合并
+- **问题**：Lark 消息投递失败时返回空 500，调用方无法得知具体阶段和错误码。
+- **修复**：改为返回结构化的 stage/code/message，过滤控制字符并限制消息长度，日志只记录阶段和错误码。
+- **成果**：投递错误信息透明可查，186 个测试全部通过，TypeScript 和生产构建均无报错。
+
+### [#6910](https://github.com/Vispie-AI/VisPie_backend/pull/6910) fix(gateway): keep ID-less failures honest
+- **日期**：2026-08-19 | **状态**：✅ 已合并
+- **问题**：线上数据中存在无请求 ID 的 Media 失败记录，日报生成了无效的 /trace/*/null 链接。
+- **修复**：对无 ID 的失败记录单独标注为不可溯源，日报和面板不再生成虚假追踪链接。
+- **成果**：日报数据诚实度提升，185 个测试全部通过，TypeScript 和构建均正常。
 
 ### [#6761](https://github.com/Vispie-AI/VisPie_backend/pull/6761) fix(reelcraft): show completed retry as success
 - **日期**：2026-08-11 | **状态**：🔀 待合并
@@ -841,6 +853,18 @@
 
 ## 二、新功能开发（feat:）
 
+### [#6931](https://github.com/Vispie-AI/VisPie_backend/pull/6931) feat(gateway): render daily report as Lark card
+- **日期**：2026-08-19 | **状态**：✅ 已合并
+- **问题**：Model Router 日报以纯文本形式发送，关键指标不直观，可读性差。
+- **修复**：用 Lark Card 2.0 布局替换纯文本，新增彩色状态头、KPI 区块、可折叠失败追踪和仪表盘跳转按钮。
+- **成果**：日报展示效果大幅提升，188 个测试全部通过，TypeScript 和生产构建均正常。
+
+### [#6897](https://github.com/Vispie-AI/VisPie_backend/pull/6897) feat(gateway): add request traces and daily stability brief
+- **日期**：2026-08-19 | **状态**：✅ 已合并
+- **问题**：Gateway Panel 缺少请求追踪页面和每日稳定性简报，故障排查效率低下。
+- **修复**：新增 Media/Language 最近失败链接追踪页和每日 09:00 上海时间 Lark 自动报告，追踪页仅展示白名单字段。
+- **成果**：183 个测试全部通过，浏览器 QA 通过，每日稳定性报告已接入指定 Lark 群组。
+
 ### [#6760](https://github.com/Vispie-AI/VisPie_backend/pull/6760) feat(ai-assets): expose every live gateway media model
 - **日期**：2026-08-11 | **状态**：✅ 已合并
 - **问题**：AI 资产工作室未能展示网关目录中的全部在线媒体模型，图像与视频模型覆盖不完整。
@@ -1486,6 +1510,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#6901](https://github.com/Vispie-AI/VisPie_backend/pull/6901) ci(gateway): configure production daily report
+- **日期**：2026-08-19 | **状态**：✅ 已合并
+- **问题**：Gateway Panel 每日报告所需的 cron 密钥未同步到 Vercel 生产环境，定时任务无法鉴权执行。
+- **修复**：从 AWS SSM 同步密钥到 Vercel 生产，授予 GitHub OIDC 角色精确 SSM/KMS 读取权限，通过 master workflow dispatch 触发部署。
+- **成果**：11 个测试全部通过，密钥以 SecureString 加密存储，生产环境每日报告正常运行。
 
 ### [#6557](https://github.com/Vispie-AI/VisPie_backend/pull/6557) ci(reelcraft): announce concise production release highlights
 - **日期**：2026-08-01 | **状态**：✅ 已合并
