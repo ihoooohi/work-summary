@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-19 | 共 291 个 PR（已合并 253 · 关闭未合并 19 · 待合并 17）
-> 最后更新：2026-08-19
+> 统计周期：2026-04-11 ~ 2026-08-20 | 共 292 个 PR（已合并 254 · 关闭未合并 19 · 待合并 17）
+> 最后更新：2026-08-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#6970](https://github.com/Vispie-AI/VisPie_backend/pull/6970) fix(reelcraft): detail daily report outcomes
+- **日期**：2026-08-20 | **状态**：✅ 已合并
+- **问题**：报告将四类任务混合统计，分类不清晰。
+- **修复**：分离成功/失败/门控/进行中，展开失败原因并修正历史统计。
+- **成果**：8个测试通过，Lark卡片正常生成。
 ### [#6912](https://github.com/Vispie-AI/VisPie_backend/pull/6912) fix(gateway): expose safe Lark delivery errors
 - **日期**：2026-08-19 | **状态**：✅ 已合并
 - **问题**：Lark 消息投递失败时返回空 500，调用方无法得知具体阶段和错误码。
