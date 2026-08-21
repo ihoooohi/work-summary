@@ -1,12 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-20 | 共 292 个 PR（已合并 254 · 关闭未合并 19 · 待合并 17）
-> 最后更新：2026-08-20
+> 统计周期：2026-04-11 ~ 2026-08-21 | 共 295 个 PR（已合并 257 · 关闭未合并 19 · 待合并 17）
+> 最后更新：2026-08-21
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#6985](https://github.com/Vispie-AI/VisPie_backend/pull/6985) fix(reelcraft): keep preview default within deploy contract
+- **日期**：2026-08-21 | **状态**：✅ 已合并
+- **问题**：PR #6984 新增的可复用工作流输入导致 GitHub 在创建任务前即拒绝工作流。
+- **修复**：移除新增输入项，改从现有 `environment` 输入派生 Preview 廉价默认值。
+- **成果**：Preview 使用 `seedance-2.0-mini`，其余环境保持 `seedance-2.0`，52 个合约测试通过。
+
+### [#6984](https://github.com/Vispie-AI/VisPie_backend/pull/6984) fix(reelcraft): default previews to cheap video tier
+- **日期**：2026-08-21 | **状态**：✅ 已合并
+- **问题**：PR 预览环境默认使用与生产相同的高价视频模型，造成不必要成本浪费。
+- **修复**：将 PR 预览默认模型改为 `seedance-2.0-mini`，暂存及生产保持 `seedance-2.0`。
+- **成果**：52 个预览/部署合约测试通过，网关、前端及生产行为均不受影响。
+
+### [#6982](https://github.com/Vispie-AI/VisPie_backend/pull/6982) fix(reelcraft): explain report failures causally
+- **日期**：2026-08-21 | **状态**：✅ 已合并
+- **问题**：报告中的通用引擎分析失败示例无法区分模型调用成功与本地节点摘要合约拒绝的情形。
+- **修复**：将通用示例替换为七部分因果分析，展示受影响节点、会话、恢复证据及后续操作。
+- **成果**：11 个测试全部通过，外部代码审查结论为可发布（SHIP）。
 
 ### [#6970](https://github.com/Vispie-AI/VisPie_backend/pull/6970) fix(reelcraft): detail daily report outcomes
 - **日期**：2026-08-20 | **状态**：✅ 已合并
