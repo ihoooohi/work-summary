@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-21 | 共 295 个 PR（已合并 257 · 关闭未合并 19 · 待合并 17）
-> 最后更新：2026-08-21
+> 统计周期：2026-04-11 ~ 2026-08-22 | 共 296 个 PR（已合并 257 · 关闭未合并 19 · 待合并 18）
+> 最后更新：2026-08-22
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1533,6 +1533,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#6991](https://github.com/Vispie-AI/VisPie_backend/pull/6991) docs(infra-amy): add concise ReelCraft incident copilot spec
+- **日期**：2026-08-22 | **状态**：🔀 待合并
+- **问题**：缺少 Infra Amy × ReelCraft 事故副驾驶双语规范文档及架构图。
+- **修复**：新增英中对照规范文档与可编辑 Excalidraw 架构图，涵盖产品目标、架构与实施阶段。
+- **成果**：文档结构清晰完整，不涉及任何运行时代码或部署变更。
 
 ### [#6901](https://github.com/Vispie-AI/VisPie_backend/pull/6901) ci(gateway): configure production daily report
 - **日期**：2026-08-19 | **状态**：✅ 已合并
