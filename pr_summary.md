@@ -1,12 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-22 | 共 296 个 PR（已合并 257 · 关闭未合并 19 · 待合并 18）
-> 最后更新：2026-08-22
+> 统计周期：2026-04-11 ~ 2026-08-23 | 共 309 个 PR（已合并 270 · 关闭未合并 19 · 待合并 18）
+> 最后更新：2026-08-23
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7012](https://github.com/Vispie-AI/VisPie_backend/pull/7012) fix(infra-amy): preserve preprovisioned canary IAM
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：DSH Canary 部署时预置的 IAM 角色被覆盖，导致权限丢失。
+- **修复**：保留预置的 Canary IAM 配置，避免部署流程重置现有权限。
+- **成果**：Canary 部署后 IAM 权限正确保留，部署流程更加稳定。
+
+### [#7011](https://github.com/Vispie-AI/VisPie_backend/pull/7011) fix(infra-amy): install pnpm in DSH canary
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：DSH Canary 环境缺少 pnpm 包管理器，导致依赖安装失败。
+- **修复**：在 Canary 构建流程中添加 pnpm 安装步骤。
+- **成果**：Canary 环境依赖安装恢复正常，构建流程顺利完成。
+
+### [#7010](https://github.com/Vispie-AI/VisPie_backend/pull/7010) fix(infra-amy): deploy DSH canary from trusted workflow
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：DSH Canary 部署未通过受信任工作流执行，存在安全隐患。
+- **修复**：将 Canary 部署改为从受信任的 GitHub Actions 工作流触发。
+- **成果**：DSH Canary 部署流程安全合规，权限管控更加规范。
+
+### [#6995](https://github.com/Vispie-AI/VisPie_backend/pull/6995) fix(infra-amy): preserve complete card evidence
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：Amy 处理 Lark 话题卡片时丢失了完整的证据信息。
+- **修复**：修复卡片处理逻辑，确保完整保留卡片证据内容。
+- **成果**：Amy 可正确保存并展示完整的话题卡片证据数据。
+
+### [#6993](https://github.com/Vispie-AI/VisPie_backend/pull/6993) fix(infra-amy): read legacy topic root cards
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：旧版话题根卡片格式无法被 infra-amy 正确读取。
+- **修复**：添加对旧版话题根卡片格式的兼容读取逻辑。
+- **成果**：infra-amy 可正确处理历史话题根卡片数据，兼容性提升。
+
+### [#6992](https://github.com/Vispie-AI/VisPie_backend/pull/6992) fix(amy): read Lark topic root cards
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：Amy 无法正确读取 Lark 话题的根卡片内容。
+- **修复**：修复 Amy 读取 Lark 话题根卡片的解析逻辑。
+- **成果**：Amy 可正常获取并处理 Lark 话题根卡片信息。
 
 ### [#6985](https://github.com/Vispie-AI/VisPie_backend/pull/6985) fix(reelcraft): keep preview default within deploy contract
 - **日期**：2026-08-21 | **状态**：✅ 已合并
@@ -876,6 +912,30 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7009](https://github.com/Vispie-AI/VisPie_backend/pull/7009) feat(infra-amy): add approved DSH repair and reversible canary
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：DSH 存在故障，需要经过审批的修复方案和可回滚的 Canary 发布机制。
+- **修复**：实现了经审批的 DSH 修复流程及可逆的 Canary 发布方案。
+- **成果**：DSH 修复和 Canary 发布流程安全可控，支持快速回滚。
+
+### [#7007](https://github.com/Vispie-AI/VisPie_backend/pull/7007) feat(infra-amy): add shared incident collaboration slices
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：跨团队处理线上故障时缺乏共享的协作任务切片机制。
+- **修复**：新增共享故障协作任务切片功能，支持多方协同处理线上事件。
+- **成果**：团队故障响应效率提升，多方协作处理事件的能力得到加强。
+
+### [#7006](https://github.com/Vispie-AI/VisPie_backend/pull/7006) feat(infra-amy): complete TASK-002 read-only ReelCraft diagnosis
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：需要完成 TASK-002 任务，对 ReelCraft 进行只读诊断分析。
+- **修复**：实现完整的 TASK-002 只读诊断功能，覆盖 ReelCraft 核心模块。
+- **成果**：TASK-002 完成，输出详细的 ReelCraft 系统只读诊断报告。
+
+### [#6996](https://github.com/Vispie-AI/VisPie_backend/pull/6996) feat(infra-amy): complete TASK-001 with DSH auth bundle
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：TASK-001 需要完成 DSH 认证套件的集成工作。
+- **修复**：实现 DSH 认证套件并完成 TASK-001 的全部功能要求。
+- **成果**：TASK-001 全部完成，DSH 认证功能上线并通过验收。
+
 ### [#6931](https://github.com/Vispie-AI/VisPie_backend/pull/6931) feat(gateway): render daily report as Lark card
 - **日期**：2026-08-19 | **状态**：✅ 已合并
 - **问题**：Model Router 日报以纯文本形式发送，关键指标不直观，可读性差。
@@ -1533,6 +1593,24 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#7013](https://github.com/Vispie-AI/VisPie_backend/pull/7013) docs(infra-amy): record TASK-012 cloud acceptance
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：TASK-012 云端验收结果缺乏正式的文档记录。
+- **修复**：补充 TASK-012 云端验收的详细文档，记录验收过程和结果。
+- **成果**：TASK-012 云端验收结果有据可查，便于后续追踪和审计。
+
+### [#7008](https://github.com/Vispie-AI/VisPie_backend/pull/7008) test(reelcraft): restore test-master suite
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：ReelCraft 测试主套件丢失或损坏，影响持续集成验证流程。
+- **修复**：恢复 ReelCraft 的 test-master 测试套件，确保测试覆盖完整。
+- **成果**：ReelCraft 测试主套件恢复正常，CI 验证流程稳定运行。
+
+### [#7005](https://github.com/Vispie-AI/VisPie_backend/pull/7005) docs(infra-amy): specify TASK-002 read-only diagnosis
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：TASK-002 只读诊断任务缺乏明确的规格说明文档。
+- **修复**：编写 TASK-002 只读诊断任务的详细规格说明文档。
+- **成果**：TASK-002 任务规格清晰，为实施工作提供了明确参考依据。
 
 ### [#6991](https://github.com/Vispie-AI/VisPie_backend/pull/6991) docs(infra-amy): add concise ReelCraft incident copilot spec
 - **日期**：2026-08-22 | **状态**：🔀 待合并
