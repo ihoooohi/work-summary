@@ -1,13 +1,54 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-23 | 共 309 个 PR（已合并 270 · 关闭未合并 19 · 待合并 18）
-> 最后更新：2026-08-23
+> 统计周期：2026-04-11 ~ 2026-08-24 | 共 319 个 PR（已合并 280 · 关闭未合并 19 · 待合并 18）
+> 最后更新：2026-08-24
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7062](https://github.com/Vispie-AI/VisPie_backend/pull/7062) fix(infra-amy): enforce complete repair patches
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：模型生成的统一差异 hunk 计数不准确，且修复计划未强制要求所有关键路径一并提交。
+- **修复**：通过 git apply --recount 接受不准确 hunk 计数，并允许修复计划声明必须包含的路径集合。
+- **成果**：56/56 测试通过，修复计划哈希、安全检查和禁止操作均保持原有约束。
+
+### [#7057](https://github.com/Vispie-AI/VisPie_backend/pull/7057) fix(infra-amy): accept patch without final newline
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：模型生成的统一差异文件缺少末尾换行符，导致可信修复验证器解析失败。
+- **修复**：验证器写入临时 patch 文件时补充解析器所需记录分隔符，审批载荷字节和 SHA-256 不变。
+- **成果**：53/53 测试通过，真实事故 patch 重放成功，不影响 IAM、部署或数据。
+
+### [#7054](https://github.com/Vispie-AI/VisPie_backend/pull/7054) fix(infra-amy): provision approved repair checks
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：生产验证运行在应用已审批修复包后因未预置 Python 环境而失败，修复被安全拦截。
+- **修复**：在可信 Infra Amy 修复验证器中预置 Python 3.12 并从可信主分支安装 ReelCraft 依赖。
+- **成果**：验证器环境完整，修复权限和允许操作范围未变，52/52 测试通过。
+
+### [#7053](https://github.com/Vispie-AI/VisPie_backend/pull/7053) fix(infra-amy): page approved repair context
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：已审批修复轮次因 Harness 截断 160 KiB 工具结果而陷入循环，无法正常执行。
+- **修复**：修复工具改为先返回有界不可变清单，再按需提供精确源文件页面，每页上限 240 行/24 KiB。
+- **成果**：修复轮次不再因结果截断而循环，审批、租约纪元和沙箱等安全机制保持不变。
+
+### [#7050](https://github.com/Vispie-AI/VisPie_backend/pull/7050) fix(alerts): exclude preview and staging Secret noise
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：预览和 staging 环境 Secret 访问日志持续触发生产告警，24 小时内 73/100 次均为非生产噪声。
+- **修复**：在日志指标过滤器中排除含 preview 或 staging 标记的 Secret ID，保留所有生产覆盖。
+- **成果**：告警洪泛停止，27 次生产访问信号完整保留，0 次预览/staging 访问泄漏。
+
+### [#7047](https://github.com/Vispie-AI/VisPie_backend/pull/7047) fix(infra-amy): pass Cloud SQL config to canary deploy
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：CI 部署步骤未将 TASK-015 新增的四个 Cloud SQL 配置传入 canary 部署脚本，导致部署失败。
+- **修复**：在工作流 env 中添加四个 Cloud SQL 资源引用并映射到私有 canary 部署步骤。
+- **成果**：TASK-015 主部署恢复正常，无凭证、无 IAM 变更或数据库改动。
+
+### [#7045](https://github.com/Vispie-AI/VisPie_backend/pull/7045) fix(reelcraft): keep production alarms actionable
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：staging 和 PR 服务的监控日志触发了生产告警组，导致大量误报噪声。
+- **修复**：将调和看门狗告警范围限定为生产环境 viral-to-game 服务，排除非生产资源。
+- **成果**：生产告警恢复可操作性，所有真实生产异常信号完整保留。
 ### [#7012](https://github.com/Vispie-AI/VisPie_backend/pull/7012) fix(infra-amy): preserve preprovisioned canary IAM
 - **日期**：2026-08-23 | **状态**：✅ 已合并
 - **问题**：DSH Canary 部署时预置的 IAM 角色被覆盖，导致权限丢失。
@@ -912,6 +953,23 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7049](https://github.com/Vispie-AI/VisPie_backend/pull/7049) feat: connect Infra Amy production incident loop
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：ReelCraft 日报失败信号缺乏持久化事故追踪、自动分诊和安全审批修复路径。
+- **修复**：将日报失败信号接入 DSH 事故和 IAP 工作台，实现安全无密钥的审批修复流程，仅允许创建草稿 PR。
+- **成果**：生产事故循环全连通，修复路径不自动合并或部署，安全边界完整保留。
+
+### [#7046](https://github.com/Vispie-AI/VisPie_backend/pull/7046) feat(infra-amy): persist shared incidents and DSH sessions in Cloud SQL
+- **日期**：2026-08-24 | **状态**：✅ 已合并
+- **问题**：共享事故和 DSH 会话缺乏持久化存储，容器重启后状态丢失。
+- **修复**：新增仅云端 Postgres SessionPersistence 插件，将事故账本和会话一并持久化到 Cloud SQL，并实现数据库写入者所有权和纪元隔离。
+- **成果**：37/37 测试通过，跨容器会话可恢复，数据库并发安全机制验证通过。
+
+### [#7014](https://github.com/Vispie-AI/VisPie_backend/pull/7014) feat(infra-amy): render readable incident trajectory
+- **日期**：2026-08-23 | **状态**：✅ 已合并
+- **问题**：原始 DSH 历史 JSON 面板对运营人员不可读，缺乏可操作的事故工作台界面。
+- **修复**：将 JSON 日志面板替换为有界的人类可读回合/消息/工具投影，并新增事故工作台页面支持分诊、修复审核和接管。
+- **成果**：35/35 测试通过，浏览器合同不再暴露系统提示和原始载荷，事故追踪可读性显著提升。
 ### [#7009](https://github.com/Vispie-AI/VisPie_backend/pull/7009) feat(infra-amy): add approved DSH repair and reversible canary
 - **日期**：2026-08-23 | **状态**：✅ 已合并
 - **问题**：DSH 存在故障，需要经过审批的修复方案和可回滚的 Canary 发布机制。
