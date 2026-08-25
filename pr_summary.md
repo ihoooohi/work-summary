@@ -1,13 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-24 | 共 319 个 PR（已合并 280 · 关闭未合并 19 · 待合并 18）
-> 最后更新：2026-08-24
+> 统计周期：2026-04-11 ~ 2026-08-25 | 共 328 个 PR（已合并 288 · 关闭未合并 19 · 待合并 19）
+> 最后更新：2026-08-25
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7123](https://github.com/Vispie-AI/VisPie_backend/pull/7123) fix(infra-amy): explain incidents in plain Chinese
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：Infra Amy 事故解答使用技术英文，非技术阅读者难以理解。
+- **修复**：将事故回答语言默认切换为简体中文，并本地化工作台界面及错误提示。
+- **成果**：66/66 测试通过，中间推理不再显示，最终回答清晰可读。
+
+### [#7119](https://github.com/Vispie-AI/VisPie_backend/pull/7119) fix(reelcraft): keep valid script imports from failing on display titles
+- **日期**：2026-08-25 | **状态**：🔀 待合并
+- **问题**：已通过解析和路由审计的脚本因展示标题生成触碰 prompt 上限而整体失败。
+- **修复**：当标题丰富超出限制时降级为确定性本地映射，不再中断故事树保存。
+- **成果**：154 项测试通过，有效脚本导入不再因辅助标题步骤失败而丢失。
+
+### [#7111](https://github.com/Vispie-AI/VisPie_backend/pull/7111) fix(infra-amy): preserve persisted DSH model compatibility
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：切换到 Kimi K3 默认模型后，已持久化的 DSH 会话因找不到旧模型而报错。
+- **修复**：在 DSH Provider 目录中同时注册 Kimi K3 与旧版 DeepSeek-V4-Pro，保留向后兼容。
+- **成果**：64/64 测试通过，旧会话可继续使用，新会话默认使用 Kimi K3。
+
+### [#7079](https://github.com/Vispie-AI/VisPie_backend/pull/7079) fix(infra-amy): prevent DSH WebSocket loading starvation
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：Cloud Run 实例并发为 1，官方 UI WebSocket 占用唯一槽位导致其他请求返回 429。
+- **修复**：将单实例并发数从 1 提升至 80，消除 WebSocket 长连接对并发槽的独占。
+- **成果**：63/63 测试通过，生产环境 429 错误不再出现。
+
+### [#7067](https://github.com/Vispie-AI/VisPie_backend/pull/7067) fix(infra-amy): expose approved repair retry contract
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：DSH 修复 manifest 未暴露已审批的 plan 边界，模型修正 patch 后无法触发新修复尝试。
+- **修复**：在 manifest 中明确暴露 approved plan 边界，同补丁保持幂等，不同补丁触发重试。
+- **成果**：57/57 测试通过，修复重试合同行为已有回归断言覆盖。
+
+### [#7066](https://github.com/Vispie-AI/VisPie_backend/pull/7066) fix(infra-amy): normalize bounded model diffs
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：多文件分隔符、空白上下文标记、hunk 计数及末尾换行符丢失，导致 patch 应用失败。
+- **修复**：在保留原始 patch 字节和哈希的前提下，补全缺失的 Git 统一差异格式元素。
+- **成果**：事故补丁 60/60 通过，ReelCraft 网关测试 60/60 通过。
 ### [#7062](https://github.com/Vispie-AI/VisPie_backend/pull/7062) fix(infra-amy): enforce complete repair patches
 - **日期**：2026-08-24 | **状态**：✅ 已合并
 - **问题**：模型生成的统一差异 hunk 计数不准确，且修复计划未强制要求所有关键路径一并提交。
@@ -953,6 +988,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7076](https://github.com/Vispie-AI/VisPie_backend/pull/7076) feat(infra-amy): expose official DSH UI behind IAP
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：Infra Amy 事故工作台缺少官方 DSH Web UI 入口，调试需直接访问内部端口。
+- **修复**：在 IAP 身份验证保护下代理官方 DSH HTTP RPC 和 WebSocket，向 vizzylabs.ai 域开放。
+- **成果**：62/62 测试通过，浏览器端 Sessions/Workspaces/Settings 及对话编辑器均正常渲染。
+
+### [#7072](https://github.com/Vispie-AI/VisPie_backend/pull/7072) feat(infra-amy): add read-only DSH session inspector
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：事故工作台缺少对 DSH 会话的只读审计视图，无法直观浏览事件和 token 用量。
+- **修复**：在工作台新增受 IAP 保护的只读会话检视器，展示事件、工具调用和计时等信息。
+- **成果**：59/59 测试通过，检视器不包含任何写入控件，符合安全边界要求。
 ### [#7049](https://github.com/Vispie-AI/VisPie_backend/pull/7049) feat: connect Infra Amy production incident loop
 - **日期**：2026-08-24 | **状态**：✅ 已合并
 - **问题**：ReelCraft 日报失败信号缺乏持久化事故追踪、自动分诊和安全审批修复路径。
@@ -1652,6 +1698,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#7069](https://github.com/Vispie-AI/VisPie_backend/pull/7069) docs(infra-amy): record TASK-016 production acceptance
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：TASK-016 生产验收完成后缺少正式文档记录，验收证据未归档。
+- **修复**：新增中英双语验收记录文件，包含 DSH 会话、批准信息、部署版本和清理证据。
+- **成果**：JSON 格式校验通过，文档已合并，草稿 PR #7068 保持未合并状态。
 ### [#7013](https://github.com/Vispie-AI/VisPie_backend/pull/7013) docs(infra-amy): record TASK-012 cloud acceptance
 - **日期**：2026-08-23 | **状态**：✅ 已合并
 - **问题**：TASK-012 云端验收结果缺乏正式的文档记录。
