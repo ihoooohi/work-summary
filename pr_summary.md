@@ -1,13 +1,72 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-25 | 共 328 个 PR（已合并 288 · 关闭未合并 19 · 待合并 19）
-> 最后更新：2026-08-25
+> 统计周期：2026-04-11 ~ 2026-08-26 | 共 342 个 PR（已合并 302 · 关闭未合并 19 · 待合并 19）
+> 最后更新：2026-08-26
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7162](https://github.com/Vispie-AI/VisPie_backend/pull/7162) fix(infra-amy): bound GitHub deployment comparison
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：部署对比范围未限制，产生误报数据。
+- **修复**：限定 GitHub 部署记录对比范围，防止越界查询。
+- **成果**：对比结果准确，报告不再受无效数据干扰。
+
+### [#7149](https://github.com/Vispie-AI/VisPie_backend/pull/7149) fix(infra-amy): read typed error producers
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：错误生产者类型未正确识别，日志解析失败。
+- **修复**：支持读取带类型注解的错误生产者，修正解析逻辑。
+- **成果**：错误信息提取完整，根因分析准确性提升。
+
+### [#7148](https://github.com/Vispie-AI/VisPie_backend/pull/7148) fix(infra-amy): tolerate historical source moves
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：历史数据源路径变更后工具崩溃无法运行。
+- **修复**：增加对历史路径迁移的兼容处理，跳过缺失来源。
+- **成果**：数据源路径变迁后系统依然稳定运行。
+
+### [#7146](https://github.com/Vispie-AI/VisPie_backend/pull/7146) fix(infra-amy): preserve failed job evidence
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：失败作业现场证据在分析流程中被意外清除。
+- **修复**：修正证据保存逻辑，确保失败作业数据完整留存。
+- **成果**：根因分析可访问完整失败现场，溯源提升。
+
+### [#7144](https://github.com/Vispie-AI/VisPie_backend/pull/7144) fix(infra-amy): emit lossless job evidence
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：作业证据输出不完整，关键字段存在信息丢失。
+- **修复**：改为无损方式输出作业证据，保留所有关键字段。
+- **成果**：完整日志存档，根因分析不再缺漏信息。
+
+### [#7143](https://github.com/Vispie-AI/VisPie_backend/pull/7143) fix(infra-amy): install root-cause evidence tools
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：根因分析工具未正确安装到容器运行环境。
+- **修复**：补充根因证据收集工具的安装与依赖配置。
+- **成果**：自动根因流程可正常调用所有必要工具。
+
+### [#7140](https://github.com/Vispie-AI/VisPie_backend/pull/7140) fix(infra-amy): keep deployer out of IAM
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：部署角色被错误赋予 IAM 写权限，存在安全风险。
+- **修复**：限制部署者权限至必要操作，移除 IAM 写权限。
+- **成果**：权限最小化落实，安全漏洞和误操作风险降低。
+
+### [#7138](https://github.com/Vispie-AI/VisPie_backend/pull/7138) fix(infra-amy): grant scoped ops secret access
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：运营密钥访问权限设置不当，导致服务调用失败。
+- **修复**：赋予服务精确范围内的密钥访问权限配置。
+- **成果**：服务正确获取所需密钥，避免过度授权风险。
+
+### [#7127](https://github.com/Vispie-AI/VisPie_backend/pull/7127) fix(infra-amy): show latest incident conclusion first
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：事故结论列表排序旧，最新结论被埋在末尾。
+- **修复**：调整查询排序，最新事故结论置于列表首位。
+- **成果**：运维人员可第一时间看到最新事故结论。
+
+### [#7126](https://github.com/Vispie-AI/VisPie_backend/pull/7126) fix(infra-amy): hide internal drafts from incident view
+- **日期**：2026-08-25 | **状态**：✅ 已合并
+- **问题**：内部草稿被误显示在事故视图，干扰信息展示。
+- **修复**：在事故视图查询中过滤草稿，仅展示已发布内容。
+- **成果**：视图清晰，无效草稿干扰消除。
 ### [#7123](https://github.com/Vispie-AI/VisPie_backend/pull/7123) fix(infra-amy): explain incidents in plain Chinese
 - **日期**：2026-08-25 | **状态**：✅ 已合并
 - **问题**：Infra Amy 事故解答使用技术英文，非技术阅读者难以理解。
@@ -988,6 +1047,29 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7161](https://github.com/Vispie-AI/VisPie_backend/pull/7161) feat(infra-amy): verify ReelCraft PR deployment status
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：缺乏对 ReelCraft PR 部署状态的自动校验。
+- **修复**：新增自动校验 PR 对应部署是否成功的功能。
+- **成果**：日报准确反映部署结果，辅助排查风险。
+
+### [#7160](https://github.com/Vispie-AI/VisPie_backend/pull/7160) feat(infra-amy): show confirmed cause in ReelCraft daily report
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：日报未展示已确认根因，运维信息不完整。
+- **修复**：日报新增确认根因，与失败任务关联展示。
+- **成果**：运维人员在日报了解根因，无需查找。
+
+### [#7136](https://github.com/Vispie-AI/VisPie_backend/pull/7136) feat(infra-amy): trace daily failures to root cause
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：每日失败任务缺乏自动根因溯源，效率低。
+- **修复**：新增每日自动根因溯源，汇总失败路径证据。
+- **成果**：根因报告自动生成存档，人工分析时间减少。
+
+### [#7129](https://github.com/Vispie-AI/VisPie_backend/pull/7129) feat(infra-amy): confirm deterministic ReelCraft root causes
+- **日期**：2026-08-26 | **状态**：✅ 已合并
+- **问题**：根因结果不确定，难以可靠复现与验证。
+- **修复**：增加确定性验证，对候选根因交叉确认。
+- **成果**：根因结论置信度提升，误判率降低可重复。
 ### [#7076](https://github.com/Vispie-AI/VisPie_backend/pull/7076) feat(infra-amy): expose official DSH UI behind IAP
 - **日期**：2026-08-25 | **状态**：✅ 已合并
 - **问题**：Infra Amy 事故工作台缺少官方 DSH Web UI 入口，调试需直接访问内部端口。
