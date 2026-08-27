@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-26 | 共 342 个 PR（已合并 302 · 关闭未合并 19 · 待合并 19）
-> 最后更新：2026-08-26
+> 统计周期：2026-04-11 ~ 2026-08-27 | 共 344 个 PR（已合并 304 · 关闭未合并 19 · 待合并 19）
+> 最后更新：2026-08-27
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7192](https://github.com/Vispie-AI/VisPie_backend/pull/7192) fix(reelcraft): accept authored clip nodes for uploads
+- **日期**：2026-08-27 | **状态**：✅ 已合并
+- **问题**：上传校验器仅允许 opening/option/win/fail 节点类型，导致项目中合法的 Canvas `clip` 类型节点被拒绝，视频上传失败。
+- **修复**：在上传目标校验逻辑中新增对 Canvas `clip` 类型节点的支持，未知节点和无关类型仍保持拒绝。
+- **成果**：用户可正常上传视频至 clip 节点，7 个上传测试及 72 个路由测试全部通过。
+
+### [#7171](https://github.com/Vispie-AI/VisPie_backend/pull/7171) fix(e2e): wait through active render polling
+- **日期**：2026-08-27 | **状态**：✅ 已合并
+- **问题**：E2E 最小循环 walker 将视频渲染轮询消耗在 18 次 creator 动作配额中，导致渲染成功后仍误报超时。
+- **修复**：将主动渲染轮询排除在 creator 动作上限之外，并在超时时报告实际耗时及终止原因。
+- **成果**：E2E 线束正确处理渲染等待，新增回归测试通过，41 个相关测试全部通过。
 ### [#7162](https://github.com/Vispie-AI/VisPie_backend/pull/7162) fix(infra-amy): bound GitHub deployment comparison
 - **日期**：2026-08-26 | **状态**：✅ 已合并
 - **问题**：部署对比范围未限制，产生误报数据。
