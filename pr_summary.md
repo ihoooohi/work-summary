@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-27 | 共 344 个 PR（已合并 304 · 关闭未合并 19 · 待合并 19）
-> 最后更新：2026-08-27
+> 统计周期：2026-04-11 ~ 2026-08-28 | 共 348 个 PR（已合并 307 · 关闭未合并 19 · 待合并 20）
+> 最后更新：2026-08-28
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7233](https://github.com/Vispie-AI/VisPie_backend/pull/7233) fix(reelcraft): keep idempotent Story Tree tidy saved
+- **日期**：2026-08-28 | **状态**：✅ 已合并
+- **问题**：自动布局整理在坐标未变化时仍将保存状态置为"未保存"。
+- **修复**：在 setNodes 和 markDirty 前比较布局输出与已持久化节点坐标，坐标相同则跳过。
+- **成果**：Story Tree 保存状态不再因无效整理触发重置，减少不必要的保存请求。
+
+### [#7232](https://github.com/Vispie-AI/VisPie_backend/pull/7232) fix(reelcraft): converge Story Tree revision after reload
+- **日期**：2026-08-28 | **状态**：✅ 已合并
+- **问题**：GET /node-canvas 和 bootstrap 未返回 CAS 版本号，导致重载后客户端持续使用过期令牌重试保存。
+- **修复**：在 bootstrap 和重载响应中附带原始存储的 Canvas 版本号，客户端成功重载后采用新的图与版本对。
+- **成果**：Story Tree 重载后版本冲突状态清除，并发保存回归测试 130 项全通过。
 ### [#7192](https://github.com/Vispie-AI/VisPie_backend/pull/7192) fix(reelcraft): accept authored clip nodes for uploads
 - **日期**：2026-08-27 | **状态**：✅ 已合并
 - **问题**：上传校验器仅允许 opening/option/win/fail 节点类型，导致项目中合法的 Canvas `clip` 类型节点被拒绝，视频上传失败。
@@ -1058,6 +1069,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7215](https://github.com/Vispie-AI/VisPie_backend/pull/7215) feat(reelcraft): observe Projects and image attachment latency
+- **日期**：2026-08-28 | **状态**：🔀 待合并
+- **问题**：缺乏对 Projects 列表和图片附件上传延迟的分段观测数据，难以定位性能瓶颈。
+- **修复**：新增 ReelCraft 延迟面板 Projects & attachments 行（面板 205-216），覆盖列表响应、分页及附件服务器/浏览器耗时。
+- **成果**：生产观测记录已写入，104 项后端测试通过，为后续针对性性能优化提供数据支撑。
+
+### [#7202](https://github.com/Vispie-AI/VisPie_backend/pull/7202) feat(infra-amy): replace Google IAP with Lark OAuth
+- **日期**：2026-08-28 | **状态**：✅ 已合并
+- **问题**：Infra Amy DSH/Incident 入口依赖 Google IAP，无法实现飞书租户级身份验证。
+- **修复**：引入签名 Lark OAuth 状态和 7 天 HttpOnly 会话，限定 Vizzy Labs 租户访问，机器端点改用专用 Header 认证。
+- **成果**：395 项 Python 测试、93 项 Node 测试通过，Cloud Run 服务鉴权成功迁移至 Lark OAuth。
 ### [#7161](https://github.com/Vispie-AI/VisPie_backend/pull/7161) feat(infra-amy): verify ReelCraft PR deployment status
 - **日期**：2026-08-26 | **状态**：✅ 已合并
 - **问题**：缺乏对 ReelCraft PR 部署状态的自动校验。
