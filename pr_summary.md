@@ -1,13 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-28 | 共 348 个 PR（已合并 307 · 关闭未合并 19 · 待合并 20）
-> 最后更新：2026-08-28
+> 统计周期：2026-04-11 ~ 2026-08-29 | 共 358 个 PR（已合并 317 · 关闭未合并 19 · 待合并 20）
+> 最后更新：2026-08-29
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7268](https://github.com/Vispie-AI/VisPie_backend/pull/7268) fix(infra-amy): run auto bug analysis past DSH doorbell
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：生产环境 DSH 门铃始终启用，导致新 Bug 话题触发调查链接而非截图读取和根因分析。
+- **修复**：为自动 Bug 话题根节点添加 DSH 门铃白名单绕过，普通调查流程保持不变。
+- **成果**：407 个测试通过，自动分析可正常绕过 DSH 门铃并在话题内生成根因总结。
+
+### [#7265](https://github.com/Vispie-AI/VisPie_backend/pull/7265) fix(reelcraft): move pipeline report to Infra Amy group
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：ReelCraft 流水线健康报告由普通 Amy 发送，目标群组和发送 App 均不正确。
+- **修复**：将报告迁移至 Infra Amy 专属群组，并通过 Secret Manager 注入 Infra Amy 应用凭证。
+- **成果**：22 个部署配置测试通过，报告正确发送至指定基础设施群组。
+
+### [#7264](https://github.com/Vispie-AI/VisPie_backend/pull/7264) fix(reelcraft): unblock daily script image evaluation
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：首次执行评估仅完成 0/3 项，脚本审查端点未被正确调用，悬挂分支的脚本被误计为失败。
+- **修复**：对齐真实 v1 浏览器脚本审查流程，增加无效夹具预检和 schema v2 分类计数。
+- **成果**：126 个测试通过，无效输入零花费隔离，正式脚本审查流程打通。
+
+### [#7263](https://github.com/Vispie-AI/VisPie_backend/pull/7263) fix(reelcraft): share Prefect report deployment
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：Prefect Cloud 工作区已达 100 个 Deployment 上限，新建单独 Deployment 注册失败。
+- **修复**：复用现有 ReelCraft 报告 Deployment，以参数化方式添加每日脚本评估调度。
+- **成果**：76 个测试通过，Deployment 注册通过 Prefect API 回读验证，双时间表正常运行。
+
+### [#7256](https://github.com/Vispie-AI/VisPie_backend/pull/7256) fix(reelcraft): recognize gateway-only agent auth
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：每日评估专用网关虚拟密钥已挂载，但 agent 初始化仅识别直接 Anthropic 密钥，导致所有 case 在启动阶段失败。
+- **修复**：扩展 agent 传输配置检测逻辑，使网关虚拟密钥可直接被识别并用于初始化。
+- **成果**：65 个测试通过，付费调用正常通过专用网关虚拟密钥路由，无直接 provider 密钥暴露。
+
+### [#7255](https://github.com/Vispie-AI/VisPie_backend/pull/7255) fix(reelcraft): decode supplied script fixture zip names
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：提供的压缩包缺少 ZIP UTF-8 标志位，Python 以 CP437 解码文件名导致乱码，首次 Cloud Run 执行找不到任何夹具而提前退出。
+- **修复**：当文件名字节为合法 UTF-8 时无损还原 CP437 解码结果，并进行 NFC 规范化。
+- **成果**：51 个测试通过，18 个夹具全部正确加载，IDs 1-21（含间隔）均可识别。
 ### [#7233](https://github.com/Vispie-AI/VisPie_backend/pull/7233) fix(reelcraft): keep idempotent Story Tree tidy saved
 - **日期**：2026-08-28 | **状态**：✅ 已合并
 - **问题**：自动布局整理在坐标未变化时仍将保存状态置为"未保存"。
@@ -1069,6 +1104,23 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7267](https://github.com/Vispie-AI/VisPie_backend/pull/7267) feat(infra-amy): auto-analyze new bug topics
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：Bug 反馈群中的新话题根节点需要手动 @Infra Amy 才能触发分析，响应不及时。
+- **修复**：自动识别并准入人工发起的新 Bug 话题根节点，通过视觉路径读取截图后在原话题内完成根因分析。
+- **成果**：407 个测试通过，自动分析强制输出根因总结，其他群组和话题的仅 mention 行为保持不变。
+
+### [#7262](https://github.com/Vispie-AI/VisPie_backend/pull/7262) feat(reelcraft): schedule daily script eval in Prefect
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：18 个夹具每日脚本转图片评估原由 GitHub Actions 定时触发，受组织 Actions 预算限制无法稳定运行。
+- **修复**：将每日评估 cron 迁移至 Prefect Cloud，Cloud Run Job 保持原有数据集、轮转、$20 硬上限和故事板图片完成边界不变。
+- **成果**：76 个测试通过，Prefect 部署签名和 CronSchedule 本地验证通过，旧工作流保留为手动回退。
+
+### [#7252](https://github.com/Vispie-AI/VisPie_backend/pull/7252) feat(reelcraft): bounded daily script-to-image evaluation
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：缺少对 18 个紧凑脚本夹具的每日自动评估，无法持续验证 ReelCraft 脚本导入至故事板图片生成的核心链路。
+- **修复**：新增具备轮转状态、UTC 日预算上限（LLM $5 + 媒体 $15）的每日评估任务，20:00 UTC 调度并向 Lark 报告递增结果。
+- **成果**：50 个测试通过，每日报告增加完成数、尝试数、图片数、花费和下一夹具证据，数据集 SHA-256 已验证。
 ### [#7215](https://github.com/Vispie-AI/VisPie_backend/pull/7215) feat(reelcraft): observe Projects and image attachment latency
 - **日期**：2026-08-28 | **状态**：🔀 待合并
 - **问题**：缺乏对 Projects 列表和图片附件上传延迟的分段观测数据，难以定位性能瓶颈。
@@ -1813,6 +1865,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#7257](https://github.com/Vispie-AI/VisPie_backend/pull/7257) perf(reelcraft): fix Projects and attachment latency
+- **日期**：2026-08-29 | **状态**：✅ 已合并
+- **问题**：Projects 列表页面需串行 5 次分页请求（中位 2.4s），附件文件在浏览器端需两分钟以上才完成加载。
+- **修复**：先返回 Mine 卡片再后台水化状态，直传附件增加字节进度条、15s 卡顿 UI 和中止传播，添加 Grafana 监控行。
+- **成果**：前端 3928 个测试、后端 239 个测试均通过，Projects 列表和附件上传路径延迟问题修复。
 ### [#7069](https://github.com/Vispie-AI/VisPie_backend/pull/7069) docs(infra-amy): record TASK-016 production acceptance
 - **日期**：2026-08-25 | **状态**：✅ 已合并
 - **问题**：TASK-016 生产验收完成后缺少正式文档记录，验收证据未归档。
