@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-29 | 共 358 个 PR（已合并 317 · 关闭未合并 19 · 待合并 20）
-> 最后更新：2026-08-29
+> 统计周期：2026-04-11 ~ 2026-08-30 | 共 360 个 PR（已合并 318 · 关闭未合并 19 · 待合并 21）
+> 最后更新：2026-08-30
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7290](https://github.com/Vispie-AI/VisPie_backend/pull/7290) fix(infra-amy): keep automatic Bug screenshots off DSH harness
+- **日期**：2026-08-30 | **状态**：🔀 待合并
+- **问题**：生产环境启用 DSH harness 后，自动 Bug 话题的截图消息被路由到 DSH 会话而非视觉诊断路径，导致根因总结响应失效。
+- **修复**：在所有 DSH 路由逻辑前排除自动 Bug 白名单话题，并在回归测试中覆盖生产级 DSH harness 配置。
+- **成果**：修复后 6 个 DSH/Bug 专项测试及完整 432 个 Infra Amy 测试全部通过，截图诊断路径恢复正常。
 ### [#7268](https://github.com/Vispie-AI/VisPie_backend/pull/7268) fix(infra-amy): run auto bug analysis past DSH doorbell
 - **日期**：2026-08-29 | **状态**：✅ 已合并
 - **问题**：生产环境 DSH 门铃始终启用，导致新 Bug 话题触发调查链接而非截图读取和根因分析。
@@ -1104,6 +1109,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7286](https://github.com/Vispie-AI/VisPie_backend/pull/7286) feat(infra-amy): reuse company Lark browser login
+- **日期**：2026-08-30 | **状态**：✅ 已合并
+- **问题**：Infra Amy 浏览器入口缺乏统一的 Lark 登录页，未经认证的访问可直接进入 DSH 和 Incident 页面。
+- **修复**：新增中文 Lark OAuth 登录页，将未认证请求路由至登录页，并复用公司 AI Asset Studio 应用进行浏览器 OAuth。
+- **成果**：105 个单测全部通过，本地登录页渲染正常，DSH/Incident 页面访问须经 Lark 认证方可进入。
 ### [#7267](https://github.com/Vispie-AI/VisPie_backend/pull/7267) feat(infra-amy): auto-analyze new bug topics
 - **日期**：2026-08-29 | **状态**：✅ 已合并
 - **问题**：Bug 反馈群中的新话题根节点需要手动 @Infra Amy 才能触发分析，响应不及时。
