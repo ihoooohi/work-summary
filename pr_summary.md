@@ -1,13 +1,60 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-30 | 共 360 个 PR（已合并 318 · 关闭未合并 19 · 待合并 21）
-> 最后更新：2026-08-30
+> 统计周期：2026-04-11 ~ 2026-08-31 | 共 369 个 PR（已合并 325 · 关闭未合并 21 · 待合并 21）
+> 最后更新：2026-08-31
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7328](https://github.com/Vispie-AI/VisPie_backend/pull/7328) fix(reelcraft): pin eval image after manual staging
+- **日期**：2026-08-31 | **状态**：🚫 已关闭
+- **问题**：手动 staging 成功后，Prefect 任务仍使用旧版评估镜像，未同步到最新修复版本。
+- **修复**：在手动精确 SHA staging 成功后补充执行镜像 pin 与回读流程，并将请求的 ref 解析为不可变的 master 祖先 SHA。
+- **成果**：Prefect 评估任务与最新手动验证镜像保持同步，避免旧镜像持续占用评估槽位。
+
+### [#7326](https://github.com/Vispie-AI/VisPie_backend/pull/7326) fix(reelcraft): resume repaired daily eval once
+- **日期**：2026-08-31 | **状态**：✅ 已合并
+- **问题**：生产环境 schema-2 结果已终态，导致修复后的资产审核和分镜帧逻辑无法通过 Prefect 再次执行。
+- **修复**：将每日评估结果 schema 升至 3，清除旧三次失败熔断，保留原有花费与轮换游标。
+- **成果**：修复后的评估逻辑可在当日通过 Prefect 再次触发，同日终态后不再重复执行。
+
+### [#7324](https://github.com/Vispie-AI/VisPie_backend/pull/7324) fix(reelcraft): pass assets review in daily eval
+- **日期**：2026-08-31 | **状态**：✅ 已合并
+- **问题**：日常评估中脚本和资产均完整的会话，资产审核始终停留在草稿状态，无法推进流程终态。
+- **修复**：补充从画布投影派生资产卡片逻辑，调用 `/design/assets/review` 正式确认接口后发送 UI 协议文本。
+- **成果**：91 个端到端测试通过，资产审核可自动确认，每日评估流程得以正常推进。
+
+### [#7321](https://github.com/Vispie-AI/VisPie_backend/pull/7321) fix(infra-amy): wire staging evidence sources
+- **日期**：2026-08-31 | **状态**：✅ 已合并
+- **问题**：Infra Amy 证据读取未区分环境，staging 事件错误地查询了生产 ReelCraft 数据。
+- **修复**：为 ReelCraft 工具增加必填 `environment` 参数，分别配置生产和 staging 的 API 目标及 Langfuse 凭证引用。
+- **成果**：134 个测试通过，staging 证据来源与生产完全隔离，Langfuse 未配置时返回明确提示。
+
+### [#7295](https://github.com/Vispie-AI/VisPie_backend/pull/7295) fix(reelcraft): preserve live Grafana panels
+- **日期**：2026-08-30 | **状态**：✅ 已合并
+- **问题**：首次导入的仪表板 JSON 替换了已有面板并删除了生产 Grafana 中的 p99 查询，需修复对齐。
+- **修复**：将仓库仪表板 JSON 与纯增量 v2 版本对齐，保留所有原有面板及查询，仅添加 Projects & attachments 行。
+- **成果**：5 个仪表板测试通过，44 个面板 ID 完整保留，防止后续代码化应用引入历史破坏性变更。
+
+### [#7294](https://github.com/Vispie-AI/VisPie_backend/pull/7294) fix(reelcraft): restore Projects and attachment metrics
+- **日期**：2026-08-30 | **状态**：✅ 已合并
+- **问题**：生产环境 7 天内 Projects/附件指标为零，根因是 Cloud Run 缺少 region 变量导致 Cloud Monitoring 写入返回 400。
+- **修复**：将真实 Cloud Run region 传入运行时指标，将无效 fallback 替换为 API 合法值 `global`，写入失败从 debug 提升为 warn。
+- **成果**：118 个指标及相关测试通过，生产 Projects/附件指标恢复正常上报。
+
+### [#7293](https://github.com/Vispie-AI/VisPie_backend/pull/7293) fix(infra-amy): separate browser and bot Lark credentials
+- **日期**：2026-08-30 | **状态**：🚫 已关闭
+- **问题**：DSH canary 激活期间浏览器 OAuth 复用了 bot 凭证，导致监听器自动回滚，部署运行无法就绪。
+- **修复**：恢复 bot 应用与公司 OAuth 应用的凭证隔离决策，在运行时和部署合约测试中强制校验边界（被同期 PR #7292 替代合并）。
+- **成果**：DSH 套件 109 个、Infra Amy 套件 432 个测试全部通过，凭证隔离在代码层面得到保障。
+
+### [#7292](https://github.com/Vispie-AI/VisPie_backend/pull/7292) fix(infra-amy): separate browser and bot Lark credentials
+- **日期**：2026-08-30 | **状态**：✅ 已合并
+- **问题**：统一登录上线后浏览器 OAuth 与 Infra Amy bot 凭证混用，新版本持续 `lark_listener_unavailable` 无法就绪。
+- **修复**：保留 bot 应用凭证用于长连接监听，独立挂载 AI Asset Studio 凭证仅用于浏览器 OAuth，并补充边界测试。
+- **成果**：109 个测试通过，bot 监听与浏览器 OAuth 凭证完全隔离，服务恢复正常就绪状态。
 ### [#7290](https://github.com/Vispie-AI/VisPie_backend/pull/7290) fix(infra-amy): keep automatic Bug screenshots off DSH harness
 - **日期**：2026-08-30 | **状态**：🔀 待合并
 - **问题**：生产环境启用 DSH harness 后，自动 Bug 话题的截图消息被路由到 DSH 会话而非视觉诊断路径，导致根因总结响应失效。
@@ -1109,6 +1156,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7325](https://github.com/Vispie-AI/VisPie_backend/pull/7325) feat(infra-amy): add read-only ReelCraft E2E evidence
+- **日期**：2026-08-31 | **状态**：✅ 已合并
+- **问题**：Infra Amy DSH 缺乏对 ReelCraft E2E 最小闭环工作流 CI 失败的直接可观测能力。
+- **修复**：新增只读 `get_reelcraft_ci_e2e` 工具，通过降权 GitHub App token 获取测试 SHA、失败步骤及 Cloud Run 执行信息，明确禁止任何 CI 变更操作。
+- **成果**：140 个测试通过，Infra Amy 可直接读取 E2E 失败证据，故障定位效率显著提升。
 ### [#7286](https://github.com/Vispie-AI/VisPie_backend/pull/7286) feat(infra-amy): reuse company Lark browser login
 - **日期**：2026-08-30 | **状态**：✅ 已合并
 - **问题**：Infra Amy 浏览器入口缺乏统一的 Lark 登录页，未经认证的访问可直接进入 DSH 和 Incident 页面。
