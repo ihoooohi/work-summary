@@ -1,13 +1,66 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-08-31 | 共 369 个 PR（已合并 325 · 关闭未合并 21 · 待合并 21）
-> 最后更新：2026-08-31
+> 统计周期：2026-04-11 ~ 2026-09-01 | 共 380 个 PR（已合并 335 · 关闭未合并 22 · 待合并 21）
+> 最后更新：2026-09-01
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7370](https://github.com/Vispie-AI/VisPie_backend/pull/7370) fix(reelcraft): make daily canary interactive
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：每日金丝雀脚本缺乏真实互动选择，导致线性无选择逻辑矛盾无法有效验证。
+- **修复**：将线性金丝雀替换为含明确作者选择和两个短结局目标的交互式版本，场景限定为一角色、一房间、一道具。
+- **成果**：112个测试通过，金丝雀形状已通过回归测试固定，18个轮换用户场景不受影响。
+
+### [#7369](https://github.com/Vispie-AI/VisPie_backend/pull/7369) fix(reelcraft): accept persisted storyboard completion
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：最终故事板卡片缺失时，即使持久化片段和帧任务证明所有图像成功，系统仍将其标记为失败。
+- **修复**：当故事板卡片缺失但持久化片段及已完成帧任务证明全部图像请求成功时，接受完成状态。
+- **成果**：111个测试通过，部分或失败帧批次仍正确标红，覆盖了验收边界的专项回归测试。
+
+### [#7368](https://github.com/Vispie-AI/VisPie_backend/pull/7368) fix(reelcraft): split daily report by environment
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：每日报告将生产和预发布环境数据混合，无法区分各环境的健康状态和故障案例。
+- **修复**：分别查询生产和预发布数据库，独立渲染各自的摘要、表格、分析和失败案例，生产事件创建仅限生产环境。
+- **成果**：31个测试通过，双环境报告卡片渲染28个元素，预发布链接指向staging.reelcraft.art。
+
+### [#7366](https://github.com/Vispie-AI/VisPie_backend/pull/7366) fix(infra-amy): isolate ReelCraft evidence by environment
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：Infra Amy处理ReelCraft证据时未区分预发布和生产环境，导致跨环境证据混用。
+- **修复**：将每个面向模型的环境规范化为staging或production，并在所有证据层拒绝环境不匹配的数据。
+- **成果**：147+61+4项测试通过，证据隔离为只读行为，未引入任何数据写入或付费媒体操作。
+
+### [#7345](https://github.com/Vispie-AI/VisPie_backend/pull/7345) fix(infra-amy): prove ReelCraft metering root causes
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：Infra Amy无法完整追溯ReelCraft计量问题的根本原因，证据链存在断点。
+- **修复**：扩展DSH能力，将日报计量别名映射至精确引擎常量，并限制仅在完整证据链确认后才输出根因结论。
+- **成果**：143+38项测试通过，所有原始日志、成本、提示等敏感数据均不进入DSH，安全边界明确。
+
+### [#7343](https://github.com/Vispie-AI/VisPie_backend/pull/7343) fix(reelcraft): repair one missing character reference
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：每日评估会话持久化7/8个视觉参考后停止，因图像网关未返回结果导致单个角色缺少图片。
+- **修复**：新增仅生成单个缺失角色参考的智能体工具，复用共享视觉参考计费、版本和幂等性逻辑。
+- **成果**：238个测试通过（含2个跳过），角色设计师和编排器可精确修复缺失角色而不重建已批准参考。
+
+### [#7340](https://github.com/Vispie-AI/VisPie_backend/pull/7340) fix(reelcraft): append missing storyboard scene refs
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：故事板引入了story_analysis.settings中不存在的新场景，导致视觉参考锁定重试三次仍无法添加缺失场景。
+- **修复**：新增generate_scene_reference工具，允许资产阶段在故事板报告缺失场景ID后动态生成并追加该场景设置。
+- **成果**：174个测试通过（含2个跳过），支持幂等重放和所有权验证，上传自有视频模式下禁用该工具。
+
+### [#7336](https://github.com/Vispie-AI/VisPie_backend/pull/7336) fix(infra-amy): drain known-disabled revisions
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：Lark监听器被明确禁用且实例指标序列缺失的短暂过期修订版本阻塞了单服务退役流程。
+- **修复**：对已知禁用修订版本仅需两次连续删除后缺失序列读取即可解除阻塞，其他监听器状态仍要求明确零值数据点。
+- **成果**：107+139+47+63项测试通过，回归验证确认未知监听器的缺失采样不被误判为零值。
+
+### [#7333](https://github.com/Vispie-AI/VisPie_backend/pull/7333) fix(infra-amy): retire proven pre-listener revisions
+- **日期**：2026-08-31 | **状态**：🚫 已关闭
+- **问题**：历史修订版本因缺少明确监听器标志而阻止了部署运行，旧版本退役逻辑无法识别早于监听器引入的修订。
+- **修复**：仅当Git证明源代码明确早于DSH Lark监听器引入提交时才退役该修订，缺失或未知等状态均保持失败关闭。
+- **成果**：107+139+63项测试通过，覆盖缺失、未知、旁支、边界和后边界源状态的完整回归测试。
 ### [#7328](https://github.com/Vispie-AI/VisPie_backend/pull/7328) fix(reelcraft): pin eval image after manual staging
 - **日期**：2026-08-31 | **状态**：🚫 已关闭
 - **问题**：手动 staging 成功后，Prefect 任务仍使用旧版评估镜像，未同步到最新修复版本。
@@ -1156,6 +1209,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7367](https://github.com/Vispie-AI/VisPie_backend/pull/7367) feat(reelcraft): make daily image eval prove end to end
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：每日图像评估缺乏端到端验证，无法证明从脚本到图像的完整流程在真实条件下正常运行。
+- **修复**：在18个轮换场景前先运行固定最小金丝雀，要求真实脚本审批和完整持久化故事板图像，并设置$10 LLM+$10媒体费用硬性上限。
+- **成果**：154个测试通过（含2个跳过），Bug组报告卡片展示金丝雀结果、参考图像、故事板图像、费用及故障诊断。
+
+### [#7347](https://github.com/Vispie-AI/VisPie_backend/pull/7347) feat(reelcraft): include daily eval in Bug group report
+- **日期**：2026-09-01 | **状态**：✅ 已合并
+- **问题**：付费每日评估通过Prefect共享部署运行，但其结果未出现在Bug组09:05每日报告卡片中。
+- **修复**：将04:00执行的18场景脚本转图像评估加入ReelCraft管道健康卡片，展示完成数、花费、失败场景和下一轮换场景等关键指标。
+- **成果**：46个测试通过，实时缓存破除读取正常工作，外部代码审查批准合并。
 ### [#7325](https://github.com/Vispie-AI/VisPie_backend/pull/7325) feat(infra-amy): add read-only ReelCraft E2E evidence
 - **日期**：2026-08-31 | **状态**：✅ 已合并
 - **问题**：Infra Amy DSH 缺乏对 ReelCraft E2E 最小闭环工作流 CI 失败的直接可观测能力。
