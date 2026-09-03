@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-02 | 共 383 个 PR（已合并 338 · 关闭未合并 22 · 待合并 21）
-> 最后更新：2026-09-02
+> 统计周期：2026-04-11 ~ 2026-09-03 | 共 384 个 PR（已合并 339 · 关闭未合并 22 · 待合并 21）
+> 最后更新：2026-09-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7452](https://github.com/Vispie-AI/VisPie_backend/pull/7452) fix(infra-amy): explain exhausted model budget
+- **日期**：2026-09-03 | **状态**：✅ 已合并
+- **问题**：额度耗尽时 Lark 卡片仅显示通用错误，无恢复引导。
+- **修复**：检测 HTTP 402 映射为 budget_exhausted，Lark 展示"额度已用完"及恢复说明。
+- **成果**：516 个测试通过，凭据不出 Lark，已合并。
 
 ### [#7402](https://github.com/Vispie-AI/VisPie_backend/pull/7402) fix(reelcraft): scope render spend to request job
 - **日期**：2026-09-02 | **状态**：✅ 已合并
