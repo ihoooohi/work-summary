@@ -1,13 +1,54 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-03 | 共 384 个 PR（已合并 339 · 关闭未合并 22 · 待合并 21）
-> 最后更新：2026-09-03
+> 统计周期：2026-04-11 ~ 2026-09-04 | 共 391 个 PR（已合并 346 · 关闭未合并 22 · 待合并 21）
+> 最后更新：2026-09-04
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7497](https://github.com/Vispie-AI/VisPie_backend/pull/7497) fix(infra-amy): install evidence modules in materialized DSH profile
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：Full preset 引用了 remote-evidence-tools.mjs，但 prepare-profile 未将其复制到物化目录，导致候选 Hand 回滚。
+- **修复**：将 bridge 及两个依赖模块安装到物化目录，扩展测试覆盖双 preset 本地导入遍历及镜像启动门控。
+- **成果**：19 个部署契约测试全部通过，镜像启动门控可捕获未挂载 agent 问题。
+
+### [#7496](https://github.com/Vispie-AI/VisPie_backend/pull/7496) fix(infra-amy): fail safely when staging traces are unconfigured
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：staging Langfuse Secret 资源无版本，部署时挂载空 :latest 引用会导致 staging 启动失败。
+- **修复**：将 staging trace 挂载改为显式成对仓库变量选项，拒绝不完整配对，并保留 credential_unavailable 标记。
+- **成果**：18 个部署契约测试通过，staging 服务可在无 trace 配置时安全运行。
+
+### [#7495](https://github.com/Vispie-AI/VisPie_backend/pull/7495) fix(infra-amy): keep evidence IAM bootstrap outside release
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：#7494 在常规发布流程中加入了授予 Secret IAM 的步骤，但 deployer 自定义角色不应拥有该权限。
+- **修复**：从发布流程中移除 IAM 授权步骤，仅保留一次性 bootstrap 脚本并添加中英文文档说明。
+- **成果**：工作流权限范围收窄，Cloud Run 启动时仍验证运行时 secret 访问，无产品行为变化。
+
+### [#7494](https://github.com/Vispie-AI/VisPie_backend/pull/7494) fix(infra-amy): reconnect evidence and verify investigation receipts
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：五个只读 evidence 工具与 Full DSH 断开连接，DSH 0.1.2 历史契约使用空 throughSeq=-1 截断，prompt ID 与 turn 起点关联错误。
+- **修复**：通过认证 Door 恢复五个只读 evidence 工具，修正历史快照跟随逻辑，并为 staging Langfuse 接入 secret-scoped Door 访问。
+- **成果**：DSH 255、harness 75、Python service 119 测试全部通过，生产与 staging 只读探测验证正常。
+
+### [#7489](https://github.com/Vispie-AI/VisPie_backend/pull/7489) fix(report): show ReelCraft E2E project links
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：Bug-group 报告将原始 daily-eval JSON 条目展示给用户，可读性差且无法直接跳转项目页面。
+- **修复**：将原始 JSON 替换为每个 ReelCraft E2E 项目的直接链接（指向资产视图），仅从合法 8 位十六进制 session ID 派生链接。
+- **成果**：54 个测试通过，实时渲染显示 10 个项目链接，示例项目页面返回 HTTP 200。
+
+### [#7472](https://github.com/Vispie-AI/VisPie_backend/pull/7472) fix(reelcraft): accept non-contiguous daily eval IDs
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：报告消费者将固定数据集数量（18）误用为 fixture ID 上限，导致包含 ID 19、20、21 的每日评估被拒绝。
+- **修复**：改为用固定外部标签集验证 ID，而非以数据集基数作为最大 ID 判断依据。
+- **成果**：53 个相关测试通过，schema-v4 latest.json 归一化正常并保留全部 18 个 ID。
+
+### [#7464](https://github.com/Vispie-AI/VisPie_backend/pull/7464) fix(infra-amy): replace canary pinned peers
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：npm ci 后 DSH peers 残留为真实目录，canary 镜像从 /app 而非 /opt/dsh 解析 cordis，导致 Cloud Build 在 Cloud Run 变更前即失败。
+- **修复**：在创建 pinned link 前移除五个被替换的包，并要求清理步骤在部署契约测试中先于 pinned link 执行。
+- **成果**：Infra Amy DSH 231 测试、CLI bridge 97 测试全部通过，专项回归测试修复前失败修复后通过。
 ### [#7452](https://github.com/Vispie-AI/VisPie_backend/pull/7452) fix(infra-amy): explain exhausted model budget
 - **日期**：2026-09-03 | **状态**：✅ 已合并
 - **问题**：额度耗尽时 Lark 卡片仅显示通用错误，无恢复引导。
