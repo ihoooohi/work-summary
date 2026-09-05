@@ -1,12 +1,36 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-04 | 共 391 个 PR（已合并 346 · 关闭未合并 22 · 待合并 21）
-> 最后更新：2026-09-04
+> 统计周期：2026-04-11 ~ 2026-09-05 | 共 397 个 PR（已合并 352 · 关闭未合并 22 · 待合并 21）
+> 最后更新：2026-09-05
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7541](https://github.com/Vispie-AI/VisPie_backend/pull/7541) fix(infra-amy): scope historical Engine revision read access
+- **日期**：2026-09-05 | **状态**：✅ 已合并
+- **问题**：Infra Amy 的 Door 身份访问 ReelCraft Engine 历史 Revision 时返回 access_denied，调试链路中断。
+- **修复**：为 Door 服务账号在生产与 Staging Engine 上精准授予 run.revisions.get 权限，并添加漂移检测脚本。
+- **成果**：270 项测试全部通过，历史 Engine Revision 成功读取，Root Cause 调查链路完全打通。
+
+### [#7534](https://github.com/Vispie-AI/VisPie_backend/pull/7534) fix(infra-amy): preserve historical engine and late trace evidence
+- **日期**：2026-09-05 | **状态**：✅ 已合并
+- **问题**：DSH 将 Studio 写入者 SHA 误标为 Engine 来源，且长 Trace 末尾关键输出被截断，导致调试证据不完整。
+- **修复**：精准投影历史 Engine Revision，区分 Studio 来源，并优先保留长 Trace 末尾模型输出片段。
+- **成果**：268 项 DSH 测试通过，真实 109 条观测 Trace 正确保留末尾输出，证据链完整。
+
+### [#7502](https://github.com/Vispie-AI/VisPie_backend/pull/7502) fix(infra-amy): bind evidence to the native Agent id
+- **日期**：2026-09-05 | **状态**：✅ 已合并
+- **问题**：bridge 使用了工厂请求字段 sessionId 而非 Agent 实例的只读 id 属性，致使 Door 持续返回 HTTP 400。
+- **修复**：将 receipt 中 session_id 绑定到 exec.agent.id，并修正回归 fixture 为真实原生 Agent 类型形状。
+- **成果**：258 项 DSH 测试全部通过，原生调查首次完整收到 Door 证据响应。
+
+### [#7500](https://github.com/Vispie-AI/VisPie_backend/pull/7500) fix(infra-amy): accept native composite evidence call IDs
+- **日期**：2026-09-04 | **状态**：✅ 已合并
+- **问题**：原生 DSH/Grok 的 call_id 含管道符分隔的 provider 后缀，Door 校验逻辑误判无效并返回 HTTP 400。
+- **修复**：在 receipt 元数据中允许管道符分隔的 call_id 格式，会话 ID、工具白名单及认证边界保持不变。
+- **成果**：258 项测试通过，复合 call_id 的完整 bridge 往返及边界校验均验证成功。
 
 ### [#7497](https://github.com/Vispie-AI/VisPie_backend/pull/7497) fix(infra-amy): install evidence modules in materialized DSH profile
 - **日期**：2026-09-04 | **状态**：✅ 已合并
@@ -2054,6 +2078,18 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#7529](https://github.com/Vispie-AI/VisPie_backend/pull/7529) docs(infra-amy): qualify dedicated staging trace evidence end to end
+- **日期**：2026-09-05 | **状态**：✅ 已合并
+- **问题**：原生 Infra Amy/DSH 缺少 Staging Langfuse Trace 来源配置，无法区分执行错误与产品故障。
+- **修复**：接入 reelcraft-staging Langfuse 项目，通过 GCP Secret 注入密钥，完成端到端 Staging Trace 读取验证。
+- **成果**：30 项 JS 回归测试通过，原生调查 inc_a0edd775 完整输出中文直因解释，Staging 证据链路打通。
+
+### [#7503](https://github.com/Vispie-AI/VisPie_backend/pull/7503) docs(infra-amy): record verified native root-cause investigation
+- **日期**：2026-09-05 | **状态**：✅ 已合并
+- **问题**：需记录 TASK-017 完整验收过程，涵盖 Door/Hand 上线、中断恢复及原生根因调查的全部证据。
+- **修复**：发布双语 TASK-017 验收文档，记录精确事件 ID、镜像 Digest、失败历程与 258 项 DSH 测试结果。
+- **成果**：原生调查产出中文直因解释，工作台与 DSH 原生界面均完成可视化验证，合规限制明确记录。
 
 ### [#7257](https://github.com/Vispie-AI/VisPie_backend/pull/7257) perf(reelcraft): fix Projects and attachment latency
 - **日期**：2026-08-29 | **状态**：✅ 已合并
