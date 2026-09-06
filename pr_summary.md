@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-05 | 共 397 个 PR（已合并 352 · 关闭未合并 22 · 待合并 21）
-> 最后更新：2026-09-05
+> 统计周期：2026-04-11 ~ 2026-09-06 | 共 401 个 PR（已合并 355 · 关闭未合并 22 · 待合并 22）
+> 最后更新：2026-09-06
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7586](https://github.com/Vispie-AI/VisPie_backend/pull/7586) fix(infra-amy): rotate incident Sessions pinned to an unmountable preset
+- **日期**：2026-09-06 | **状态**：✅ 已合并
+- **问题**：DSH Session 绑定了 hand 不再挂载的预设时，日报信号直接返回 triage-failed，无法启动真实调查。
+- **修复**：dispatchTriage 读取 Session 快照，预设不符时自动在当前预设下开启轮换 Session，写入幂等 session-rotated 台账事件。
+- **成果**：绑定废弃预设的告警 Session 可被自动轮换，测试从 270 条增至 274 条全部通过。
+
+### [#7582](https://github.com/Vispie-AI/VisPie_backend/pull/7582) fix(infra-amy): preserve retry feedback in bounded trace previews
+- **日期**：2026-09-06 | **状态**：✅ 已合并
+- **问题**：Langfuse trace 预览中，过长系统提示占满 2000 字符预算，导致真实重试反馈信息不可见。
+- **修复**：将 2000 字符预览按最新四条消息均分，按 UTF-8 字节裁剪以保证中文摘要在 64 KiB 信封限制内。
+- **成果**：重试反馈内容在 trace 预览中得以保留，135 项 Python 和 270 项 DSH 测试全部通过。
 ### [#7541](https://github.com/Vispie-AI/VisPie_backend/pull/7541) fix(infra-amy): scope historical Engine revision read access
 - **日期**：2026-09-05 | **状态**：✅ 已合并
 - **问题**：Infra Amy 的 Door 身份访问 ReelCraft Engine 历史 Revision 时返回 access_denied，调试链路中断。
@@ -2079,6 +2090,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#7585](https://github.com/Vispie-AI/VisPie_backend/pull/7585) chore(infra-amy): roll the hand manifest to 378a185b8 (door evidence bridge)
+- **日期**：2026-09-06 | **状态**：🔀 待合并
+- **问题**：hand manifest 镜像版本（27bf0b832）落后于线上实际版本（378a185b8），存在 HAND.md 明确禁止的环境组合。
+- **修复**：将 sandbox.yaml 中 hand 镜像 tag 更新为 378a185b864256b23cb3e6c55005e1afe2c2ce24，恢复与线上 Sandbox 的一致性。
+- **成果**：manifest 与线上镜像对齐，270 项 DSH 测试全部通过，回滚仅需 revert 本 PR 且不影响线上状态。
+
+### [#7584](https://github.com/Vispie-AI/VisPie_backend/pull/7584) docs(infra-amy): record completed native retry-evidence acceptance
+- **日期**：2026-09-06 | **状态**：✅ 已合并
+- **问题**：PR #7582 发布后，TASK-019 双语记录未包含原生 DSH turn 验收结果及遗留问题说明。
+- **修复**：在 TASK-019 中补录 PR #7582 发布记录、第 3 轮原生 DSH 会话验收详情及独立 Incident 摘要选择缺口。
+- **成果**：双语验收记录完整归档，部署与监听器状态均有据可查，纯文档变更无需额外部署。
 ### [#7529](https://github.com/Vispie-AI/VisPie_backend/pull/7529) docs(infra-amy): qualify dedicated staging trace evidence end to end
 - **日期**：2026-09-05 | **状态**：✅ 已合并
 - **问题**：原生 Infra Amy/DSH 缺少 Staging Langfuse Trace 来源配置，无法区分执行错误与产品故障。
