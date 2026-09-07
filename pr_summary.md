@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-06 | 共 401 个 PR（已合并 355 · 关闭未合并 22 · 待合并 22）
-> 最后更新：2026-09-06
+> 统计周期：2026-04-11 ~ 2026-09-07 | 共 403 个 PR（已合并 357 · 关闭未合并 22 · 待合并 22）
+> 最后更新：2026-09-07
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7612](https://github.com/Vispie-AI/VisPie_backend/pull/7612) fix(reelcraft-player): count DOM progress events as download liveness
+- **日期**：2026-09-07 | **状态**：✅ 已合并
+- **问题**：#7588 上线后发现，冷启动时 moov 头尚未到达导致缓冲区无可解析范围，下载活跃度检测仍将正在接收字节的请求误判为"死链"并触发重载。
+- **修复**：在 `DownloadLiveness.note()` 中将 DOM `progress` 事件纳入活跃度判断，并在 `useStallRecovery` 中绑定监听器，确保有字节到达时即视为存活。
+- **成果**：与 #7588 协同修复慢速网络下冷启动触发多余缓存刷新的问题，卡顿监控链在首帧加载全程保持正确的活跃判断。
+
+### [#7588](https://github.com/Vispie-AI/VisPie_backend/pull/7588) fix(reelcraft-player): never abort a live download in the stall watchdog
+- **日期**：2026-09-07 | **状态**：✅ 已合并
+- **问题**：ReelCraft 播放器卡顿监控在慢速网络下将"正在接收字节"的开片素材误判为卡死，连续触发 reseek/hard_reload 重置缓冲区，导致慢链路用户始终无法进入故事。
+- **修复**：新增 `bufferedRanges.ts`、`downloadLiveness.ts` 等模块检测字节是否仍在到达；字节流入期间持 `buffering` 状态并展示加载动画，20 秒无进展后才显示手动操作提示。
+- **成果**：消除慢链路用户遭遇"Playback got stuck"循环的主要路径，正在下载的素材不再被错误中断，`stall_unrecovered` 指标预期下降。
 ### [#7586](https://github.com/Vispie-AI/VisPie_backend/pull/7586) fix(infra-amy): rotate incident Sessions pinned to an unmountable preset
 - **日期**：2026-09-06 | **状态**：✅ 已合并
 - **问题**：DSH Session 绑定了 hand 不再挂载的预设时，日报信号直接返回 triage-failed，无法启动真实调查。
