@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-07 | 共 403 个 PR（已合并 357 · 关闭未合并 22 · 待合并 22）
-> 最后更新：2026-09-07
+> 统计周期：2026-04-11 ~ 2026-09-09 | 共 405 个 PR（已合并 359 · 关闭未合并 22 · 待合并 22）
+> 最后更新：2026-09-09
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7704](https://github.com/Vispie-AI/VisPie_backend/pull/7704) fix(reelcraft): continue five independent Preview V3 script attempts
+- **日期**：2026-09-09 | **状态**：✅ 已合并
+- **问题**：评估批次中某个脚本失败后整个流水线停止，无法继续执行其余独立的Preview V3脚本尝试。
+- **修复**：已结算失败样本不再阻断独立夹具轮换，`max_cases`改为计数真实产品案例尝试（默认5次），并新增精确续跑锁。
+- **成果**：409个相关测试通过，正式部署（app/host/Prefect三端）验证完成，每日评估可在单次失败后继续执行最多5个独立脚本。
 
 ### [#7612](https://github.com/Vispie-AI/VisPie_backend/pull/7612) fix(reelcraft-player): count DOM progress events as download liveness
 - **日期**：2026-09-07 | **状态**：✅ 已合并
@@ -1318,6 +1324,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#7660](https://github.com/Vispie-AI/VisPie_backend/pull/7660) feat(reelcraft): run daily image evaluation and reports on Preview V3
+- **日期**：2026-09-09 | **状态**：✅ 已合并
+- **问题**：ReelCraft每日图像评估使用旧版V1回路，无法在已验证的Preview V3通道运行，日报缺乏真实V3项目链接。
+- **修复**：将旧版V1评估器替换为V3产品流程，添加PostgreSQL顾问锁与可恢复断点，迁移Cloud Run Job和Prefect任务到统一合约。
+- **成果**：每日评估成功部署到Preview V3通道，Infra Amy发送含真实V3会话链接的正式报告，$10 LLM+$10媒体预算限制完整保留。
 
 ### [#7367](https://github.com/Vispie-AI/VisPie_backend/pull/7367) feat(reelcraft): make daily image eval prove end to end
 - **日期**：2026-09-01 | **状态**：✅ 已合并
