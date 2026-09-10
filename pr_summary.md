@@ -1,12 +1,55 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-09 | 共 405 个 PR（已合并 359 · 关闭未合并 22 · 待合并 22）
-> 最后更新：2026-09-09
+> 统计周期：2026-04-11 ~ 2026-09-10 | 共 412 个 PR（已合并 366 · 关闭未合并 22 · 待合并 22）
+> 最后更新：2026-09-10
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7746](https://github.com/Vispie-AI/VisPie_backend/pull/7746) fix(e2e): close budget-interrupted results without new spend
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：E2E 流程在 LLM 费用轻微超限（10.17 vs 10 USD）时拒绝关闭已完成的预算中断批次。
+- **修复**：新增默认关闭的仅核销参数，通过原有守护后读取实际配额并跳过所有付费生成入口点。
+- **成果**：预算中断批次可无新支出完成关闭，555 项测试通过，实际只读探针验证通过。
+
+### [#7742](https://github.com/Vispie-AI/VisPie_backend/pull/7742) fix(reelcraft): close settled daily budget interruptions without generation
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：ReelCraft 日评估无法关闭已结算的预算中断会话，导致正式日报无法如实展示五次真实尝试。
+- **修复**：在现有精确哈希核销逻辑中新增严格纯预算证明路径，在付费循环前返回且不可继续执行。
+- **成果**：512 项测试通过，读只 PostgreSQL 回放验证 0 个 job、3 个已结算轮次，日报可诚实展示状态。
+
+### [#7737](https://github.com/Vispie-AI/VisPie_backend/pull/7737) fix(daily-eval): match real Preview database read contracts
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：Preview V3 日评估预检发现两处数据库适配器不匹配：渲染请求字段错误且 jobs.input 未解码为严格对象。
+- **修复**：将存在性查询改为 `SELECT 1 AS present` 并使用正确字段名，在核销辅助函数内解码 TEXT 类型的 jobs.input JSON。
+- **成果**：377 项测试通过，针对实际只读 PostgreSQL 会话的完整核销身份验证通过，源内容与构建哈希全部匹配。
+
+### [#7736](https://github.com/Vispie-AI/VisPie_backend/pull/7736) fix(amy): keep deploy workflow expressions under GitHub limit
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：Amy 部署工作流插值后的 run: 块增至 22,809 字符，超过 GitHub 21,000 字符限制导致作业创建失败。
+- **修复**：将超大部署脚本渲染拆分为两个串行 runner 步骤，拼接后的远程脚本字节完全一致。
+- **成果**：29 项测试通过，三段插值块均在限制内，重建后脚本 SHA256 完全一致，独立审查批准上线。
+
+### [#7735](https://github.com/Vispie-AI/VisPie_backend/pull/7735) fix(amy): deploy workspace prompts from workflow SHA
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：PR #7732 合并后部署流程实为假成功：主机 git 刷新失败导致工作流复制了旧版 AGENTS 文件，新容器以过期提示词启动。
+- **修复**：改为从部署作业自身的精确检出发布 Amy 引导提示词，并在容器重启前验证 S3 包和 AGENTS 哈希。
+- **成果**：65 项测试通过，YAML 解析、bash -n 语法检查和 ContextBuilder 提示词探针均通过，安全审查批准上线。
+
+### [#7734](https://github.com/Vispie-AI/VisPie_backend/pull/7734) fix(daily-eval): safely resume settled Preview V3 failures
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：Preview V3 日评估中某个失败夹具在同一 UTC 日内独立结算后，无法在不重复付费的情况下安全恢复其他脚本执行。
+- **修复**：新增无生成恢复步骤，绑定精确 SHA-256 和幂等已消费来源回执，恢复调用不可进入生成循环。
+- **成果**：384 项扩展回归测试通过，恢复路径仅前进一次游标且不修改原始失败计数，独立审查批准上线。
+
+### [#7732](https://github.com/Vispie-AI/VisPie_backend/pull/7732) fix(amy): preserve sourced public profile emails
+- **日期**：2026-09-10 | **状态**：✅ 已合并
+- **问题**：Amy 纳米机器人通用隐私守护过度应用，在创作者联系人列表场景中将抓取器已保留的公开邮件地址也一并脱敏。
+- **修复**：在每次会话加载的系统指令中明确区分公开采购邮件与私密/推断/凭证类数据，并增加回归合约覆盖部署传播。
+- **成果**：63 项测试通过，实时 ContextBuilder 公开邮件优先级探针和所有负边界检查均通过，独立审查批准上线。
+
 
 ### [#7704](https://github.com/Vispie-AI/VisPie_backend/pull/7704) fix(reelcraft): continue five independent Preview V3 script attempts
 - **日期**：2026-09-09 | **状态**：✅ 已合并
