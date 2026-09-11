@@ -1,13 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-10 | 共 412 个 PR（已合并 366 · 关闭未合并 22 · 待合并 22）
-> 最后更新：2026-09-10
+> 统计周期：2026-04-11 ~ 2026-09-11 | 共 418 个 PR（已合并 370 · 关闭未合并 22 · 待合并 24）
+> 最后更新：2026-09-11
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7793](https://github.com/Vispie-AI/VisPie_backend/pull/7793) fix(infra-amy): acknowledge automatic Bug reports with a terminal reaction
+- **日期**：2026-09-11 | **状态**：🔀 待合并
+- **问题**：2026-09-10 版本后，Infra Amy 自动处理 Bug 上报后不再添加任何表情回应，导致 Bug 群组无法判断报告是否已被处理。
+- **修复**：新增 `_INVESTIGATED_EMOJI = "Get"` 作为自动 Bug 分析完成的终态表情，替换原来设置为 `None` 的逻辑。
+- **成果**：自动 Bug 上报流程现在会在处理完成后添加"收到"表情，通知状态可见性恢复正常。
+
+### [#7792](https://github.com/Vispie-AI/VisPie_backend/pull/7792) fix(amy-nanobot): raise per-turn time budget 25min → 55min
+- **日期**：2026-09-11 | **状态**：🔀 待合并
+- **问题**：Amy nanobot 每轮任务超时限制为 25 分钟，导致耗时较长的邮箱扫描任务在执行过程中被强制中断。
+- **修复**：将三个关联超时配置统一调整：内部 `wait_for` 从 1500s 升至 3300s，Hatchet 任务 `execution_timeout` 从 30m 升至 60m。
+- **成果**：所有 nanobot 镜像（Amy、Eva、11 个皮肤机器人）均获得 55 分钟执行预算，长任务不再被提前中断。
+
+### [#7791](https://github.com/Vispie-AI/VisPie_backend/pull/7791) fix(reelcraft): expose shot identity keys in admin job input allowlist
+- **日期**：2026-09-11 | **状态**：✅ 已合并
+- **问题**：#7790 部署后，管理员 API 隐私字段白名单未包含镜头身份键，导致 DSH 证据工具仍将不同镜头的成功误判为失败镜头已恢复。
+- **修复**：将 `target`、`node_id`、`clip_id`、`asset_id` 四个结构性 ID 字段添加至 `_JOB_INPUT_FIELDS` 白名单。
+- **成果**：DSH 证据工具现可正确识别镜头级别的失败与恢复，shot-level 故障追踪功能完整生效。
+
+### [#7790](https://github.com/Vispie-AI/VisPie_backend/pull/7790) fix(reelcraft): make failure recovery shot-level in daily report and DSH evidence
+- **日期**：2026-09-11 | **状态**：✅ 已合并
+- **问题**：每日报告和 DSH 证据工具以 `(session, step)` 为粒度追踪故障恢复，导致同场景中不同镜头的成功被误判为失败镜头的恢复。
+- **修复**：将恢复键改为 `(session_id, step, shot_target, shot_id)` 严格匹配，SQL 通过正则提取镜头字段，DSH 工具新增 `same_step_other_shot_successes` 字段。
+- **成果**：staging 场景 `be593c91` 复现验证通过，被误吞的失败事件现可正确上报，226 个测试全部通过。
+
+### [#7768](https://github.com/Vispie-AI/VisPie_backend/pull/7768) fix(reelcraft): correct V3 E2E parse validation and failure reporting
+- **日期**：2026-09-11 | **状态**：✅ 已合并
+- **问题**：ReelCraft V3 E2E 在两个项目素材卡片数量刷新后（7→8 及 12→15），parse 验证失败，导致日报误报产品故障。
+- **修复**：将专用 pin schema 与历史 parse-tool 计数分开验证，区分接收验证失败与产品失败，并限定诊断范围。
+- **成果**：776 个专项测试通过，受影响项目现可正常推进至"生成资源"阶段，历史档案 5 个案例回放结果正确。
+
+### [#7765](https://github.com/Vispie-AI/VisPie_backend/pull/7765) fix(infra-amy): investigate staging daily report failures
+- **日期**：2026-09-11 | **状态**：✅ 已合并
+- **问题**：ReelCraft 每日报告中显示的 staging 环境失败未被接入 Infra Amy 现有的自动 Incident/DSH 调查路径。
+- **修复**：分别生成生产和 staging 环境故障信号，通过共享认证桥接同时发送，staging 调查链接和结论单独展示在 staging 卡片区域。
+- **成果**：187 个 report-core 测试通过，staging 失败现可自动触发 Infra Amy 调查流程，与生产环境调查相互独立。
 ### [#7746](https://github.com/Vispie-AI/VisPie_backend/pull/7746) fix(e2e): close budget-interrupted results without new spend
 - **日期**：2026-09-10 | **状态**：✅ 已合并
 - **问题**：E2E 流程在 LLM 费用轻微超限（10.17 vs 10 USD）时拒绝关闭已完成的预算中断批次。
