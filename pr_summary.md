@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-11 | 共 418 个 PR（已合并 370 · 关闭未合并 22 · 待合并 24）
-> 最后更新：2026-09-11
+> 统计周期：2026-04-11 ~ 2026-09-12 | 共 419 个 PR（已合并 370 · 关闭未合并 22 · 待合并 25）
+> 最后更新：2026-09-12
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7808](https://github.com/Vispie-AI/VisPie_backend/pull/7808) fix(reelcraft): make the daily V3 image evaluation report the real product state
+- **日期**：2026-09-12 | **状态**：🔀 待合并
+- **问题**：`image_only_safety` 硬停阻断多脚本轮转，后续评测持续被阻塞。
+- **修复**：降为单脚本红行，修正帧别名逻辑，细化视频 payload 检测。
+- **成果**：636 测试通过，评测轮转恢复，历史卡点可 reconcile 关闭。
 ### [#7793](https://github.com/Vispie-AI/VisPie_backend/pull/7793) fix(infra-amy): acknowledge automatic Bug reports with a terminal reaction
 - **日期**：2026-09-11 | **状态**：🔀 待合并
 - **问题**：2026-09-10 版本后，Infra Amy 自动处理 Bug 上报后不再添加任何表情回应，导致 Bug 群组无法判断报告是否已被处理。
