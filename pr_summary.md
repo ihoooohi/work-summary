@@ -1,12 +1,54 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-12 | 共 419 个 PR（已合并 370 · 关闭未合并 22 · 待合并 25）
-> 最后更新：2026-09-12
+> 统计周期：2026-04-11 ~ 2026-09-13 | 共 426 个 PR（已合并 377 · 关闭未合并 22 · 待合并 25）
+> 最后更新：2026-09-13
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7829](https://github.com/Vispie-AI/VisPie_backend/pull/7829) fix(reelcraft): a cut turn's done may be followed by transcript persistence
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：预算被拒绝时，turn的done事件之后可能仍有transcript持久化事件（如artifact_created），导致协调验证判定"done未为最后事件"而失败。
+- **修复**：修改verify_budget_reconciliation_settled，允许done后跟随非执行类持久化事件，但拒绝任何tool_start、额外done等执行事件。
+- **成果**：session #9308e5d5协调验证通过，487个测试全部通过。
+
+### [#7828](https://github.com/Vispie-AI/VisPie_backend/pull/7828) fix(reelcraft): settle a gateway budget refusal that cut the turn before any generation
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：网关返回402预算耗尽错误在任何生成前截断turn，运行循环和协调验证均无法正确处理此类停止，导致检查点卡死。
+- **修复**：新增verify_budget_refusal_settled通过快照结算chat步骤的budget_exhausted失败，并扩展协调验证以处理以tool_result信封结尾的截断turn。
+- **成果**：预算耗尽场景可被正确识别和协调，486个测试全部通过。
+
+### [#7827](https://github.com/Vispie-AI/VisPie_backend/pull/7827) fix(studio): let the first chained start-frame alias land on a planned slot
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：#7777引入的逻辑导致首个链式起始帧别名无法落到尚无图像的已规划槽位，多镜次Beat的分镜板对UI和评估来说始终不完整。
+- **修复**：修改_build_storyboard_candidate，允许链式结束帧结果初始化无图像且无显式aliased_from键的槽位，创作者固定操作权限不变。
+- **成果**：脚本#06中6个帧槽位图像缺失问题修复，426个测试通过，1个跳过。
+
+### [#7826](https://github.com/Vispie-AI/VisPie_backend/pull/7826) fix(reelcraft): re-prove recorded transport rows with the snapshot predicate
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：#7820已协调的chat/poll行在后续延续运行中被verify_session_settled严格断言拒绝，导致无法继续执行后续脚本评估。
+- **修复**：新增verify_prior_row_settled，对已记录的chat/poll行使用snapshot断言重新验证，其余行保留严格断言。
+- **成果**：延续运行可正确跳过已协调的transport行并继续执行，483个测试通过。
+
+### [#7820](https://github.com/Vispie-AI/VisPie_backend/pull/7820) fix(reelcraft): wait for the V3 completion card and reconcile transport stops
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：评估器在资产波结束与storyboard审批卡出现之间的约300ms窗口期发送了通用推进指令，触发Codex agent超时致使检查点永久卡死。
+- **修复**：在e2e_minimal_loop中增加await_v3_gate_card最长30秒轮询，并在daily_script_image_eval中新增精确hash协调以接受快照证明的transport停止。
+- **成果**：storyboard规划步骤可通过精确点击路径触发，642个测试通过，1个跳过。
+
+### [#7817](https://github.com/Vispie-AI/VisPie_backend/pull/7817) fix(studio): give every workspace cache writer a private .tmp sibling
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：多个并发workspace写入者共用同一.tmp临时文件名，os.replace竞争条件引发ENOENT错误，导致并行资产任务失败。
+- **修复**：为每个写入者生成含PID、线程ID和随机数的唯一私有.tmp文件名，replace失败后自动清理该私有临时文件。
+- **成果**：消除workspace缓存写入竞争条件，255个测试全部通过。
+
+### [#7814](https://github.com/Vispie-AI/VisPie_backend/pull/7814) fix(reelcraft): give the daily Preview its V3 canonical asset root
+- **日期**：2026-09-13 | **状态**：✅ 已合并
+- **问题**：daily Preview部署脚本缺少VTG_CANONICAL_ASSET_GCS_ROOT变量，导致自2026-09-12起每个V3会话在script_analysis阶段均报canonical_store_unsupported错误。
+- **修复**：在deploy_daily_preview_app.sh中添加VTG_CANONICAL_ASSET_GCS_ROOT环境变量，并在daily_eval_preview_contract.py中增加预飞检查，拒绝缺失或错误的根路径。
+- **成果**：V3解析功能恢复，582个测试通过，daily Preview重部署后评估批次可正常继续。
 
 ### [#7808](https://github.com/Vispie-AI/VisPie_backend/pull/7808) fix(reelcraft): make the daily V3 image evaluation report the real product state
 - **日期**：2026-09-12 | **状态**：🔀 待合并
