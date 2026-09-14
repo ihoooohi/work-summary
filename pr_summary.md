@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-13 | 共 426 个 PR（已合并 377 · 关闭未合并 22 · 待合并 25）
-> 最后更新：2026-09-13
+> 统计周期：2026-04-11 ~ 2026-09-14 | 共 431 个 PR（已合并 382 · 关闭未合并 22 · 待合并 25）
+> 最后更新：2026-09-14
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1450,6 +1450,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7880](https://github.com/Vispie-AI/VisPie_backend/pull/7880) feat(infra-amy): ping the Bug reporter when an automatic analysis ends
+- **日期**：2026-09-14 | **状态**：✅ 已合并
+- **问题**：自动Bug分析结束后更新进度卡片，但Lark不会通知用户，reporter无法知晓分析已完成。
+- **修复**：分析完成后在同一Bug线程中发送@reporter文本通知，带幂等UUID防止Lark重投递重复发送。
+- **成果**：reporter可实时收到分析完成或失败的通知，无需手动回溯查看卡片。
+
+### [#7879](https://github.com/Vispie-AI/VisPie_backend/pull/7879) feat(reelcraft): show which evaluator PR produced the daily E2E result
+- **日期**：2026-09-14 | **状态**：✅ 已合并
+- **问题**：多个评测修复在同一天合并，日报E2E区域无法标识是哪个版本产生了当前结果。
+- **修复**：在workflow中固定评测器PR号，runner记录到每次运行结果，report显示评测程序版本链接。
+- **成果**：每张日报卡片清晰展示评测程序版本（PR号+commit SHA），便于追溯和对比。
 ### [#7660](https://github.com/Vispie-AI/VisPie_backend/pull/7660) feat(reelcraft): run daily image evaluation and reports on Preview V3
 - **日期**：2026-09-09 | **状态**：✅ 已合并
 - **问题**：ReelCraft每日图像评估使用旧版V1回路，无法在已验证的Preview V3通道运行，日报缺乏真实V3项目链接。
@@ -2238,6 +2249,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#7845](https://github.com/Vispie-AI/VisPie_backend/pull/7845) [codex] Preserve Amy reminder immutable image digest
+- **日期**：2026-09-14 | **状态**：✅ 已合并
+- **问题**：Prefect 3.4.6将@sha256摘要解析为tag，导致云端部署注册了无效的:sha256引用而失败。
+- **修复**：改用to_deployment().apply(image=...)保留预构建镜像引用原文，并在部署前校验摘要语法。
+- **成果**：Amy提醒云端部署可正确使用不可变镜像摘要，保障每次发布的一致性。
+
+### [#7837](https://github.com/Vispie-AI/VisPie_backend/pull/7837) [codex] Fix Prefect reminder credential bootstrap order
+- **日期**：2026-09-14 | **状态**：✅ 已合并
+- **问题**：Prefect在模块导入时缓存设置，导致Secret Manager token加载前SDK已初始化并失败。
+- **修复**：将SDK/flow导入延迟至凭证引导完成后，修正credential bootstrap顺序。
+- **成果**：Prefect云端认证正常，Amy需求提醒云端部署可成功注册并运行，完成已授权的云端发布。
+
+### [#7836](https://github.com/Vispie-AI/VisPie_backend/pull/7836) [codex] Run Amy requirement reminders on Prefect Cloud
+- **日期**：2026-09-14 | **状态**：✅ 已合并
+- **问题**：Amy需求提醒依赖本地调度，缺乏云端持久化运行、幂等性保障和可靠的投递回执机制。
+- **修复**：将任务迁移至Prefect Cloud Run V2独立部署，每日08:40上海时区执行，唯一幂等创建。
+- **成果**：Amy需求提醒具备云端持久调度，31个单元测试覆盖，完整受众验证和投递回执。
 ### [#7585](https://github.com/Vispie-AI/VisPie_backend/pull/7585) chore(infra-amy): roll the hand manifest to 378a185b8 (door evidence bridge)
 - **日期**：2026-09-06 | **状态**：🔀 待合并
 - **问题**：hand manifest 镜像版本（27bf0b832）落后于线上实际版本（378a185b8），存在 HAND.md 明确禁止的环境组合。
