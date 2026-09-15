@@ -1,13 +1,48 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-14 | 共 431 个 PR（已合并 382 · 关闭未合并 22 · 待合并 25）
-> 最后更新：2026-09-14
+> 统计周期：2026-04-11 ~ 2026-09-15 | 共 438 个 PR（已合并 388 · 关闭未合并 22 · 待合并 26）
+> 最后更新：2026-09-15
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#7916](https://github.com/Vispie-AI/VisPie_backend/pull/7916) [codex] Fix large Amy reminder cards and scheduled-only restart
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：Amy每日需求提醒卡片包含243个标签对象，超过Lark 200元素限制（错误300305），导致全员发送失败。
+- **修复**：统计所有标签数量，仅对超限的个人需求列表进行压缩，发送前对每张卡片和账号预校验，并识别已离职账号单独跳过。
+- **成果**：50个确定性测试通过，14张重建卡片全部通过CardKit验证，08:40定时提醒恢复正常。
+
+### [#7902](https://github.com/Vispie-AI/VisPie_backend/pull/7902) fix(reelcraft): resolve the evaluator PR from the commit, not its subject
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：评估器通过解析合并提交的Subject后缀`(#NNNN)`获取PR号，自定义Subject的合并不含此后缀，导致PR号记录为null，追踪信息不完整。
+- **修复**：改为调用GitHub API从提交直接查询所属PR号，无效或意外响应记录为空值而非猜测，两个入口均增加pull-requests读权限。
+- **成果**：356个测试通过，评估器PR追踪记录完整，不再出现SHA-only的追踪缺口。
+
+### [#7901](https://github.com/Vispie-AI/VisPie_backend/pull/7901) [codex] Fix Amy reminder partial delivery and receipt-bound recovery
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：2026-09-15 08:40运行在发送6条提醒后中断，第7位收件人为已离职账号（Lark 230029），后续7位收件人完全未尝试发送。
+- **修复**：仅保留已验证的数字CLI错误码，明确识别230029离职拒绝后继续批量，添加绑定已部署源码的同日云端恢复模式，不确定回执保持fail-closed。
+- **成果**：44个单元测试通过，原有6条消息ID独立回读确认，历史不确定回执保持不变。
+
+### [#7900](https://github.com/Vispie-AI/VisPie_backend/pull/7900) fix(reelcraft): wait out a live still wave that outlived the walk deadline
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：Walker截止时间到期时两个脚本的图片仍在成功生成（#08月复仇：21:01到期，21:18完成；#09：23:00到期，23:03完成），完成的脚本被错误标红。
+- **修复**：截止到期时检查session自有图片任务状态，若有剩余预算则等待图片波次完成后再判定，无活跃任务或无剩余预算时维持原有截止时间判定。
+- **成果**：670个测试通过，两个脚本由错误红色正确变绿，批次运行不会因此超出时间窗口。
+
+### [#7897](https://github.com/Vispie-AI/VisPie_backend/pull/7897) fix(infra-amy): give the drain steps more time than they are allowed to spend
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：部署步骤超时（35分钟）与排空脚本预算（2100秒≈35分钟）完全相等，runner在脚本完成前终止retire步骤，致监听器未激活，生产环境Lark静默2小时32分。
+- **修复**：两个retire步骤超时从35分钟提升至45分钟，为排空预算提供10分钟余量；脚本仍保留自有截止时间，修复不改变activate的singleton保证。
+- **成果**：165个测试通过，新增回归测试确保每个drain步骤超时严格大于其排空预算。
+
+### [#7896](https://github.com/Vispie-AI/VisPie_backend/pull/7896) fix(reelcraft): a harness deadline is that script's red, not the end of the night
+- **日期**：2026-09-15 | **状态**：✅ 已合并
+- **问题**：Walker的每轮截止时间（2700秒）到期后错误终止整晚运行，18个fixture仅完成2个，而产品实际已成功生成全部资产（26/26和20/20张图）。
+- **修复**：区分harness截止时间模板，到期后通过数据库快照验证所有任务已结束则标记为该脚本红色并继续轮转，仍有活跃任务则保持检查点。
+- **成果**：662个测试通过，协调接受已归档截止时间停止，延续运行不再被历史截止行阻断。
 ### [#7829](https://github.com/Vispie-AI/VisPie_backend/pull/7829) fix(reelcraft): a cut turn's done may be followed by transcript persistence
 - **日期**：2026-09-13 | **状态**：✅ 已合并
 - **问题**：预算被拒绝时，turn的done事件之后可能仍有transcript持久化事件（如artifact_created），导致协调验证判定"done未为最后事件"而失败。
@@ -1450,6 +1485,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7898](https://github.com/Vispie-AI/VisPie_backend/pull/7898) feat(amy): sync Damian's partnership meetings into the production table
+- **日期**：2026-09-15 | **状态**：🔀 待合并
+- **问题**：Narrative Team合作沟通会议结果需人工手动填入生产多维表格，效率低下且容易遗漏。
+- **修复**：Amy每日两次通过租户管理员API获取Damian主持的合作类会议，识别录音后提取摘要与后续事项，精确匹配公司名后写入指定字段，同时记录AI更新时间列。
+- **成果**：64个单元测试通过，容器干跑完整验证主链路及provider降级路径，设计不自动创建新行、重读前先校验防并发覆盖。
 ### [#7880](https://github.com/Vispie-AI/VisPie_backend/pull/7880) feat(infra-amy): ping the Bug reporter when an automatic analysis ends
 - **日期**：2026-09-14 | **状态**：✅ 已合并
 - **问题**：自动Bug分析结束后更新进度卡片，但Lark不会通知用户，reporter无法知晓分析已完成。
