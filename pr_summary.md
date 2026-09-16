@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-15 | 共 438 个 PR（已合并 388 · 关闭未合并 22 · 待合并 26）
-> 最后更新：2026-09-15
+> 统计周期：2026-04-11 ~ 2026-09-16 | 共 441 个 PR（已合并 390 · 关闭未合并 22 · 待合并 27）
+> 最后更新：2026-09-16
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#7941](https://github.com/Vispie-AI/VisPie_backend/pull/7941) fix(reelcraft): let the daily preflight wait out a Preview cold start
+- **日期**：2026-09-16 | **状态**：✅ 已合并
+- **问题**：每日计划评估因 Preview 服务冷启动耗时约 25-30 秒，预检 HTTP 探针超时仅 20 秒无重试，导致评估在执行 54 秒后以 harness_error 失败。
+- **修复**：实现 `_await_serving` 包装服务探针，在 150 秒内以 3 秒步长重试传输错误和特定 5xx 状态码，确定性错误（401/403/404）仍立即失败。
+- **成果**：预检现可等待 Preview 冷启动完成，避免因零实例扩缩容导致的评估失败，相关测试全部通过。
 
 ### [#7916](https://github.com/Vispie-AI/VisPie_backend/pull/7916) [codex] Fix large Amy reminder cards and scheduled-only restart
 - **日期**：2026-09-15 | **状态**：✅ 已合并
@@ -1485,6 +1491,12 @@
 
 ## 二、新功能开发（feat:）
 
+### [#7984](https://github.com/Vispie-AI/VisPie_backend/pull/7984) [codex] feat(infra-amy): deliver selected DSH screenshots in Lark
+- **日期**：2026-09-16 | **状态**：✅ 已合并
+- **问题**：Infra Amy 的 DSH 会话包含成功的 `read_image` 截图附件，但 Lark 消息桥仅转发文字，无法在回复中展示截图图片。
+- **修复**：解析最终答案中的 Markdown 图片引用，经回环路由获取同请求的 DSH 附件，验证后上传并以 Lark Card 2.0 图片渲染，限制最多 5 张共 15 MiB。
+- **成果**：Lark 回复现可携带带标题的图片卡片，重试时复用已上传图片键，部分失败时降级为纯文字并显示警告，Python/Node/DSH 测试共 723 项全部通过。
+
 ### [#7898](https://github.com/Vispie-AI/VisPie_backend/pull/7898) feat(amy): sync Damian's partnership meetings into the production table
 - **日期**：2026-09-15 | **状态**：🔀 待合并
 - **问题**：Narrative Team合作沟通会议结果需人工手动填入生产多维表格，效率低下且容易遗漏。
@@ -2288,6 +2300,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#7939](https://github.com/Vispie-AI/VisPie_backend/pull/7939) chore(adsignal): keep retired ES runtime disabled
+- **日期**：2026-09-16 | **状态**：🔀 待合并
+- **问题**：生产已切换至 PostgreSQL 读取 AdSignal，但四个 ES 读取标志未默认关闭，后续部署可能意外恢复已退役的 OpenSearch 连接。
+- **修复**：将四个 AdSignal ES 读取标志默认设为 false，并在所有标志禁用时从 EC2、Cloud Run、ECS 各运行入口移除 Elasticsearch 相关环境变量。
+- **成果**：防止已退役 OpenSearch 域被意外重连，保留显式回滚路径，并新增 ECS 任务定义回归测试覆盖（6 项通过）。
 
 ### [#7845](https://github.com/Vispie-AI/VisPie_backend/pull/7845) [codex] Preserve Amy reminder immutable image digest
 - **日期**：2026-09-14 | **状态**：✅ 已合并
