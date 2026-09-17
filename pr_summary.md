@@ -1,12 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-16 | 共 441 个 PR（已合并 390 · 关闭未合并 22 · 待合并 27）
-> 最后更新：2026-09-16
+> 统计周期：2026-04-11 ~ 2026-09-17 | 共 444 个 PR（已合并 393 · 关闭未合并 22 · 待合并 27）
+> 最后更新：2026-09-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#8024](https://github.com/Vispie-AI/VisPie_backend/pull/8024) [codex] fix Infra Amy image replies across native inputs and tool results
+- **日期**：2026-09-17 | **状态**：✅ 已合并
+- **问题**：Door 选择器仅识别根级 `read_image` 输出，嵌套原生结果中的图片因 `image_not_in_turn` 错误被拒绝上传至 Lark。
+- **修复**：支持根/嵌套 `read_image` 输出关联、允许引用当前请求已接纳的图片，并增加有限次重试及上传成功键保留。
+- **成果**：历史失败请求回放验证恢复为 2 张图片正常展示（164/164 测试 + 216/216 Door 测试全部通过）。
+
+### [#7996](https://github.com/Vispie-AI/VisPie_backend/pull/7996) fix(amy): follow the requesting user's language on every turn
+- **日期**：2026-09-17 | **状态**：✅ 已合并
+- **问题**：遗留英文默认工作区指导使 Amy 在中文请求时返回英文回复。
+- **修复**：在每轮 system prompt 末尾追加明确的回复语言策略，跟随请求用户语言并防止外部内容干扰语言选择。
+- **成果**：Amy 中文请求均以中文回复，实时容器部署验证通过，五类语言场景测试全部 pass。
+
+### [#7989](https://github.com/Vispie-AI/VisPie_backend/pull/7989) fix(infra-amy): keep Lark image replies compact
+- **日期**：2026-09-17 | **状态**：✅ 已合并
+- **问题**：`fit_horizontal` 模式使 Infra Amy Lark 卡片中的截图撑满全宽，形成多屏超长图片。
+- **修复**：改用 `crop_center` 并限制缩略图为 240×180px，同时设置 `preview: true`，保留原始图片资源。
+- **成果**：Lark 卡片图片回复改为紧凑缩略图，原始图片数据与下载链接保持不变（66 个测试全部通过）。
 
 ### [#7941](https://github.com/Vispie-AI/VisPie_backend/pull/7941) fix(reelcraft): let the daily preflight wait out a Preview cold start
 - **日期**：2026-09-16 | **状态**：✅ 已合并
