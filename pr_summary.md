@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-17 | 共 444 个 PR（已合并 393 · 关闭未合并 22 · 待合并 27）
-> 最后更新：2026-09-17
+> 统计周期：2026-04-11 ~ 2026-09-18 | 共 447 个 PR（已合并 395 · 关闭未合并 22 · 待合并 28）
+> 最后更新：2026-09-18
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1509,6 +1509,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8085](https://github.com/Vispie-AI/VisPie_backend/pull/8085) feat(amy): plain-language buttons, a 24h default, and no cut-off text
+- **日期**：2026-09-18 | **状态**：✅ 已合并
+- **问题**：会议同步卡片按钮使用内部代码命名，且摘要文本被截断至110字符，用户无法完整审核待确认内容。
+- **修复**：将按钮改为自然语言（"确认更新这一行"/"不要更新"），新增24小时自动应用机制，并移除文本截断限制。
+- **成果**：卡片交互更直观，摘要完整展示，自动应用降低人工操作负担，共92个测试通过。
+
+### [#8082](https://github.com/Vispie-AI/VisPie_backend/pull/8082) feat(amy): link each meeting-sync proposal back to its recording
+- **日期**：2026-09-18 | **状态**：✅ 已合并
+- **问题**：会议同步提案卡片缺少录音来源链接，用户需自行搜索会议录音以核查摘要准确性。
+- **修复**：在提案卡片及确认卡片中新增录音来源链接，确保全程可追溯。
+- **成果**：用户可直接从卡片跳转至对应录音，提升摘要审核效率，共86个测试通过。
 ### [#7984](https://github.com/Vispie-AI/VisPie_backend/pull/7984) [codex] feat(infra-amy): deliver selected DSH screenshots in Lark
 - **日期**：2026-09-16 | **状态**：✅ 已合并
 - **问题**：Infra Amy 的 DSH 会话包含成功的 `read_image` 截图附件，但 Lark 消息桥仅转发文字，无法在回复中展示截图图片。
@@ -2319,6 +2330,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8087](https://github.com/Vispie-AI/VisPie_backend/pull/8087) [codex] Package ReelCraft V3 local development with Supabase and Preview Cloud SQL
+- **日期**：2026-09-18 | **状态**：🔀 待合并
+- **问题**：ReelCraft V3本地开发环境缺乏统一可复现的启动方式，各开发者需自行完成机器配置。
+- **修复**：打包含Supabase认证适配器、Preview Cloud SQL启动脚本、配置模板及团队使用手册的本地开发套件。
+- **成果**：开发者可通过标准化流程启动本地V3环境，113个后端及75个前端测试通过，PR草稿待团队评审合并。
 ### [#7939](https://github.com/Vispie-AI/VisPie_backend/pull/7939) chore(adsignal): keep retired ES runtime disabled
 - **日期**：2026-09-16 | **状态**：🔀 待合并
 - **问题**：生产已切换至 PostgreSQL 读取 AdSignal，但四个 ES 读取标志未默认关闭，后续部署可能意外恢复已退役的 OpenSearch 连接。
