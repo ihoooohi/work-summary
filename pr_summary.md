@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-18 | 共 447 个 PR（已合并 395 · 关闭未合并 22 · 待合并 28）
-> 最后更新：2026-09-18
+> 统计周期：2026-04-11 ~ 2026-09-20 | 共 448 个 PR（已合并 395 · 关闭未合并 22 · 待合并 29）
+> 最后更新：2026-09-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1509,6 +1509,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8164](https://github.com/Vispie-AI/VisPie_backend/pull/8164) feat(reelcraft): safely cut Staging business DB to Cloud SQL
+- **日期**：2026-09-20 | **状态**：🔀 待合并
+- **问题**：Staging 业务 DB 迁至 Cloud SQL，需保生产不受影响。
+- **修复**：固定 Staging 连接至 Cloud SQL，加一次性 CAS 切换器并冻结写入。
+- **成果**：751 项测试通过，数据复制预演通过，待最终校验后合并。
 ### [#8085](https://github.com/Vispie-AI/VisPie_backend/pull/8085) feat(amy): plain-language buttons, a 24h default, and no cut-off text
 - **日期**：2026-09-18 | **状态**：✅ 已合并
 - **问题**：会议同步卡片按钮使用内部代码命名，且摘要文本被截断至110字符，用户无法完整审核待确认内容。
