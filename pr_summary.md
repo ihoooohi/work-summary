@@ -1,13 +1,42 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-20 | 共 448 个 PR（已合并 395 · 关闭未合并 22 · 待合并 29）
-> 最后更新：2026-09-20
+> 统计周期：2026-04-11 ~ 2026-09-21 | 共 453 个 PR（已合并 400 · 关闭未合并 22 · 待合并 29）
+> 最后更新：2026-09-21
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8205](https://github.com/Vispie-AI/VisPie_backend/pull/8205) fix(monitoring): make a failed channel lookup fail, instead of resolving to empty
+- **日期**：2026-09-21 | **状态**：✅ 已合并
+- **问题**：`resolve_channel` 函数因 `rm -f` 导致退出码始终为 0，找不到通知频道时返回空字符串但不报错，使后续 API 调用收到无效频道名。
+- **修复**：在清理临时文件前捕获查找状态码并返回，同时在每个调用点增加显式空值检查，防止未来重构再次引入同类问题。
+- **成果**：频道解析失败时正确以非零状态退出，告警策略创建流程不再因空频道名被静默接受而产生 API 错误。
+
+### [#8203](https://github.com/Vispie-AI/VisPie_backend/pull/8203) fix(monitoring): resolve alert channels lazily, and route the staging Cloud SQL policies to Lark
+- **日期**：2026-09-21 | **状态**：✅ 已合并
+- **问题**：`apply.sh` 在循环前提前解析主通知频道，但该频道名在生产项目中已不存在，导致脚本直接退出、无法创建任何告警策略。
+- **修复**：将通知频道改为在每次创建策略前按需解析，放宽验证器要求为"至少通知一个频道"，并更新 README 记录实际告警路由现状。
+- **成果**：告警策略创建流程恢复正常，Staging Cloud SQL 策略成功路由到 Lark 频道，文档与线上状态保持一致。
+
+### [#8202](https://github.com/Vispie-AI/VisPie_backend/pull/8202) fix(infra-amy): read Staging session evidence from Cloud SQL, and alert on that database
+- **日期**：2026-09-21 | **状态**：✅ 已合并
+- **问题**：Staging 业务数据库迁移至 Cloud SQL 后，infra-amy 会话证据代理仍读取 InsForge 上的冻结数据，且 ReelCraft 项目从未为 Cloud SQL 配置任何告警策略，数据库饱和时无任何报警。
+- **修复**：更新 infra-amy 部署以挂载 Cloud SQL 实例并正确解析关键字值格式 DSN，新增 Staging 数据库连接数（>54）和 CPU（>80%）两项 GCP 告警策略。
+- **成果**：会话证据代理恢复从正确数据库读取数据，ReelCraft Staging 数据库获得首个监控告警体系，不健康状态不再静默。
+
+### [#8166](https://github.com/Vispie-AI/VisPie_backend/pull/8166) fix(staging): run readonly database preflight as socket owner
+- **日期**：2026-09-21 | **状态**：✅ 已合并
+- **问题**：硬化的 Staging 数据库预检容器以默认 UID 运行，无权访问模式为 0700 的私有代理目录，导致 Unix socket 连接时发生权限错误（errno 13）。
+- **修复**：将预检容器改为以 runner 的 UID/GID 运行，与私有代理目录所有者身份匹配，保留网络隔离、只读文件系统及权限移除等安全配置。
+- **成果**：预检容器通过 schema/ACL/SEO 合约验证，147 个相关测试通过，Staging 迁移任务得以继续执行。
+
+### [#8165](https://github.com/Vispie-AI/VisPie_backend/pull/8165) fix(staging): keep read-only database preflight imports in tmpfs
+- **日期**：2026-09-20 | **状态**：✅ 已合并
+- **问题**：托管 Staging 数据库预检容器的配置导入会在只读根文件系统中尝试创建 `/app/generated` 等目录，触发 EROFS 错误导致预检失败。
+- **修复**：将配置导入产生的临时目录固定到已有的 `/tmp` tmpfs 挂载点，保留只读文件系统、网络隔离及全部 SQL 身份/schema/ACL/SEO 检查。
+- **成果**：预检容器恢复正常运行，147 个相关测试通过，Staging 迁移任务 35544600937 得以在安全预部署检查后继续推进。
 ### [#8024](https://github.com/Vispie-AI/VisPie_backend/pull/8024) [codex] fix Infra Amy image replies across native inputs and tool results
 - **日期**：2026-09-17 | **状态**：✅ 已合并
 - **问题**：Door 选择器仅识别根级 `read_image` 输出，嵌套原生结果中的图片因 `image_not_in_turn` 错误被拒绝上传至 Lark。
