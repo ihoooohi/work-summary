@@ -1,13 +1,36 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-21 | 共 453 个 PR（已合并 400 · 关闭未合并 22 · 待合并 29）
-> 最后更新：2026-09-21
+> 统计周期：2026-04-11 ~ 2026-09-22 | 共 458 个 PR（已合并 405 · 关闭未合并 22 · 待合并 29）
+> 最后更新：2026-09-22
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8289](https://github.com/Vispie-AI/VisPie_backend/pull/8289) fix(infra-amy): prevent persistent preset stages from blocking restart
+- **日期**：2026-09-22 | **状态**：✅ 已合并
+- **问题**：Hand PVC 中断预设准备后，容器复用同一 PID 时磁盘残留的 stage 文件导致反复启动失败。
+- **修复**：为每次准备分配唯一独占 staging 目录，并将 EXIT 清理限定在子 shell 内以保留局部变量。
+- **成果**：同 PID 碰撞不再阻塞重启，现有会话和凭证完整保留，容器公开就绪检查通过。
+
+### [#8269](https://github.com/Vispie-AI/VisPie_backend/pull/8269) fix(reelcraft): preserve playable retry loops during publishing
+- **日期**：2026-09-22 | **状态**：✅ 已合并
+- **问题**：发布 Born to Kill 项目时，含决策节点的合法重试循环被误判为阻塞循环而拒绝发布。
+- **修复**：在原生和遗留追踪中对齐播放器策略：含决策节点的重复片段为可玩循环，纯片段循环仍阻塞。
+- **成果**：决策重试路径正常保留，项目成功通过预发布检查并提交审核，纯片段循环检测不受影响。
+
+### [#8225](https://github.com/Vispie-AI/VisPie_backend/pull/8225) fix(reelcraft): stop joining InsForge Auth against the staging Cloud SQL database
+- **日期**：2026-09-22 | **状态**：✅ 已合并
+- **问题**：cases_sql 无条件 JOIN auth.users，而 Staging Cloud SQL 中不存在 auth schema，导致整个 Staging 区块读取失败。
+- **修复**：移除 Staging 中对 auth.users 的 JOIN，改用查询内已有的 COALESCE 回退链以 owner_uuid 字符串代替。
+- **成果**：Staging 数据正常读取，生产环境保持原有邮件解析逻辑不变。
+
+### [#8215](https://github.com/Vispie-AI/VisPie_backend/pull/8215) fix(reelcraft): read the daily report's staging half from Cloud SQL, and say so when it cannot
+- **日期**：2026-09-22 | **状态**：✅ 已合并
+- **问题**：日报卡片通过同一 DATABASE_URL 读取两套环境，Staging 迁移至 Cloud SQL 后仍从旧库读取冻结数据而无告警。
+- **修复**：为每个环境独立配置 DSN 且无回退，Staging 不可读时在卡片中显示明确错误而非静默忽略。
+- **成果**：报告卡片准确反映各环境真实数据，Staging 异常时显示橙色提示标头而非误报健康。
 ### [#8205](https://github.com/Vispie-AI/VisPie_backend/pull/8205) fix(monitoring): make a failed channel lookup fail, instead of resolving to empty
 - **日期**：2026-09-21 | **状态**：✅ 已合并
 - **问题**：`resolve_channel` 函数因 `rm -f` 导致退出码始终为 0，找不到通知频道时返回空字符串但不报错，使后续 API 调用收到无效频道名。
@@ -1538,6 +1561,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8292](https://github.com/Vispie-AI/VisPie_backend/pull/8292) feat(infra-amy): safely reclaim completed worktrees
+- **日期**：2026-09-22 | **状态**：✅ 已合并
+- **问题**：Hand 的 100 GiB PVC 因积累 153 个持久工作树而被填满，导致磁盘空间耗尽无法新建工作区。
+- **修复**：引入显式工作树生命周期和 15 分钟清理进程，按稳定任务 ID 复用检出，完成后七天保留期后安全回收。
+- **成果**：容量达 80% 时预清理、90% 时拒绝新建，恢复引用和收据持久保存，已通过 Linux 隔离测试验证。
 ### [#8164](https://github.com/Vispie-AI/VisPie_backend/pull/8164) feat(reelcraft): safely cut Staging business DB to Cloud SQL
 - **日期**：2026-09-20 | **状态**：🔀 待合并
 - **问题**：Staging 业务 DB 迁至 Cloud SQL，需保生产不受影响。
