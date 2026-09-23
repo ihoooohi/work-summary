@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-22 | 共 458 个 PR（已合并 405 · 关闭未合并 22 · 待合并 29）
-> 最后更新：2026-09-22
+> 统计周期：2026-04-11 ~ 2026-09-23 | 共 463 个 PR（已合并 410 · 关闭未合并 22 · 待合并 29）
+> 最后更新：2026-09-23
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8335](https://github.com/Vispie-AI/VisPie_backend/pull/8335) fix(reelcraft): capacity dashboard reads distribution log metrics with ALIGN_DELTA + REDUCE_MEAN
+- **日期**：2026-09-23 | **状态**：✅ 已合并
+- **问题**：容量仪表板用 ALIGN_MEAN 查询 DELTA DISTRIBUTION 指标，Cloud Monitoring 返回 HTTP 400，10 个面板目标无数据显示。
+- **修复**：改用 ALIGN_DELTA + REDUCE_MEAN 组合，并添加测试约束分布式指标必须使用该聚合方式。
+- **成果**：Grafana 每个分布式目标均返回正确数据帧，staging 验证 cap 值精确为 8。
+
+### [#8310](https://github.com/Vispie-AI/VisPie_backend/pull/8310) fix: keep selected-shot import within frontend file budget
+- **日期**：2026-09-23 | **状态**：✅ 已合并
+- **问题**：选中镜头导入修复新增注释导致 NodeTimelineEditor 文件行数超出 885 行上限。
+- **修复**：删除新增的解释性注释并保留原有条件格式，使修复代码符合行数限制。
+- **成果**：前端预算检查通过，运行时行为不变，导入功能正常工作。
+
+### [#8309](https://github.com/Vispie-AI/VisPie_backend/pull/8309) fix: import local video into the selected storyboard shot
+- **日期**：2026-09-23 | **状态**：✅ 已合并
+- **问题**：多镜头编辑器导入本地视频时仅以父卡片为目标，预览仍播放旧子镜头内容，阻塞对话验收。
+- **修复**：当供给目标未包含选中镜头时，使用已加载的镜头链作为导入目标，空卡片和有效选择保留原有目标。
+- **成果**：THE LAST EMBER 对话验收阻塞解除，117 个相关测试全部通过，TypeScript 类型检查通过。
 ### [#8289](https://github.com/Vispie-AI/VisPie_backend/pull/8289) fix(infra-amy): prevent persistent preset stages from blocking restart
 - **日期**：2026-09-22 | **状态**：✅ 已合并
 - **问题**：Hand PVC 中断预设准备后，容器复用同一 PID 时磁盘残留的 stage 文件导致反复启动失败。
@@ -1561,6 +1578,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8331](https://github.com/Vispie-AI/VisPie_backend/pull/8331) feat(reelcraft): video render capacity monitoring (seats + queue) and quieter reconcile alerts
+- **日期**：2026-09-23 | **状态**：✅ 已合并
+- **问题**：2026-09-22 发生席位泄漏导致渲染池满，87 个视频任务超时失败，但现有 Grafana 监控和告警均未能发现该问题。
+- **修复**：新增只读容量监控模块定期记录席位占用与队列深度，添加 Lark 告警策略，并限制 reconcile 告警标签提取器避免每次修订触发独立告警。
+- **成果**：新增 10 个日志指标、3 条告警策略及 Grafana 容量监控行，161 个测试全部通过，可及时发现席位泄漏与渲染队列阻塞。
 ### [#8292](https://github.com/Vispie-AI/VisPie_backend/pull/8292) feat(infra-amy): safely reclaim completed worktrees
 - **日期**：2026-09-22 | **状态**：✅ 已合并
 - **问题**：Hand 的 100 GiB PVC 因积累 153 个持久工作树而被填满，导致磁盘空间耗尽无法新建工作区。
@@ -2392,6 +2414,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8306](https://github.com/Vispie-AI/VisPie_backend/pull/8306) chore(reelcraft): prepare guarded Prod Cloud SQL migration (no cutover)
+- **日期**：2026-09-23 | **状态**：✅ 已合并
+- **问题**：ReelCraft 生产数据库需迁移至 Cloud SQL，但必须在不执行实际切换的前提下完成准备工作。
+- **修复**：新增离线 Prod 部署合约、只读预检、沙箱迁移彩排适配器及三张受管证据控制表，切换门控明确拒绝首次 Prod 切换。
+- **成果**：Staging 完成三张证据表迁移验证（54→57 表），Prod 迁移代码准备就绪，实际切换仍需独立满足多项门控条件。
 ### [#8087](https://github.com/Vispie-AI/VisPie_backend/pull/8087) [codex] Package ReelCraft V3 local development with Supabase and Preview Cloud SQL
 - **日期**：2026-09-18 | **状态**：🔀 待合并
 - **问题**：ReelCraft V3本地开发环境缺乏统一可复现的启动方式，各开发者需自行完成机器配置。
