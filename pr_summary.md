@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-23 | 共 463 个 PR（已合并 410 · 关闭未合并 22 · 待合并 29）
-> 最后更新：2026-09-23
+> 统计周期：2026-04-11 ~ 2026-09-24 | 共 466 个 PR（已合并 412 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-09-24
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8402](https://github.com/Vispie-AI/VisPie_backend/pull/8402) fix(reelcraft): read the daily report's production half from Cloud SQL
+- **日期**：2026-09-24 | **状态**：🔀 待合并
+- **问题**：生产数据库迁移至 Cloud SQL 后，每日报告仍从旧 InsForge 数据库读取生产数据，导致静默数据错误。
+- **修复**：将生产报告 DSN 切换至 Cloud SQL，修复 Auth 用户联表逻辑，并为所有报告连接启用只读会话。
+- **成果**：日报生产段将从迁移后的 Cloud SQL 获取准确数据，避免静默数据崩溃问题。
+
+### [#8344](https://github.com/Vispie-AI/VisPie_backend/pull/8344) fix(reelcraft): restore managed Prod release and maintenance paths
+- **日期**：2026-09-24 | **状态**：✅ 已合并
+- **问题**：数据库切换完成后，ReelCraft 生产环境的发布和维护流程被暂停，需要恢复。
+- **修复**：将生产发布和维护路径绑定到 Cloud SQL m1 数据库及 Secret 第 2 版，并为相关工作流添加防护措施。
+- **成果**：恢复生产环境受管发布和维护能力，通过 563 + 790 项测试验证无回归。
 ### [#8335](https://github.com/Vispie-AI/VisPie_backend/pull/8335) fix(reelcraft): capacity dashboard reads distribution log metrics with ALIGN_DELTA + REDUCE_MEAN
 - **日期**：2026-09-23 | **状态**：✅ 已合并
 - **问题**：容量仪表板用 ALIGN_MEAN 查询 DELTA DISTRIBUTION 指标，Cloud Monitoring 返回 HTTP 400，10 个面板目标无数据显示。
@@ -2414,6 +2425,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8404](https://github.com/Vispie-AI/VisPie_backend/pull/8404) docs(reelcraft): correct the render-capacity root-cause narrative
+- **日期**：2026-09-24 | **状态**：✅ 已合并
+- **问题**：运营手册错误地将视频渲染席位泄漏归因于 fal.ai 422 错误返回，与实际根因不符。
+- **修复**：纠正根因描述，明确席位泄漏由"已完成但未释放"及"结果未知的渲染"两类场景造成。
+- **成果**：运营文档与实际生产发现一致，准确反映两类席位泄漏场景及后续修复方向。
 ### [#8306](https://github.com/Vispie-AI/VisPie_backend/pull/8306) chore(reelcraft): prepare guarded Prod Cloud SQL migration (no cutover)
 - **日期**：2026-09-23 | **状态**：✅ 已合并
 - **问题**：ReelCraft 生产数据库需迁移至 Cloud SQL，但必须在不执行实际切换的前提下完成准备工作。
