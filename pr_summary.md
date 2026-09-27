@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-24 | 共 466 个 PR（已合并 412 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-09-24
+> 统计周期：2026-04-11 ~ 2026-09-27 | 共 467 个 PR（已合并 413 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-09-27
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1589,6 +1589,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8491](https://github.com/Vispie-AI/VisPie_backend/pull/8491) feat(auth): prepare isolated Supabase migration with safe compatibility default
+- **日期**：2026-09-27 | **状态**：✅ 已合并
+- **问题**：需要将认证系统从 InsForge 迁移到独立的 Supabase Auth，同时保持现有 InsForge 为默认，不影响生产用户。
+- **修复**：实现提供商中立的后端认证网关，添加前端 PKCE 登录流程，并提供安全的固定环境迁移预检工具。
+- **成果**：完成认证迁移准备工作，通过 957 项后端测试及 5751 项前端测试，兼容旧有 InsForge 行为。
 ### [#8331](https://github.com/Vispie-AI/VisPie_backend/pull/8331) feat(reelcraft): video render capacity monitoring (seats + queue) and quieter reconcile alerts
 - **日期**：2026-09-23 | **状态**：✅ 已合并
 - **问题**：2026-09-22 发生席位泄漏导致渲染池满，87 个视频任务超时失败，但现有 Grafana 监控和告警均未能发现该问题。
