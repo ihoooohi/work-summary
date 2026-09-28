@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-27 | 共 467 个 PR（已合并 413 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-09-27
+> 统计周期：2026-04-11 ~ 2026-09-28 | 共 468 个 PR（已合并 414 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-09-28
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8511](https://github.com/Vispie-AI/VisPie_backend/pull/8511) fix(reelcraft): Prod Auth 绑定独立 Supabase 项目
+- **日期**：2026-09-28 | **状态**：✅ 已合并
+- **问题**：ReelCraft Prod Auth 使用旧共享 cwx Supabase 项目，需迁移至独立项目以隔离生产环境。
+- **修复**：将 Prod Auth 固定地址改为独立 qksbnkvuigikjcjjtdnl 项目，同步 reusable workflow 的 Prod allowlist 配置。
+- **成果**：395 个测试全部通过，含 52 项新增 contract tests，新 Prod 项目验证通过，旧项目被正确拒绝。
 ### [#8402](https://github.com/Vispie-AI/VisPie_backend/pull/8402) fix(reelcraft): read the daily report's production half from Cloud SQL
 - **日期**：2026-09-24 | **状态**：🔀 待合并
 - **问题**：生产数据库迁移至 Cloud SQL 后，每日报告仍从旧 InsForge 数据库读取生产数据，导致静默数据错误。
