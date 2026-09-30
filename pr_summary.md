@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-28 | 共 468 个 PR（已合并 414 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-09-28
+> 统计周期：2026-04-11 ~ 2026-09-30 | 共 472 个 PR（已合并 418 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-09-30
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2435,6 +2435,29 @@
 
 ## 三、文档建设（docs:）
 
+### [#8678](https://github.com/Vispie-AI/VisPie_backend/pull/8678) Retire InsForge auth bindings from Supabase deployments and protect V3 rollback
+- **日期**：2026-09-30 | **状态**：✅ 已合并
+- **问题**：Supabase部署仍保留InsForge认证URL并挂载其匿名密钥，同时缺乏对V3回滚到Engine V2退役前旧版镜像的防护。
+- **修复**：停止在auth_provider=supabase时授予或挂载InsForge密钥及URL，并阻止生产回滚到含退役引擎的旧版提交。
+- **成果**：493个部署与发布测试全部通过，Supabase部署与InsForge认证完全解耦，V3回滚安全边界得到加固。
+
+### [#8566](https://github.com/Vispie-AI/VisPie_backend/pull/8566) Rearm deployment env guard after Engine V2 retirement
+- **日期**：2026-09-30 | **状态**：✅ 已合并
+- **问题**：Engine V2环境变量退役后，两个部署调用方临时开放了降级确认，需恢复安全守卫以防止未来密钥被意外移除。
+- **修复**：在Staging和Prod两个部署调用方恢复confirm_env_downgrade: false配置，使未经审查的密钥移除重新失败闭合。
+- **成果**：34个部署合约测试通过，环境密钥移除的失败闭合保护已全面重新启用。
+
+### [#8564](https://github.com/Vispie-AI/VisPie_backend/pull/8564) Allow one-time removal of retired Engine V2 deployment keys
+- **日期**：2026-09-30 | **状态**：✅ 已合并
+- **问题**：PR #8561移除Engine V2配置后Staging部署失败，原因是现役版本仍含ENGINE_V2_*变量导致降级守卫拒绝其移除。
+- **修复**：在Staging和Prod调用方明确确认此次一次性密钥移除，其余密钥移除仍受守卫保护，两端恢复false后生效。
+- **成果**：34个部署合约测试通过，三个Engine V2环境变量已从Staging与Prod部署中顺利清除。
+
+### [#8561](https://github.com/Vispie-AI/VisPie_backend/pull/8561) Retire external ReelCraft V2 Engine and legacy E2E
+- **日期**：2026-09-30 | **状态**：✅ 已合并
+- **问题**：V3会话仍持久化agent_core=v2元数据，新建对话可能调用已退役的外部Engine V2服务，遗留E2E工作流也在持续自动触发。
+- **修复**：将V3首轮对话直接路由到Sandbox主机，跳过Engine投影读取，并移除Preview/Staging/Prod部署中所有Engine URL与token配置。
+- **成果**：363个V3/E2E/部署测试及645个发布/Cloud SQL测试通过，ReelCraft V2 Engine及所有旧版E2E工作流全部退役。
 ### [#8404](https://github.com/Vispie-AI/VisPie_backend/pull/8404) docs(reelcraft): correct the render-capacity root-cause narrative
 - **日期**：2026-09-24 | **状态**：✅ 已合并
 - **问题**：运营手册错误地将视频渲染席位泄漏归因于 fal.ai 422 错误返回，与实际根因不符。
