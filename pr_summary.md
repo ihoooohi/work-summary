@@ -1,13 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-09-30 | 共 472 个 PR（已合并 418 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-09-30
+> 统计周期：2026-04-11 ~ 2026-10-01 | 共 476 个 PR（已合并 422 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-10-01
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8712](https://github.com/Vispie-AI/VisPie_backend/pull/8712) fix(infra-amy): separate live PVC expansion from immutable Sandbox template
+- **日期**：2026-10-01 | **状态**：✅ 已合并
+- **问题**：Kubernetes Sandbox API 拒绝修改不可变字段 volumeClaimTemplates，导致 150Gi 磁盘扩容无法直接应用于现有 Sandbox。
+- **修复**：将扩容后的 data-infra-amy PVC 声明从 Sandbox 模板中独立抽取到 pvc.yaml，保留原 100Gi 引导模板不变。
+- **成果**：现有 Sandbox 保持兼容，PVC 可独立管理，两项存储契约测试均通过。
+
+### [#8709](https://github.com/Vispie-AI/VisPie_backend/pull/8709) fix(infra-amy): automatically release completed worktrees and protect active turns
+- **日期**：2026-10-01 | **状态**：✅ 已合并
+- **问题**：reaper 每 15 分钟运行一次，但 agent 忘记手动执行 complete 命令导致所有 checkout 始终保持活跃，无法自动回收。
+- **修复**：实现基于 Session 目标的自动回收逻辑，通过内核租约保护活跃轮次，并将 PVC 持久存储从 100Gi 扩容至 150Gi。
+- **成果**：三个已完成 checkout 自动完成状态转换，436 项测试全部通过，磁盘使用率降至 61%。
+
+### [#8704](https://github.com/Vispie-AI/VisPie_backend/pull/8704) fix(infra-amy): restore Grok OAuth requests rejected with 426
+- **日期**：2026-10-01 | **状态**：✅ 已合并
+- **问题**：OAuth 适配器 0.8.5 上报 grok-shell/0.1.220 版本号，导致 Grok 会话因 HTTP 426 错误而无法建立。
+- **修复**：在 Hand 清单和启动默认配置中将 GROK_BUILD_CLIENT_VERSION 固定覆盖为兼容版本 1.0.13。
+- **成果**：合成测试返回 HTTP 200 并包含预期标记，七项运行时契约测试全部通过。
 ### [#8511](https://github.com/Vispie-AI/VisPie_backend/pull/8511) fix(reelcraft): Prod Auth 绑定独立 Supabase 项目
 - **日期**：2026-09-28 | **状态**：✅ 已合并
 - **问题**：ReelCraft Prod Auth 使用旧共享 cwx Supabase 项目，需迁移至独立项目以隔离生产环境。
@@ -2435,6 +2452,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8696](https://github.com/Vispie-AI/VisPie_backend/pull/8696) Remove E2E results from the ReelCraft daily report
+- **日期**：2026-10-01 | **状态**：✅ 已合并
+- **问题**：每日健康报告仍包含已废弃的 E2E 评估模块，报告执行时会拉取评估对象并影响卡片颜色判断。
+- **修复**：移除 E2E 评估区块、已下线的 viewer 链接及相关数据来源声明，不再执行评估对象获取逻辑。
+- **成果**：252 项报告测试和 19 项部署契约通过，Prefect 部署验证确认生成卡片不含 E2E 内容。
 ### [#8678](https://github.com/Vispie-AI/VisPie_backend/pull/8678) Retire InsForge auth bindings from Supabase deployments and protect V3 rollback
 - **日期**：2026-09-30 | **状态**：✅ 已合并
 - **问题**：Supabase部署仍保留InsForge认证URL并挂载其匿名密钥，同时缺乏对V3回滚到Engine V2退役前旧版镜像的防护。
