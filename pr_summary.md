@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-01 | 共 476 个 PR（已合并 422 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-10-01
+> 统计周期：2026-04-11 ~ 2026-10-02 | 共 481 个 PR（已合并 427 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-10-02
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8806](https://github.com/Vispie-AI/VisPie_backend/pull/8806) fix(infra-amy): understand model access requests without a fixed phrase
+- **日期**：2026-10-02 | **状态**：✅ 已合并
+- **问题**：Amy 对模型权限申请要求固定说法，导致英文名字或同义表达被拒绝。
+- **修复**：改由 Infra Amy 自然理解各类申请措辞，Door 仍校验固定结构化范围与真实身份。
+- **成果**：George 可用中英文自然语言申请模型权限，保留同一预算与撤销机制。
+
+### [#8804](https://github.com/Vispie-AI/VisPie_backend/pull/8804) fix(infra-amy): use the approved one-shot model pilot budget
+- **日期**：2026-10-02 | **状态**：✅ 已合并
+- **问题**：George 申请模型权限时需再次发送原始 Lark 资金审批消息，流程繁琐。
+- **修复**：新增 reviewed_funding 部署配置作为替代资金来源，与原始消息路径互斥。
+- **成果**：运营商预批准后 George 无需额外消息即可触发一次性模型权限申请。
 ### [#8712](https://github.com/Vispie-AI/VisPie_backend/pull/8712) fix(infra-amy): separate live PVC expansion from immutable Sandbox template
 - **日期**：2026-10-01 | **状态**：✅ 已合并
 - **问题**：Kubernetes Sandbox API 拒绝修改不可变字段 volumeClaimTemplates，导致 150Gi 磁盘扩容无法直接应用于现有 Sandbox。
@@ -1611,6 +1622,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8768](https://github.com/Vispie-AI/VisPie_backend/pull/8768) feat(infra-amy): George 为 Zuocan 开临时模型权限（默认关闭）
+- **日期**：2026-10-02 | **状态**：✅ 已合并
+- **问题**：George 无法在不访问管理控制台的情况下为 Zuocan 授予临时模型权限。
+- **修复**：构建 Infra Amy 门控流程，Door 验证身份后发放最多 $1/1 小时的临时 OpenAI 密钥并私信通知。
+- **成果**：首次实现通过 Lark 消息驱动的一次性模型权限委托，默认关闭待实际验收。
 ### [#8491](https://github.com/Vispie-AI/VisPie_backend/pull/8491) feat(auth): prepare isolated Supabase migration with safe compatibility default
 - **日期**：2026-09-27 | **状态**：✅ 已合并
 - **问题**：需要将认证系统从 InsForge 迁移到独立的 Supabase Auth，同时保持现有 InsForge 为默认，不影响生产用户。
@@ -2452,6 +2468,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#8807](https://github.com/Vispie-AI/VisPie_backend/pull/8807) deploy(infra-amy): pin Hand for natural-language access requests
+- **日期**：2026-10-02 | **状态**：✅ 已合并
+- **问题**：#8806 合并后 Hand 镜像未更新，权限申请技能无法解析自然语言措辞。
+- **修复**：将 infra-amy Hand 固定至含 permission-access 技能的新镜像摘要并验证就绪。
+- **成果**：Hand 已部署并通过 13/13 自然语言场景测试，实际 George 申请待完成。
+
+### [#8805](https://github.com/Vispie-AI/VisPie_backend/pull/8805) deploy(infra-amy): pin the access pilot Hand image
+- **日期**：2026-10-02 | **状态**：✅ 已合并
+- **问题**：访问 pilot 合并后 Hand 镜像未与最新权限源码保持同步。
+- **修复**：将 infra-amy Hand 固定至通过 Cloud Build 验证的新镜像摘要，沙箱配置完整保留。
+- **成果**：Hand 镜像已匹配访问 pilot 源码，为真实 George→Zuocan 一次性申请做好准备。
 ### [#8696](https://github.com/Vispie-AI/VisPie_backend/pull/8696) Remove E2E results from the ReelCraft daily report
 - **日期**：2026-10-01 | **状态**：✅ 已合并
 - **问题**：每日健康报告仍包含已废弃的 E2E 评估模块，报告执行时会拉取评估对象并影响卡片颜色判断。
