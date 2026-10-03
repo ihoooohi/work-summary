@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-02 | 共 481 个 PR（已合并 427 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-10-02
+> 统计周期：2026-04-11 ~ 2026-10-03 | 共 483 个 PR（已合并 429 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-10-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1622,6 +1622,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8816](https://github.com/Vispie-AI/VisPie_backend/pull/8816) feat(infra-amy): handle Vercel delegation through Door
+- **日期**：2026-10-03 | **状态**：✅ 已合并
+- **问题**：Infra Amy 无法通过 Door 读取 Vercel 账户成员信息与敏感变量，George 的委托请求无法处理。
+- **修复**：为 Amy 新增 Door 权限，可检查成员身份与敏感变量，在 George 明确审批后执行有限邀请操作。
+- **成果**：Door 套件 496/496 通过，Amy 语义验证 13/13 通过，实际适配器读取零写入验证成功。
 ### [#8768](https://github.com/Vispie-AI/VisPie_backend/pull/8768) feat(infra-amy): George 为 Zuocan 开临时模型权限（默认关闭）
 - **日期**：2026-10-02 | **状态**：✅ 已合并
 - **问题**：George 无法在不访问管理控制台的情况下为 Zuocan 授予临时模型权限。
@@ -2468,6 +2473,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8817](https://github.com/Vispie-AI/VisPie_backend/pull/8817) chore(infra-amy): pin qualified Vercel delegation Hand
+- **日期**：2026-10-03 | **状态**：✅ 已合并
+- **问题**：Infra Amy 的 Hand 容器镜像未锁定到含 Vercel 委托能力的合格版本，重建后能力可能丢失。
+- **修复**：将 Hand 镜像固定到 Cloud Build 产出的合格摘要，并完成 Pod 滚动更新。
+- **成果**：新 Pod 以合格摘要 Running/Ready 启动，挂载技能与源哈希一致，Vercel 委托能力得以保留。
 ### [#8807](https://github.com/Vispie-AI/VisPie_backend/pull/8807) deploy(infra-amy): pin Hand for natural-language access requests
 - **日期**：2026-10-02 | **状态**：✅ 已合并
 - **问题**：#8806 合并后 Hand 镜像未更新，权限申请技能无法解析自然语言措辞。
