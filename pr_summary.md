@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-03 | 共 483 个 PR（已合并 429 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-10-03
+> 统计周期：2026-04-11 ~ 2026-10-04 | 共 485 个 PR（已合并 431 · 关闭未合并 22 · 待合并 30）
+> 最后更新：2026-10-04
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#8825](https://github.com/Vispie-AI/VisPie_backend/pull/8825) fix(infra-amy): wire deployed App credential into permission reads
+- **日期**：2026-10-04 | **状态**：✅ 已合并
+- **问题**：多平台 GitHub 连接器仅识别 remediator 覆盖变量，忽略已部署的 App 密钥 `INFRA_AMY_GITHUB_APP_PRIVATE_KEY`，导致权限读取全部失败。
+- **修复**：在 Door 代理和只读资格脚本中将部署变量设为回退值，同时保留 remediator 覆盖逻辑，未改动任何凭证传输或权限分配。
+- **成果**：集成测试验证运行时 PEM 可正常签发安装 JWT 并完成仓库权限读取，全部 Door 合约测试通过。
 ### [#8806](https://github.com/Vispie-AI/VisPie_backend/pull/8806) fix(infra-amy): understand model access requests without a fixed phrase
 - **日期**：2026-10-02 | **状态**：✅ 已合并
 - **问题**：Amy 对模型权限申请要求固定说法，导致英文名字或同义表达被拒绝。
@@ -2473,6 +2478,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#8824](https://github.com/Vispie-AI/VisPie_backend/pull/8824) Infra Amy: prepare bounded multi-platform permission delegation
+- **日期**：2026-10-04 | **状态**：✅ 已合并
+- **问题**：Infra Amy 缺乏多平台权限委托能力，George 无法通过自然语言向同事授予 GCP、AWS SSO、GitHub、Lark 等平台的受限权限。
+- **修复**：新增多平台权限委托框架，涵盖 GCP 项目、AWS SSO、GitHub 仓库及 Lark 文档/邮箱等范围，实现发送方身份验证、角色执行、权限持久化和增量撤销。
+- **成果**：通过 516 项 Door 测试、171 项 harness 测试和 118 项 CLI 桥接测试，预验证九个员工身份，未执行任何实际权限分配或付费调用。
 ### [#8817](https://github.com/Vispie-AI/VisPie_backend/pull/8817) chore(infra-amy): pin qualified Vercel delegation Hand
 - **日期**：2026-10-03 | **状态**：✅ 已合并
 - **问题**：Infra Amy 的 Hand 容器镜像未锁定到含 Vercel 委托能力的合格版本，重建后能力可能丢失。
