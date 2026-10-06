@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-04 | 共 485 个 PR（已合并 431 · 关闭未合并 22 · 待合并 30）
-> 最后更新：2026-10-04
+> 统计周期：2026-04-11 ~ 2026-10-06 | 共 486 个 PR（已合并 431 · 关闭未合并 22 · 待合并 31）
+> 最后更新：2026-10-06
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1627,6 +1627,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#8940](https://github.com/Vispie-AI/VisPie_backend/pull/8940) feat(amy-dsh): migrate memory and restore cached campaign reads
+- **日期**：2026-10-06 | **状态**：🔀 待合并
+- **问题**：Amy DSH 缺少对现有记忆的访问权限，缓存活动读取指向已退役的 HTTP 后端。
+- **修复**：新增控制台记忆搜索与完成轮次投递，将缓存分析读取指向可达的 Cloud Run API，并添加网络策略隔离元数据服务器。
+- **成果**：37项平台测试、10项记忆插件测试通过，镜像已部署至暂存环境两个 Pod，并经由聊天→控制台→InsForge 链路验证恢复了九月群组记忆记录。
 ### [#8816](https://github.com/Vispie-AI/VisPie_backend/pull/8816) feat(infra-amy): handle Vercel delegation through Door
 - **日期**：2026-10-03 | **状态**：✅ 已合并
 - **问题**：Infra Amy 无法通过 Door 读取 Vercel 账户成员信息与敏感变量，George 的委托请求无法处理。
