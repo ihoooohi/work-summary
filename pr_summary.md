@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-06 | 共 486 个 PR（已合并 431 · 关闭未合并 22 · 待合并 31）
-> 最后更新：2026-10-06
+> 统计周期：2026-04-11 ~ 2026-10-07 | 共 489 个 PR（已合并 432 · 关闭未合并 22 · 待合并 33）
+> 最后更新：2026-10-07
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1626,6 +1626,24 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#8960](https://github.com/Vispie-AI/VisPie_backend/pull/8960) feat(infra-amy): shared Lark session Hub with collaboration and presence
+- **日期**：2026-10-07 | **状态**：✅ 已合并
+- **问题**：Infra Amy的会话列表缺乏基于登录的所有权分组和协作消息归属功能。
+- **修复**：新增`/hub`接口按Lark用户分组共享DSH会话，Door层以短暂租户验证身份替换原有身份断言。
+- **成果**：Hub上线staging，支持OAuth登录、会话归属与在线状态，经559个DSH测试验证通过。
+
+### [#8958](https://github.com/Vispie-AI/VisPie_backend/pull/8958) feat(amy-dsh): verify document comments through the staging door
+- **日期**：2026-10-07 | **状态**：🔀 待合并
+- **问题**：Amy的DSH门控逻辑忽略了Lark文档评论事件，无法处理`drive.notice.comment_add_v1`通知。
+- **修复**：新增仅Amy使用的handler，验证评论作者、bot提及有效性及新鲜度，staging以预览模式（只读）部署。
+- **成果**：92个本地测试通过，staging验证了评论接受、作者伪造拒绝及bot未提及拒绝等关键路径。
+
+### [#8953](https://github.com/Vispie-AI/VisPie_backend/pull/8953) feat(amy-dsh): prepare B9 routine previews and scheduled test replies
+- **日期**：2026-10-06 | **状态**：🔀 待合并
+- **问题**：Amy的B9例程预览和计划回复功能缺失，DSH定时轮次的Lark出口尚未实现。
+- **修复**：实现B9反馈预览（全分页、保留去重语义）和schedule-replies插件（幂等交付密钥、最多重试45分钟）。
+- **成果**：73个测试通过，staging验证全局写入门控block有效，B9验收待真实DSH定时模型轮次确认。
 
 ### [#8940](https://github.com/Vispie-AI/VisPie_backend/pull/8940) feat(amy-dsh): migrate memory and restore cached campaign reads
 - **日期**：2026-10-06 | **状态**：🔀 待合并
