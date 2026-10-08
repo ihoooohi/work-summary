@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-07 | 共 489 个 PR（已合并 432 · 关闭未合并 22 · 待合并 33）
-> 最后更新：2026-10-07
+> 统计周期：2026-04-11 ~ 2026-10-08 | 共 495 个 PR（已合并 436 · 关闭未合并 22 · 待合并 35）
+> 最后更新：2026-10-08
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#9068](https://github.com/Vispie-AI/VisPie_backend/pull/9068) fix(infra-hub): isolate slow requests and recover failed session titles
+- **日期**：2026-10-08 | **状态**：🔀 待合并
+- **问题**：慢速会话创建或提示占用了共享Hub状态文件锁，阻塞其他员工的页面加载和消息发送。
+- **修复**：状态转换缩短持锁时间，DSH调用在锁外执行，相同进行中请求共享结果，失败标题可在重启后修复。
+- **成果**：14个Hub测试通过，覆盖并发阻塞、重复请求、失败重命名和中断恢复场景。
 ### [#8825](https://github.com/Vispie-AI/VisPie_backend/pull/8825) fix(infra-amy): wire deployed App credential into permission reads
 - **日期**：2026-10-04 | **状态**：✅ 已合并
 - **问题**：多平台 GitHub 连接器仅识别 remediator 覆盖变量，忽略已部署的 App 密钥 `INFRA_AMY_GITHUB_APP_PRIVATE_KEY`，导致权限读取全部失败。
@@ -1627,6 +1632,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#9067](https://github.com/Vispie-AI/VisPie_backend/pull/9067) feat(replay): capture package iframes and read Replay Vision evidence
+- **日期**：2026-10-08 | **状态**：✅ 已合并
+- **问题**：包访问在PostHog回放中错过了游戏iframe，宿主录制启动等待长达8秒。
+- **修复**：在两侧启用官方跨域录制，宿主录制在包页面/SPA入口时立即开始，iframe仅接收公开采集密钥。
+- **成果**：前端23个测试和Infra Amy 30个工具/中间件/部署测试通过，4个现有不可变包已完成重新打包上传。
+
+### [#9065](https://github.com/Vispie-AI/VisPie_backend/pull/9065) feat(agimy): restore console GTM access and measure native Amy capabilities
+- **日期**：2026-10-08 | **状态**：🔀 待合并
+- **问题**：AGImy Hub存有旧GTM技能但无可用凭证路由，导致真实Meta广告查询在多次配置发现调用后失败。
+- **修复**：添加使用Amy现有范围密钥的固定来源控制台签名器，工作台获得传输标记，Amy原生预设仅在需要时加载启动上下文。
+- **成果**：完成153个旧技能盘点和50次真实模型执行的历史问题测试，11个平台测试、9个GTM客户端测试通过。
 ### [#8960](https://github.com/Vispie-AI/VisPie_backend/pull/8960) feat(infra-amy): shared Lark session Hub with collaboration and presence
 - **日期**：2026-10-07 | **状态**：✅ 已合并
 - **问题**：Infra Amy的会话列表缺乏基于登录的所有权分组和协作消息归属功能。
@@ -2501,6 +2517,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#9127](https://github.com/Vispie-AI/VisPie_backend/pull/9127) docs(replay): cover live published package bridge upgrades
+- **日期**：2026-10-08 | **状态**：✅ 已合并
+- **问题**：Rockstar线上动态登记仍指向不含录屏SDK的旧版本，导致新真实回放持续为空iframe。
+- **修复**：基于当前作者版本重新生成包，211个对象逐一核对仅bridge字节改变，并补充动态登记优先级和generation条件更新步骤文档。
+- **成果**：211个对象MD5核对和公开index/bridge读回验证通过，合并后按授权范围切换线上登记。
+
+### [#9125](https://github.com/Vispie-AI/VisPie_backend/pull/9125) chore(infra-amy): roll qualified PostHog Hand image
+- **日期**：2026-10-08 | **状态**：✅ 已合并
+- **问题**：需要将包含PostHog Replay Vision技能和135积分上限的已验证Hand镜像固定到部署清单。
+- **修复**：仅更新运行时清单中的镜像摘要，保留现有环境配置、订阅默认值和单例设置。
+- **成果**：Hand镜像资格验证通过，实际候选Pod列出365个历史会话并读取历史页面，135积分技能挂载验证通过。
+
+### [#9118](https://github.com/Vispie-AI/VisPie_backend/pull/9118) docs(posthog): align pilot with approved 135-credit acceptance budget
+- **日期**：2026-10-08 | **状态**：✅ 已合并
+- **问题**：Replay Vision试点预算已由用户批准从120积分提升至135积分，但Amy技能和操作文档未同步更新。
+- **修复**：更新Amy技能及操作/验收文档以匹配已保存的PostHog配置，采样率设为最低0.1%保持自动扫描禁用。
+- **成果**：PostHog读回确认35/135积分使用情况，4个文件的纯文档变更差异审查通过。
 ### [#8824](https://github.com/Vispie-AI/VisPie_backend/pull/8824) Infra Amy: prepare bounded multi-platform permission delegation
 - **日期**：2026-10-04 | **状态**：✅ 已合并
 - **问题**：Infra Amy 缺乏多平台权限委托能力，George 无法通过自然语言向同事授予 GCP、AWS SSO、GitHub、Lark 等平台的受限权限。
