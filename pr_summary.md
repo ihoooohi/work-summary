@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-08 | 共 495 个 PR（已合并 436 · 关闭未合并 22 · 待合并 35）
-> 最后更新：2026-10-08
+> 统计周期：2026-04-11 ~ 2026-10-09 | 共 498 个 PR（已合并 437 · 关闭未合并 22 · 待合并 37）
+> 最后更新：2026-10-09
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#9168](https://github.com/Vispie-AI/VisPie_backend/pull/9168) fix(replay): save package landing recordings before the first tap
+- **日期**：2026-10-09 | **状态**：✅ 已合并
+- **问题**：包录制立即启动，但被动落地快照可能残留在 SDK 缓冲区中，导致首次点击前的访问数据丢失。
+- **修复**：利用 SDK 官方 URL 覆盖机制，在无需用户输入的情况下上传初始包快照，并将 posthog-js 固定至 1.438.3 版本。
+- **成果**：21 项录制/路由测试全部通过，TypeScript/Vite 构建及前端预算检查通过，冒烟测试验证无输入时快照正常上传。
 ### [#9068](https://github.com/Vispie-AI/VisPie_backend/pull/9068) fix(infra-hub): isolate slow requests and recover failed session titles
 - **日期**：2026-10-08 | **状态**：🔀 待合并
 - **问题**：慢速会话创建或提示占用了共享Hub状态文件锁，阻塞其他员工的页面加载和消息发送。
@@ -1632,6 +1637,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#9289](https://github.com/Vispie-AI/VisPie_backend/pull/9289) feat(amy-dsh): restore GTM and qualify capabilities on current DSH
+- **日期**：2026-10-09 | **状态**：🔀 待合并
+- **问题**：Amy 在当前 DSH 主线上无法回答 GTM 问题，因工作台缺少可用凭证路由，且启动读取存在多余模型调用。
+- **修复**：将 #9065 的 GTM/上下文修复集成至当前主线，新增原生证据工具，GTM 签名保持控制台所有权并拒绝付费生成。
+- **成果**：平台 11/11、GTM 客户端 9/9、基准 Python 11/11、平台模板 5/5，共 148/149 项原生测试通过。
+
+### [#9177](https://github.com/Vispie-AI/VisPie_backend/pull/9177) feat(taplot): monitor Harness v4 and refactor daily health report
+- **日期**：2026-10-09 | **状态**：🔀 待合并
+- **问题**：每日健康卡片仍汇总已停用的 Studio 任务，且在空日时可能错误描述为稳定执行。
+- **修复**：将定时报告切换至 Taplot Harness v4，新增每五分钟变更监控，区分缺数据/空闲/失败/取消等状态，并移除旧版数据库依赖。
+- **成果**：81 项报告/部署测试、110 项主机/同步测试及 342 项预览测试全部通过，待 GCP 日志权限就绪后上线。
 ### [#9067](https://github.com/Vispie-AI/VisPie_backend/pull/9067) feat(replay): capture package iframes and read Replay Vision evidence
 - **日期**：2026-10-08 | **状态**：✅ 已合并
 - **问题**：包访问在PostHog回放中错过了游戏iframe，宿主录制启动等待长达8秒。
