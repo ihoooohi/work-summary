@@ -1,13 +1,42 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-09 | 共 498 个 PR（已合并 437 · 关闭未合并 22 · 待合并 37）
-> 最后更新：2026-10-09
+> 统计周期：2026-04-11 ~ 2026-10-10 | 共 511 个 PR（已合并 450 · 关闭未合并 22 · 待合并 37）
+> 最后更新：2026-10-10
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#9391](https://github.com/Vispie-AI/VisPie_backend/pull/9391) fix(ci): load the prepared Infra Amy profile once
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：镜像资格认证时重复加载 cordis.patch.yml 导致服务因 loader ID 冲突无法启动。
+- **修复**：改为仅启动一次已准备好的 Infra Amy 配置，与本地启动脚本保持一致。
+- **成果**：38 项部署合约测试通过，修复了资格认证流程的启动故障。
+
+### [#9390](https://github.com/Vispie-AI/VisPie_backend/pull/9390) fix(posthog): preserve long journeys within the evidence response budget
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：真实验收会话返回 490 行第一方数据，但重复字段名导致 JSON 载荷超出 Door 证据响应限制。
+- **修复**：改为返回列头与对应行数组，保留所有字段、会话关联及时间戳，同时维持隐私投影和截断语义不变。
+- **成果**：498 项测试通过，实际端点读取返回全部 489 行，序列化 205657 字节，无截断。
+
+### [#9385](https://github.com/Vispie-AI/VisPie_backend/pull/9385) fix(ci): qualify Door with the Infra Amy runtime profile
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：Door 浏览器资格认证流程启动了 George Settings 固件而非 Infra Amy 配置，导致测试误判候选镜像失败。
+- **修复**：在资格认证时以运行时用户身份准备新配置文件，并使用 Infra Amy 打包配置启动镜像。
+- **成果**：38 项部署合约测试通过，真实浏览器验证流程恢复正常。
+
+### [#9384](https://github.com/Vispie-AI/VisPie_backend/pull/9384) fix(amy): allow Lark business writes with other service writes blocked
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：Amy 共享控制台全局写入门控同时阻止了 Lark 文档和 Base 写入，无法单独开放 Lark 业务写权限。
+- **修复**：新增独立的 AMY_LARK_API_WRITE_GATE 环境变量，在不影响 GitHub、数据库等写操作的前提下单独控制 Lark 写入权限。
+- **成果**：32 项平台测试通过，GitHub/数据库/GTM 写入保持禁用，Lark 文档和 Base 写入功能正常开放。
+
+### [#9379](https://github.com/Vispie-AI/VisPie_backend/pull/9379) fix(amy): follow native Hub preset selection for memory
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：原生 Hub 会话即使用户切换为 Amy 预设后仍保留 standard 头，导致 memory_search 工具不可用且已完成签名会话无法归档。
+- **修复**：内存模块现在监听原生预设切换事件，随预设变更动态安装或卸载工具，并拒绝处理早期或混合预设的会话。
+- **成果**：17 项插件测试和 15 项内存服务测试通过，真实签名会话的自动归档和 memory_search 验证成功。
 ### [#9168](https://github.com/Vispie-AI/VisPie_backend/pull/9168) fix(replay): save package landing recordings before the first tap
 - **日期**：2026-10-09 | **状态**：✅ 已合并
 - **问题**：包录制立即启动，但被动落地快照可能残留在 SDK 缓冲区中，导致首次点击前的访问数据丢失。
@@ -1637,6 +1666,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#9386](https://github.com/Vispie-AI/VisPie_backend/pull/9386) feat(posthog): verify findings with first-party game event records
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：Replay Vision 发现的内容仅依赖 PostHog 镜像，无法通过第一方数据库记录独立核实游戏事件是否真实到达。
+- **修复**：新增 Door 支持的 get_game_event_mirror 读取器和原生 infra-amy-evidence game-events CLI，并更新 PostHog 技能使用该独立数据源。
+- **成果**：497 项 DSH Node 测试通过，真实端点返回 200 行规范化数据，验证了读取器对生产端点的访问能力。
 ### [#9289](https://github.com/Vispie-AI/VisPie_backend/pull/9289) feat(amy-dsh): restore GTM and qualify capabilities on current DSH
 - **日期**：2026-10-09 | **状态**：🔀 待合并
 - **问题**：Amy 在当前 DSH 主线上无法回答 GTM 问题，因工作台缺少可用凭证路由，且启动读取存在多余模型调用。
@@ -2533,6 +2567,47 @@
 
 ## 三、文档建设（docs:）
 
+### [#9446](https://github.com/Vispie-AI/VisPie_backend/pull/9446) docs(amy): deliver mentor capability inventory and nanobot comparison
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：需要为 Amy AGImy Hub 交付导师报告，包括技能能力清单和与旧 nanobot 的延迟对比分析。
+- **修复**：梳理 153 项旧技能条目、53 个当前 Hub 技能文件，完成能力清单和 8 组 10 题延迟测量报告。
+- **成果**：能力清单来源全部核查，修复前后各轮 20/20 来源审查通过，私密问答数据保留在本地。
+
+### [#9407](https://github.com/Vispie-AI/VisPie_backend/pull/9407) Add PostHog readers while preserving the incumbent Door runtime
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：生产 Door 未注册 PostHog 和第一方游戏事件读取器，直接重建会删除 Hand 仍在使用的 7 个现有读取器。
+- **修复**：以最小化 Docker 分层在不可变生产 Door 镜像上叠加两个新读取器，验证文件系统哈希后仅修改必要导入。
+- **成果**：498 项 Node 检查通过，7 个原有读取器保留，候选镜像浏览器安全验证通过。
+
+### [#9401](https://github.com/Vispie-AI/VisPie_backend/pull/9401) Pin qualified PostHog first-party Hand layer
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：需要将第一方游戏事件读取器叠加层固定到 Hand，同时保留现有 DSH、依赖项和遗留工具。
+- **修复**：将 Hand 固定到在服务中的 9499 镜像上的最小第一方叠加层，添加 game-events CLI 和更新后的 PostHog 验证技能。
+- **成果**：402 个会话保留完好，原生技能/读写及 game-events CLI 验证通过，隔离集群 QA 完成。
+
+### [#9389](https://github.com/Vispie-AI/VisPie_backend/pull/9389) docs(amy-dsh): record completed shared capability acceptance
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：需要将 Amy 公共能力向共享原生 AGImy Hub 迁移的验收结果写入文档，取代原有待定状态的描述。
+- **修复**：将已部署的各组件摘要、真实签名内存及 Base 写入结果、恢复的资格门控和延迟限制等信息记录至验收文档。
+- **成果**：两轮各 20 题问答均通过来源审查，原生文档/评论、Base/附件和一次性计划操作验证通过。
+
+### [#9387](https://github.com/Vispie-AI/VisPie_backend/pull/9387) build(posthog): add first-party evidence to the verified Hand
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：已验证的 Hand 需要集成第一方游戏事件读取器和原生 CLI 以支持 PostHog 数据交叉验证，但直接复制主分支会删除现有遗留读取器。
+- **修复**：在精确的 9499 服务镜像上构建最小化叠加层，仅在必要锚点处扩展代理/配置文件/CLI，验证所有现有源码哈希后再修改。
+- **成果**：Shell/Python 解析通过，运行时 UID、9 个读取器 Schema、遗留生命周期和缺失凭证边界均得到验证。
+
+### [#9346](https://github.com/Vispie-AI/VisPie_backend/pull/9346) build(infra-amy): roll verified PostHog reporting skill into Hand
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：PR #9340 合并后 Hand 仍加载旧版 PostHog 技能，需要将修订后的报告技能叠加到当前服务的 Hand 镜像。
+- **修复**：在精确的 9499 镜像摘要上构建小型叠加层，安装修订后的技能文件，保留现有 DSH、依赖项和遗留工具目录不变。
+- **成果**：Cloud Build 成功，402 个历史会话保留，原生技能写/读及不支持结论拒绝验证通过，生产切换完成。
+
+### [#9340](https://github.com/Vispie-AI/VisPie_backend/pull/9340) docs(infra-amy): verify Replay Vision citations before reporting
+- **日期**：2026-10-10 | **状态**：✅ 已合并
+- **问题**：PostHog 返回的高置信度摘要包含错误游戏引用、未解析的时间戳和不一致的录像声明。
+- **修复**：更新 Infra Amy 的 PostHog 技能，在报告前暂停并验证引用场景，区分视频/录像/事件时钟，隔离不支持的声明。
+- **成果**：3 项 PostHog Replay 工具测试通过，同步累计 165 积分上限，保留两个冻结队列不做替换或重跑。
 ### [#9127](https://github.com/Vispie-AI/VisPie_backend/pull/9127) docs(replay): cover live published package bridge upgrades
 - **日期**：2026-10-08 | **状态**：✅ 已合并
 - **问题**：Rockstar线上动态登记仍指向不含录屏SDK的旧版本，导致新真实回放持续为空iframe。
