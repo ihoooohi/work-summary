@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-10 | 共 511 个 PR（已合并 450 · 关闭未合并 22 · 待合并 37）
-> 最后更新：2026-10-10
+> 统计周期：2026-04-11 ~ 2026-10-11 | 共 514 个 PR（已合并 453 · 关闭未合并 22 · 待合并 37）
+> 最后更新：2026-10-11
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#9462](https://github.com/Vispie-AI/VisPie_backend/pull/9462) fix(amy-hub): restore common message, review and workbook workflows
+- **日期**：2026-10-11 | **状态**：✅ 已合并
+- **问题**：Hub代码审查依赖旧EC2私钥，消息工具缺少线程和附件入口，Excel技能依赖未安装。
+- **修复**：改用控制台已有的GitHub代签恢复审查，增加消息线程及受限附件下载，并补充Excel依赖。
+- **成果**：8个消息/审查测试、32个控制台测试通过，代码审查同题耗时从93.47s优化至76.22s。
 
 ### [#9391](https://github.com/Vispie-AI/VisPie_backend/pull/9391) fix(ci): load the prepared Infra Amy profile once
 - **日期**：2026-10-10 | **状态**：✅ 已合并
@@ -2566,6 +2572,18 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#9471](https://github.com/Vispie-AI/VisPie_backend/pull/9471) Amy Hub: add media generation and native request routines
+- **日期**：2026-10-11 | **状态**：✅ 已合并
+- **问题**：Hub缺少托管媒体生成路径，PM/日常程序仍描述已废弃的nanobot watcher和固定收件人。
+- **修复**：新增单次提交的图片/视频工作流、保留原始请求的任务状态检查记录及来源范围内的原生摘要。
+- **成果**：真实生成Gemini图片和Veo 4秒720p视频，原生PM创建任务清单并保留原始请求，API调用减少至2次/47861输入token。
+
+### [#9468](https://github.com/Vispie-AI/VisPie_backend/pull/9468) docs(amy-hub): finalize common capability release evidence
+- **日期**：2026-10-11 | **状态**：✅ 已合并
+- **问题**：Mentor的常用能力报告仍显示消息/摘要未验收且候选未部署的旧状态。
+- **修复**：更新为PR #9462合并、精确候选镜像部署及用户57秒页面验收的实际结果，补充独立读回记录。
+- **成果**：11个基准报告测试通过，完整记录消息线程、合并转发、容器附件及两次有界Base摘要的验收结果。
 
 ### [#9446](https://github.com/Vispie-AI/VisPie_backend/pull/9446) docs(amy): deliver mentor capability inventory and nanobot comparison
 - **日期**：2026-10-10 | **状态**：✅ 已合并
