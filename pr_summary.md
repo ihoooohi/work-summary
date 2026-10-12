@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-11 | 共 514 个 PR（已合并 453 · 关闭未合并 22 · 待合并 37）
-> 最后更新：2026-10-11
+> 统计周期：2026-04-11 ~ 2026-10-12 | 共 516 个 PR（已合并 454 · 关闭未合并 22 · 待合并 38）
+> 最后更新：2026-10-12
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#9517](https://github.com/Vispie-AI/VisPie_backend/pull/9517) fix(infra-amy): trim Meta configuration from performance context
+- **日期**：2026-10-12 | **状态**：✅ 已合并
+- **问题**：Meta 性能查询将配置清单（63k 字符）全发给模型，上下文冗余严重。
+- **修复**：新增 `--compact` 模式，省略广告配置，精简至 2,340 字符。
+- **成果**：延迟从 51s 降至 35s，token 减半，部署 Cloud Run 验证通过。
 
 ### [#9462](https://github.com/Vispie-AI/VisPie_backend/pull/9462) fix(amy-hub): restore common message, review and workbook workflows
 - **日期**：2026-10-11 | **状态**：✅ 已合并
@@ -2572,6 +2578,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#9479](https://github.com/Vispie-AI/VisPie_backend/pull/9479) docs(amy-hub): record shared media and routine acceptance
+- **日期**：2026-10-12 | **状态**：🔀 待合并
+- **问题**：#9471 Hub 共享发布及验收测试缺乏正式记录。
+- **修复**：补录发布详情及十项原生模型测量，完成 Hub 会话与 QA 回读验证。
+- **成果**：8 个叠加文件已验证；MP4 播放问题待跟进，无产品代码变更。
 
 ### [#9471](https://github.com/Vispie-AI/VisPie_backend/pull/9471) Amy Hub: add media generation and native request routines
 - **日期**：2026-10-11 | **状态**：✅ 已合并
