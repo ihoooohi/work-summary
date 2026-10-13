@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-12 | 共 516 个 PR（已合并 454 · 关闭未合并 22 · 待合并 38）
-> 最后更新：2026-10-12
+> 统计周期：2026-04-11 ~ 2026-10-13 | 共 518 个 PR（已合并 455 · 关闭未合并 22 · 待合并 39）
+> 最后更新：2026-10-13
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#9694](https://github.com/Vispie-AI/VisPie_backend/pull/9694) fix(amy-hub): play and download workspace videos in native DSH
+- **日期**：2026-10-13 | **状态**：🔀 待合并
+- **问题**：Amy生成的MP4链接打开文件面板时显示"不支持预览"且无下载控制。
+- **修复**：新增独立DSH文档渲染器，使链接直接打开视频播放器并提供下载链接，利用现有授权工作区字节读取。
+- **成果**：渲染器/生命周期测试、平台测试及基准报告测试全部通过，MP4播放与下载功能在实际DSH 0.2.1-alpha.1上验证成功。
+
+### [#9690](https://github.com/Vispie-AI/VisPie_backend/pull/9690) fix(amy): automatically reclaim completed review copies
+- **日期**：2026-10-13 | **状态**：✅ 已合并
+- **问题**：Amy的共享EC2根磁盘被已完成的评审克隆占满（容器/tmp约38GB，恢复后/workspace/worktrees增至51GB）。
+- **修复**：在Amy现有Hub心跳中添加有界收集器，自动清理已完成评审副本，并设置独占锁、五分钟宽限期等安全条件。
+- **成果**：工作树占用从51GB降至42GB，根目录释放21GB空间，心跳自动清除了18个已完成副本，生产验证通过。
 ### [#9517](https://github.com/Vispie-AI/VisPie_backend/pull/9517) fix(infra-amy): trim Meta configuration from performance context
 - **日期**：2026-10-12 | **状态**：✅ 已合并
 - **问题**：Meta 性能查询将配置清单（63k 字符）全发给模型，上下文冗余严重。
