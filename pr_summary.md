@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-13 | 共 518 个 PR（已合并 455 · 关闭未合并 22 · 待合并 39）
-> 最后更新：2026-10-13
+> 统计周期：2026-04-11 ~ 2026-10-14 | 共 520 个 PR（已合并 457 · 关闭未合并 22 · 待合并 39）
+> 最后更新：2026-10-14
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#9709](https://github.com/Vispie-AI/VisPie_backend/pull/9709) fix(amy-hub): activate video bundle in existing profiles
+- **日期**：2026-10-14 | **状态**：✅ 已合并
+- **问题**：已共享的网页档案中可能存在媒体依赖项但未选中对应的 bundle，导致 MP4 链接落在不支持预览的页面上。
+- **修复**：安装程序现在仅将媒体 bundle 追加到持久化的有序 bundle 列表中，保留其他 manifest 字段、现有层和用户补丁，操作幂等。
+- **成果**：34 项平台测试全部通过，原生合成中已正确包含媒体 bundle，修复效果经共享安装配置验证。
 
 ### [#9694](https://github.com/Vispie-AI/VisPie_backend/pull/9694) fix(amy-hub): play and download workspace videos in native DSH
 - **日期**：2026-10-13 | **状态**：🔀 待合并
@@ -1688,6 +1694,12 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#9718](https://github.com/Vispie-AI/VisPie_backend/pull/9718) feat(amy): prepare full Lark DSH cutover and record shared acceptance
+- **日期**：2026-10-14 | **状态**：✅ 已合并
+- **问题**：Amy 的 Lark 入口需要从 nanobot 迁移到 DSH，本地会话链接应指向已签名的 AGImy Hub。
+- **修复**：将本地会话链接重定向至已签名的 AGImy Hub，保留 Pod 现有的已签名 Door Origin，并添加带捕获哈希、私有回滚和读回的限定范围试运行路由助手。
+- **成果**：8 项专项切换测试通过，共享媒体发布记录和 Taplot 自动驾驶目录元数据均已归档，其他机器人路由及用户设置保持不变。
 
 ### [#9386](https://github.com/Vispie-AI/VisPie_backend/pull/9386) feat(posthog): verify findings with first-party game event records
 - **日期**：2026-10-10 | **状态**：✅ 已合并
