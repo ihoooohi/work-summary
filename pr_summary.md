@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-14 | 共 520 个 PR（已合并 457 · 关闭未合并 22 · 待合并 39）
-> 最后更新：2026-10-14
+> 统计周期：2026-04-11 ~ 2026-10-15 | 共 522 个 PR（已合并 458 · 关闭未合并 22 · 待合并 40）
+> 最后更新：2026-10-15
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1695,6 +1695,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#9928](https://github.com/Vispie-AI/VisPie_backend/pull/9928) feat(amy): move the full ordinary Lark entry to DSH
+- **日期**：2026-10-15 | **状态**：🔀 待合并
+- **问题**：普通 Lark Amy 入口仍默认路由至 nanobot，旧版每人选择器可绕过 DSH 全量切换。
+- **修复**：将 Amy 的来源网关和 fleet 行全部指向合规 DSH Door，并移除旧版 Codex/聊天/AB/影子选择器。
+- **成果**：QA 实测 DSH Done 卡片 6 秒内送达，所有 237 项 Hub/插件测试通过，路由生成 16 条。
+
+### [#9847](https://github.com/Vispie-AI/VisPie_backend/pull/9847) feat(infra-amy): edit authorized Lark documents in place
+- **日期**：2026-10-15 | **状态**：✅ 已合并
+- **问题**：Infra Amy 能发布 Lark 文档，但无法修改已有页面的内容。
+- **修复**：扩展 Hand-only Door 路由及 infra-amy-doc，支持读取、追加、段落/标题文字更新和图片缩放。
+- **成果**：通过 65 项代理/控制平面/金丝雀测试，授权文档可在保留原 URL 的情况下被安全编辑。
 ### [#9718](https://github.com/Vispie-AI/VisPie_backend/pull/9718) feat(amy): prepare full Lark DSH cutover and record shared acceptance
 - **日期**：2026-10-14 | **状态**：✅ 已合并
 - **问题**：Amy 的 Lark 入口需要从 nanobot 迁移到 DSH，本地会话链接应指向已签名的 AGImy Hub。
