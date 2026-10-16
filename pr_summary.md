@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-15 | 共 522 个 PR（已合并 458 · 关闭未合并 22 · 待合并 40）
-> 最后更新：2026-10-15
+> 统计周期：2026-04-11 ~ 2026-10-16 | 共 524 个 PR（已合并 460 · 关闭未合并 22 · 待合并 40）
+> 最后更新：2026-10-16
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#9953](https://github.com/Vispie-AI/VisPie_backend/pull/9953) fix(amy): safely reclaim completed PR review clones
+- **日期**：2026-10-16 | **状态**：✅ 已合并
+- **问题**：PR 审查克隆因 detached commit 缺失导致未能自动回收，长期占用磁盘空间。
+- **修复**：新增每小时有界清理任务，验证 PR 已关闭且提交已发布后原子化安全回收克隆。
+- **成果**：50 项 Python 测试全部通过，生产镜像 `8000371` 部署成功，自动调度器首次清理运行正常。
 ### [#9709](https://github.com/Vispie-AI/VisPie_backend/pull/9709) fix(amy-hub): activate video bundle in existing profiles
 - **日期**：2026-10-14 | **状态**：✅ 已合并
 - **问题**：已共享的网页档案中可能存在媒体依赖项但未选中对应的 bundle，导致 MP4 链接落在不支持预览的页面上。
@@ -2613,6 +2618,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#9930](https://github.com/Vispie-AI/VisPie_backend/pull/9930) docs(amy): record completed ordinary Lark DSH cutover
+- **日期**：2026-10-15 | **状态**：✅ 已合并
+- **问题**：Amy 普通 Lark 入口切换至 DSH 门后，文档仍停留在仅准备阶段的旧结论。
+- **修复**：将文档更新为已上线路由、不可变镜像、原始消息回复及同会话跟进的完整切换记录。
+- **成果**：指南升至第 31 版并附新截图，运行时已由 PR #9928 验证，此 PR 无部署代码变更。
 ### [#9479](https://github.com/Vispie-AI/VisPie_backend/pull/9479) docs(amy-hub): record shared media and routine acceptance
 - **日期**：2026-10-12 | **状态**：🔀 待合并
 - **问题**：#9471 Hub 共享发布及验收测试缺乏正式记录。
