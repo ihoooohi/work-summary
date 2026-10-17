@@ -1,12 +1,30 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-16 | 共 524 个 PR（已合并 460 · 关闭未合并 22 · 待合并 40）
-> 最后更新：2026-10-16
+> 统计周期：2026-04-11 ~ 2026-10-17 | 共 528 个 PR（已合并 464 · 关闭未合并 22 · 待合并 40）
+> 最后更新：2026-10-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#10078](https://github.com/Vispie-AI/VisPie_backend/pull/10078) fix(r007): load repaired extraction workflow through the live skill entry
+- **日期**：2026-10-17 | **状态**：✅ 已合并
+- **问题**：#10076合并后Door验收发现`skill("reverse-app")`返回unknown，原因是技能描述中存在未转义的`:`导致DSH YAML解析器丢弃该技能。
+- **修复**：改用YAML折叠标量格式，并在所有Hand构建路径中要求实际DSH技能提供者发现和加载验证。
+- **成果**：修复后Fixture通过安装的yaml解析器和FileSystemSkillProvider正常加载，新增含冒号描述的回归测试。
+
+### [#10076](https://github.com/Vispie-AI/VisPie_backend/pull/10076) fix(r007): switch default extraction runtime to verified repaired tools
+- **日期**：2026-10-17 | **状态**：✅ 已合并
+- **问题**：Episode导出流程仍默认使用修复前的旧工具，运行中的Infra Amy Hand持久化Profile未切换到已修复版本。
+- **修复**：在Hand镜像中以窄覆盖层部署源码固定工作流，添加哈希校验收据并拒绝已知五个有损遗留命令名。
+- **成果**：52项离线单元测试通过（含4项新运行时用例），Cloud Build验证镜像并运行完整测试套件。
+
+### [#10051](https://github.com/Vispie-AI/VisPie_backend/pull/10051) fix(reverse-app): preserve Episode branches and character state
+- **日期**：2026-10-16 | **状态**：✅ 已合并
+- **问题**：Episode拆解脚本丢弃条件分支与角色状态，导致后续摘要将错误转储数据视为主线剧情，Markdown发布时原始角色标记丢失。
+- **修复**：新增离线无损图导出器及显式角色/标记/积分状态重放，修复来源范围内的研究问题并保守处理分支阻断逻辑。
+- **成果**：48项单元测试通过，历史导出器可字节对齐复现两部优先书目的存档首章输出，涵盖10本书/139章/168章完成记录。
 
 ### [#9953](https://github.com/Vispie-AI/VisPie_backend/pull/9953) fix(amy): safely reclaim completed PR review clones
 - **日期**：2026-10-16 | **状态**：✅ 已合并
@@ -2617,6 +2635,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#10082](https://github.com/Vispie-AI/VisPie_backend/pull/10082) docs(r007): persist the complete ten-minute adaptation pacing contract
+- **日期**：2026-10-17 | **状态**：✅ 已合并
+- **问题**：R-007批次缺少独立的改编节奏合约，用户提供的30-40分钟基准时间未被正式记录为规划输入。
+- **修复**：新增独立改编节奏合约文档，规定约600秒覆盖完整改编体验，禁止提前倒计时或强制进度以达标。
+- **成果**：仅两个提取指南文件变更，引擎代码、源JSON及活跃会话保持不变，Markdown检查与保护哈希均通过验证。
 
 ### [#9930](https://github.com/Vispie-AI/VisPie_backend/pull/9930) docs(amy): record completed ordinary Lark DSH cutover
 - **日期**：2026-10-15 | **状态**：✅ 已合并
