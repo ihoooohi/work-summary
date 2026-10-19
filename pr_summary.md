@@ -1,12 +1,54 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-17 | 共 528 个 PR（已合并 464 · 关闭未合并 22 · 待合并 40）
-> 最后更新：2026-10-17
+> 统计周期：2026-04-11 ~ 2026-10-19 | 共 537 个 PR（已合并 472 · 关闭未合并 22 · 待合并 41）
+> 最后更新：2026-10-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#10268](https://github.com/Vispie-AI/VisPie_backend/pull/10268) fix: restore Instagram videos and responsive dashboard sorting
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：Instagram 采集因 `video_duration` 为空而丢弃所有视频，且仪表盘排序不响应分页。
+- **修复**：兼容可空时长字段并在无帖子保存时标记失败；前端改为本地重排序并延迟视频加载。
+- **成果**：生产验证共恢复 20 条 Instagram 视频，排序约 339ms，原有 19 个 TikTok 视频完整保留。
+
+### [#10266](https://github.com/Vispie-AI/VisPie_backend/pull/10266) fix: show dashboard refresh results automatically
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：刷新后页面持续停留在"Refresh requested"状态，用户无法得知刷新结果。
+- **修复**：前端轮询 #10265 新增的持久化状态接口，刷新完成后自动重载指标与视频列表。
+- **成果**：实测一次真实刷新约 20 秒完成，页面自动显示 TikTok 和 Instagram 双平台成功结果。
+
+### [#10265](https://github.com/Vispie-AI/VisPie_backend/pull/10265) fix: persist manual dashboard refresh outcomes
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：手动刷新仅返回"已排队"确认，刷新结果不持久化，页面无法显示最终状态。
+- **修复**：新增持久化运行 ID 与终态字段，提供带鉴权的 `/refresh-status` 端点追踪运行状态。
+- **成果**：63 条测试通过，生产验证刷新结果正确持久化，前端可自动观测完成状态。
+
+### [#10263](https://github.com/Vispie-AI/VisPie_backend/pull/10263) fix: verify submission sync deployment without rebuilding
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：发布验证因比较完整部署响应的服务器时间戳而失败，无法确认镜像是否正确采用。
+- **修复**：改为仅比对有效调度设置，新增只读巡检模式支持按摘要验证已部署镜像。
+- **成果**：45 条测试通过，调度元数据差异被正确接受，镜像巡检不触发任何写操作。
+
+### [#10262](https://github.com/Vispie-AI/VisPie_backend/pull/10262) fix: preserve existing dashboard video scope during submission sync
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：提交同步首次引入 `posted_content_ids` 时，会将无限制 Creator 仪表盘降级为仅限发布内容。
+- **修复**：增量与活动调和同步均跳过无限制仪表盘的全局/创作者白名单写入，仅更新身份信息。
+- **成果**：43 条测试通过，包含范围保留与幂等性回归；生产修复已就绪。
+
+### [#10181](https://github.com/Vispie-AI/VisPie_backend/pull/10181) fix(infra-amy): keep control-plane health independent of event replay
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：Amy 磁盘恢复后控制平面健康检查仍返回 502，因每次检查都重放业务事件数据。
+- **修复**：健康检查直接返回进程状态，业务请求仍等待刷新完成，互不阻塞。
+- **成果**：549 条单测通过，生产版本以 100% 流量上线，连续健康检查均返回 200。
+
+### [#10177](https://github.com/Vispie-AI/VisPie_backend/pull/10177) fix(infra-amy): grow persistent storage to 250Gi after disk exhaustion
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：Amy 持久化磁盘 150Gi 用尽，仅剩 72KB，导致预设安装失败并触发 157 次重启。
+- **修复**：将现有 PVC 请求从 150Gi 扩展至 250Gi，保留 PVC UID、磁盘数据和会话文件。
+- **成果**：Kubernetes dry-run 验证通过，扩容后 Pod 就绪，Amy 成功恢复正常运行。
 
 ### [#10078](https://github.com/Vispie-AI/VisPie_backend/pull/10078) fix(r007): load repaired extraction workflow through the live skill entry
 - **日期**：2026-10-17 | **状态**：✅ 已合并
@@ -1717,6 +1759,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#10269](https://github.com/Vispie-AI/VisPie_backend/pull/10269) feat: track Facebook Reels with company Apify
+- **日期**：2026-10-19 | **状态**：🔀 待合并
+- **问题**：仪表盘缺少 Facebook Reels 数据追踪，无法将 FB 内容与 TikTok/Instagram 统一呈现。
+- **修复**：接入公司 Apify 账号，支持配置 FB 公开主页或直链，手动/后台刷新时导入指标和媒体。
+- **成果**：119 条 Python 回归测试通过，前端过滤与展示逻辑已完成；待 Apify token 授权后生产上线。
+
+### [#10254](https://github.com/Vispie-AI/VisPie_backend/pull/10254) feat(dashboard): serve manual refresh API before frontend release
+- **日期**：2026-10-19 | **状态**：✅ 已合并
+- **问题**：前端手动刷新按钮（#10253）依赖的后端 API `/api/v1/dashboards/{id}/refresh` 尚未发布。
+- **修复**：提前单独发布已通过评审的后端路由及回归测试，后端与前端解耦上线。
+- **成果**：51 条测试通过，后端 API 已上线；前端 PR #10253 可在此基础上合并发布。
 
 ### [#9928](https://github.com/Vispie-AI/VisPie_backend/pull/9928) feat(amy): move the full ordinary Lark entry to DSH
 - **日期**：2026-10-15 | **状态**：🔀 待合并
