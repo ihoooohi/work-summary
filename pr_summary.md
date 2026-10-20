@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-19 | 共 537 个 PR（已合并 472 · 关闭未合并 22 · 待合并 41）
-> 最后更新：2026-10-19
+> 统计周期：2026-04-11 ~ 2026-10-20 | 共 543 个 PR（已合并 477 · 关闭未合并 22 · 待合并 42）
+> 最后更新：2026-10-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#10357](https://github.com/Vispie-AI/VisPie_backend/pull/10357) fix(amy): keep native gh calls on console transport
+- **日期**：2026-10-20 | **状态**：✅ 已合并
+- **问题**：Amy 原生 CI 审查任务中 `gh` 因缺少 GH_TOKEN 和 CA 证书以退出码 4 失败，GitHub 审查无法提交。
+- **修复**：在 `/usr/local/bin/gh` 添加适配器，在 Amy Pod 环境中注入 console 标记和 CA bundle 后再调用原生 `gh`。
+- **成果**：只读 PR 读取验证通过，40 项平台测试全部通过，CI 审查路径可正确接入 GitHub。
+
+### [#10354](https://github.com/Vispie-AI/VisPie_backend/pull/10354) fix(amy): satisfy native review preset search schema
+- **日期**：2026-10-20 | **状态**：✅ 已合并
+- **问题**：DSH 0.2.1-alpha.1 要求预设含 `tool-fs-search.sampleOverCapGlobResults`，首次原生 `session/create` 因缺失而拒绝 `amy-prreview` 预设。
+- **修复**：在预设中补充与普通 Amy 相同的 `false` 值，并在发布说明中明确区分预设实例化与 Web 启动阶段。
+- **成果**：原生预设创建路径通过验证，40 项平台测试通过，审查监听器待后续启用。
 
 ### [#10268](https://github.com/Vispie-AI/VisPie_backend/pull/10268) fix: restore Instagram videos and responsive dashboard sorting
 - **日期**：2026-10-19 | **状态**：✅ 已合并
@@ -1760,6 +1772,18 @@
 
 ## 二、新功能开发（feat:）
 
+### [#10351](https://github.com/Vispie-AI/VisPie_backend/pull/10351) feat(amy): prepare native GCP CI review responder
+- **日期**：2026-10-20 | **状态**：✅ 已合并
+- **问题**：旧 EC2 Amy 审查员已停止，`prreview-ci` 请求积压，缺少原生 GCP DSH CI 审查通道。
+- **修复**：在 GCP Amy Workbench 中新增默认关闭的原生审查通道，复用现有 GitHub App 身份，添加专用 `amy-prreview` 预设。
+- **成果**：40 项平台测试、10 项 Kubernetes 渲染测试和 10 项审查员测试全部通过，原生引导验证成功。
+
+### [#10349](https://github.com/Vispie-AI/VisPie_backend/pull/10349) feat(amy): prepare direct Lark event delivery to the GCP DSH door
+- **日期**：2026-10-20 | **状态**：✅ 已合并
+- **问题**：Amy Lark 事件 URL 仍指向 EC2 网关，GCP Door 因不支持 Lark URL 验证握手而无法直接接收事件。
+- **修复**：在 GCP Door 仅用现有验证令牌响应 `url_verification`，回显受限 challenge，并从 Secret Manager 挂载令牌到 Amy Door 部署。
+- **成果**：256 项 Python 传输测试通过，Ruff 格式/Lint 及部署脚本语法检查通过，候选监听器已就绪待切换。
+
 ### [#10269](https://github.com/Vispie-AI/VisPie_backend/pull/10269) feat: track Facebook Reels with company Apify
 - **日期**：2026-10-19 | **状态**：🔀 待合并
 - **问题**：仪表盘缺少 Facebook Reels 数据追踪，无法将 FB 内容与 TikTok/Instagram 统一呈现。
@@ -2689,6 +2713,18 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#10356](https://github.com/Vispie-AI/VisPie_backend/pull/10356) docs(amy): document explicit native reviewer bundle activation
+- **日期**：2026-10-20 | **状态**：✅ 已合并
+- **问题**：安装 CI 审查依赖后还需在 Amy 配置文件中显式注册 bundle，但该步骤在发布说明中缺失。
+- **修复**：在 `project_amy/amy-dsh/README.md` 补充显式 bundle 注册步骤，保留原有空闲检查和预设实例化等验证门控。
+- **成果**：发布流程文档完整覆盖 bundle 注册，diff 空白检查通过，不涉及运行时代码或凭据变更。
+
+### [#10352](https://github.com/Vispie-AI/VisPie_backend/pull/10352) docs(rea): prioritize structural adaptation and human slice testing
+- **日期**：2026-10-20 | **状态**：🔀 待合并
+- **问题**：REA 原流程侧重压缩比和连贯性，缺少对结构改编效果和玩家真实体验的早期验证。
+- **修复**：按 R-007 将结构改编和真人切片快测置于扩量前，更新 taplot-rea 技能说明并附两部完整第一章审阅稿。
+- **成果**：技能文档和参考文件同步更新，飞书审阅稿已发布，供团队在扩量前进行结构与体验验证。
 
 ### [#10082](https://github.com/Vispie-AI/VisPie_backend/pull/10082) docs(r007): persist the complete ten-minute adaptation pacing contract
 - **日期**：2026-10-17 | **状态**：✅ 已合并
