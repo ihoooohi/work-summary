@@ -1,12 +1,60 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-20 | 共 543 个 PR（已合并 477 · 关闭未合并 22 · 待合并 42）
-> 最后更新：2026-10-20
+> 统计周期：2026-04-11 ~ 2026-10-21 | 共 562 个 PR（已合并 496 · 关闭未合并 22 · 待合并 42）
+> 最后更新：2026-10-21
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#10587](https://github.com/Vispie-AI/VisPie_backend/pull/10587) fix(infra-amy): measure the worker PVC without ConfigMap volumes
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：Infra Amy worker 的 PVC 容量度量被 ConfigMap 卷污染，导致存储用量统计不准确。
+- **修复**：剥离 ConfigMap 卷后单独采集 worker PVC 指标，确保度量仅反映真实存储占用。
+- **成果**：Grafana 中 worker PVC 用量数据准确，运维可靠性提升。
+
+### [#10581](https://github.com/Vispie-AI/VisPie_backend/pull/10581) fix(george): preserve group root sessions and isolate task context
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：George 组根会话在任务切换时被意外清除，造成上下文隔离失效。
+- **修复**：修复会话保留逻辑，确保组根会话持久化并对各任务上下文独立隔离。
+- **成果**：George 多任务并发稳定性显著改善，上下文隔离符合预期。
+
+### [#10574](https://github.com/Vispie-AI/VisPie_backend/pull/10574) fix(infra-amy): collect OOM after containerd exit race
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：containerd 退出竞态导致 OOM 事件采集丢失，影响内存异常诊断。
+- **修复**：在 containerd 退出竞态后增加 OOM 采集补偿逻辑，确保事件不丢失。
+- **成果**：OOM 事件完整记录，基础设施内存问题可被及时发现和追溯。
+
+### [#10533](https://github.com/Vispie-AI/VisPie_backend/pull/10533) fix(monitoring): show Infra Amy request summary in Grafana
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：Infra Amy 请求汇总面板在 Grafana 中未正常展示，监控可见性不足。
+- **修复**：修正面板配置，使 Infra Amy 请求汇总数据正确渲染在 Grafana 仪表板中。
+- **成果**：运维团队可在 Grafana 直接查看 Infra Amy 请求概况，响应效率提升。
+
+### [#10532](https://github.com/Vispie-AI/VisPie_backend/pull/10532) fix(monitoring): finish Infra Amy dashboard import and panel labels
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：Infra Amy 监控仪表板导入不完整，面板标签缺失影响可读性。
+- **修复**：补全仪表板导入流程并完善各面板标签，确保监控视图信息完整。
+- **成果**：Infra Amy 专属 Grafana 仪表板完整可用，监控覆盖率达到预期。
+
+### [#10454](https://github.com/Vispie-AI/VisPie_backend/pull/10454) fix(dashboard): include the full Pacific day in date filters
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：数据看板日期过滤器未覆盖完整的太平洋时区全天，导致边界数据缺失。
+- **修复**：调整日期过滤器时区边界，确保太平洋时区全天数据均被纳入统计。
+- **成果**：数据看板日期维度完整性修复，统计结果与实际数据一致。
+
+### [#10449](https://github.com/Vispie-AI/VisPie_backend/pull/10449) fix(dashboard): preserve missing TikTok plays and show confirmed zero correctly
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：TikTok 播放量缺失时被错误置零，导致确认零值与数据缺失无法区分。
+- **修复**：区分缺失播放量和确认零值的展示逻辑，确保数据看板正确呈现两种状态。
+- **成果**：TikTok 播放量数据质量提升，用户可准确识别数据缺失与真实零播放。
+
+### [#10421](https://github.com/Vispie-AI/VisPie_backend/pull/10421) fix(dashboard): restore Instagram views omitted by account listings
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：账号列表接口遗漏了部分 Instagram 浏览量数据，导致数据看板展示不全。
+- **修复**：修复账号列表查询逻辑，确保所有 Instagram 浏览量数据都被正确纳入统计。
+- **成果**：Instagram 数据看板数据完整性恢复，业务数据分析准确性提升。
 
 ### [#10357](https://github.com/Vispie-AI/VisPie_backend/pull/10357) fix(amy): keep native gh calls on console transport
 - **日期**：2026-10-20 | **状态**：✅ 已合并
@@ -1772,6 +1820,42 @@
 
 ## 二、新功能开发（feat:）
 
+### [#10585](https://github.com/Vispie-AI/VisPie_backend/pull/10585) feat(infra-amy): show isolated workers in Grafana
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：隔离 worker 运行状态无法在 Grafana 中可视化，运维缺乏监控手段。
+- **修复**：在 Grafana 中新增隔离 worker 监控面板，展示其健康状态与资源使用情况。
+- **成果**：隔离 worker 纳入统一监控视图，基础设施可观测性全面提升。
+
+### [#10568](https://github.com/Vispie-AI/VisPie_backend/pull/10568) feat(infra-amy): isolate heavy tests in bounded execution Pods
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：重型测试与常规任务共享执行资源，存在相互干扰和资源超限风险。
+- **修复**：将重型测试迁移至独立的有界执行 Pod 中运行，实现资源隔离与限制。
+- **成果**：重型测试不再影响常规任务，系统稳定性和资源利用率得到改善。
+
+### [#10567](https://github.com/Vispie-AI/VisPie_backend/pull/10567) feat(infra): qualify George legacy ingress cutover to GCP
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：George 遗留入口流量尚未完成迁移验证，存在 GCP 切换风险。
+- **修复**：完成 George 遗留入口流量切换至 GCP 的资质验证，确保迁移可靠性。
+- **成果**：George 遗留入口流量 GCP 切换通过资质验证，基础设施现代化进程推进。
+
+### [#10530](https://github.com/Vispie-AI/VisPie_backend/pull/10530) feat(monitoring): add dedicated Infra Amy health and request dashboard
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：Infra Amy 缺乏专属的健康状态和请求量监控仪表板，运维可见性不足。
+- **修复**：新建 Infra Amy 专属 Grafana 仪表板，覆盖健康检查和请求量两大监控维度。
+- **成果**：Infra Amy 监控体系建立，运维团队可实时感知其运行健康度。
+
+### [#10457](https://github.com/Vispie-AI/VisPie_backend/pull/10457) feat(infra): move legacy Amy and web URLs behind isolated GCP edge
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：遗留 Amy 和 Web URL 直接暴露，缺乏隔离的 GCP 边缘层保护。
+- **修复**：将遗留 Amy 和 Web URL 统一迁移至独立 GCP 边缘层后，增强访问隔离性。
+- **成果**：遗留服务访问路径统一收口，安全性和可管理性提升。
+
+### [#10422](https://github.com/Vispie-AI/VisPie_backend/pull/10422) feat(ops): move retained EC2 web sites to GCP
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：部分保留的 EC2 站点仍运行在旧有基础设施上，未完成云平台迁移。
+- **修复**：将保留的 EC2 Web 站点迁移至 GCP，统一基础设施平台。
+- **成果**：EC2 存量站点迁移完成，基础设施平台统一度提升，运维复杂度降低。
+
 ### [#10351](https://github.com/Vispie-AI/VisPie_backend/pull/10351) feat(amy): prepare native GCP CI review responder
 - **日期**：2026-10-20 | **状态**：✅ 已合并
 - **问题**：旧 EC2 Amy 审查员已停止，`prreview-ci` 请求积压，缺少原生 GCP DSH CI 审查通道。
@@ -2713,6 +2797,36 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#10535](https://github.com/Vispie-AI/VisPie_backend/pull/10535) docs(amy): mark qualified meeting batch credential active
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：会议批次凭证完成资质验证后文档未及时更新，团队协作中存在信息滞后。
+- **修复**：在文档中将会议批次凭证状态标记为"已激活"，同步最新验证结论。
+- **成果**：文档与实际凭证状态保持一致，降低团队误操作风险。
+
+### [#10534](https://github.com/Vispie-AI/VisPie_backend/pull/10534) ops(amy): preserve final legacy aliases on GCP tunnel
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：GCP 隧道迁移后最终遗留别名未被保留，可能导致依赖方访问中断。
+- **修复**：在 GCP 隧道上保留所有最终遗留别名，确保迁移期间访问连续性。
+- **成果**：遗留别名平稳过渡，依赖方无感知切换，迁移风险降低。
+
+### [#10531](https://github.com/Vispie-AI/VisPie_backend/pull/10531) ops(amy): move the meeting batch off the retired nanobot runtime
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：会议批次任务仍运行在已退役的 nanobot runtime 上，存在稳定性隐患。
+- **修复**：将会议批次任务从退役 nanobot runtime 迁移至新运行时环境。
+- **成果**：会议批次任务在新运行时稳定运行，退役运行时依赖清理完成。
+
+### [#10529](https://github.com/Vispie-AI/VisPie_backend/pull/10529) ops(amy): prepare GCP shared gateway and cron handoff
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：GCP 共享网关和 cron 任务交接准备工作尚未到位，影响后续迁移计划。
+- **修复**：完成 GCP 共享网关配置和 cron 任务交接的准备工作，为正式切换奠定基础。
+- **成果**：GCP 共享网关和 cron 交接就绪，基础设施迁移路径清晰。
+
+### [#10466](https://github.com/Vispie-AI/VisPie_backend/pull/10466) ops(amy): verify legacy data recovery in isolated GCP builds
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：隔离 GCP 构建环境中遗留数据恢复能力未经验证，迁移可靠性存疑。
+- **修复**：在隔离 GCP 构建中执行遗留数据恢复验证，确认数据完整性和恢复可行性。
+- **成果**：遗留数据恢复能力在 GCP 隔离环境中验证通过，迁移置信度提升。
 
 ### [#10356](https://github.com/Vispie-AI/VisPie_backend/pull/10356) docs(amy): document explicit native reviewer bundle activation
 - **日期**：2026-10-20 | **状态**：✅ 已合并
