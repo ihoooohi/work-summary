@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-21 | 共 562 个 PR（已合并 496 · 关闭未合并 22 · 待合并 42）
-> 最后更新：2026-10-21
+> 统计周期：2026-04-11 ~ 2026-10-22 | 共 563 个 PR（已合并 497 · 关闭未合并 22 · 待合并 42）
+> 最后更新：2026-10-22
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1820,6 +1820,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#10591](https://github.com/Vispie-AI/VisPie_backend/pull/10591) feat(agimy): add Infra Amy dashboard entry to Health
+- **日期**：2026-10-21 | **状态**：✅ 已合并
+- **问题**：AGImy 健康页面缺少 Infra Amy 基础设施监控的快捷入口。
+- **修复**：在现有健康插件页面新增 Infra Amy 卡片，点击后在新标签页中打开已有的 Grafana 监控面板。
+- **成果**：用户可通过 AGImy 侧边栏直接访问 Infra Amy 主服务与隔离任务的监控覆盖数据。
 ### [#10585](https://github.com/Vispie-AI/VisPie_backend/pull/10585) feat(infra-amy): show isolated workers in Grafana
 - **日期**：2026-10-21 | **状态**：✅ 已合并
 - **问题**：隔离 worker 运行状态无法在 Grafana 中可视化，运维缺乏监控手段。
