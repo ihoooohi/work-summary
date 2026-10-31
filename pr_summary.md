@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-22 | 共 563 个 PR（已合并 497 · 关闭未合并 22 · 待合并 42）
-> 最后更新：2026-10-22
+> 统计周期：2026-04-11 ~ 2026-10-31 | 共 565 个 PR（已合并 497 · 关闭未合并 22 · 待合并 44）
+> 最后更新：2026-10-31
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -1820,6 +1820,12 @@
 
 ## 二、新功能开发（feat:）
 
+### [#11429](https://github.com/Vispie-AI/VisPie_backend/pull/11429) feat(infra-amy): bound task storage and expose cleanup trends
+- **日期**：2026-10-31 | **状态**：🔀 待合并
+- **问题**：已完成任务目录在全局活跃轮次围栏后持续累积，历史清理缺乏字节总量度量，磁盘压力难以预测。
+- **修复**：添加 Session/祖先租约、有界保留策略和可重建缓存回收机制，并在 Grafana 展示清理/守卫/字节趋势。
+- **成果**：独特证据、会话和共享运行时缓存受保护，磁盘压力超阈值时自动回收可重建缓存，存储利用率可观测性提升。
+
 ### [#10591](https://github.com/Vispie-AI/VisPie_backend/pull/10591) feat(agimy): add Infra Amy dashboard entry to Health
 - **日期**：2026-10-21 | **状态**：✅ 已合并
 - **问题**：AGImy 健康页面缺少 Infra Amy 基础设施监控的快捷入口。
@@ -2802,6 +2808,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#11428](https://github.com/Vispie-AI/VisPie_backend/pull/11428) infra: prepare isolated R007 workspace without touching operations
+- **日期**：2026-10-31 | **状态**：🔀 待合并
+- **问题**：R007 导出与文件处理共享 Infra Amy 运营 Hand 及持久磁盘，缺乏独立隔离的工作区。
+- **修复**：在不变更运行中 Hand、原生任务历史或 Android 设备的前提下，规划并生成独立的 R007 工作区提案。
+- **成果**：离线规划器通过 kubectl 客户端 dry-run 验证，部署副本为零，未产生云资源费用，为后续迁移打下基础。
 
 ### [#10535](https://github.com/Vispie-AI/VisPie_backend/pull/10535) docs(amy): mark qualified meeting batch credential active
 - **日期**：2026-10-21 | **状态**：✅ 已合并
