@@ -1,13 +1,42 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-10-31 | 共 565 个 PR（已合并 497 · 关闭未合并 22 · 待合并 44）
-> 最后更新：2026-10-31
+> 统计周期：2026-04-11 ~ 2026-11-02 | 共 571 个 PR（已合并 503 · 关闭未合并 22 · 待合并 44）
+> 最后更新：2026-11-02
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#11543](https://github.com/Vispie-AI/VisPie_backend/pull/11543) fix(taplot-admin): find staff workspaces in credit top-up search
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：Credit充值搜索无法找到员工个人工作区，因为其没有客户信用钱包。
+- **修复**：选择器新增员工工作区选项，并打开所有者的个人配额行进行充值。
+- **成果**：员工信用充值搜索恢复正常，客户钱包充值流程不受影响。
+
+### [#11533](https://github.com/Vispie-AI/VisPie_backend/pull/11533) fix(infra-amy): recover Codex availability failures once on Sonnet
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：Codex连接超时、HTTP 429及5xx错误会直接中止Infra Amy，无法返回答案。
+- **修复**：在输出前添加一次Sonnet 5.5路由备用请求，保留原始输入、工具及取消信号。
+- **成果**：Codex可用性故障可恢复一次，598个测试全部通过，安全拒绝等场景仍为终止态。
+
+### [#11483](https://github.com/Vispie-AI/VisPie_backend/pull/11483) fix(grafana): show cleanup amounts per hour
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：清理趋势曲线在重叠一小时窗口中重复计算删除量，数据虚高。
+- **修复**：将曲线替换为按小时独立柱状图，每小时桶仅统计该时段的删除量。
+- **成果**：六个非零小时的删除总量与累计卡片完全吻合，28个监控测试全部通过。
+
+### [#11481](https://github.com/Vispie-AI/VisPie_backend/pull/11481) fix(grafana): show cumulative Infra Amy cleanup curve
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：清理趋势面板在重叠一小时窗口内重复计算每次删除，导致数据翻倍。
+- **修复**：面板37改为读取与累计总卡片相同的持久累计表达式，展示为阶梯曲线。
+- **成果**：最新数据点与累计卡片一致，21个监控测试全部通过，其他面板无变动。
+
+### [#11479](https://github.com/Vispie-AI/VisPie_backend/pull/11479) fix(infra-amy): show model safety refusals on Lark cards
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：模型因安全策略拒绝请求时，Infra Amy仅显示通用错误卡片，缺乏明确说明。
+- **修复**：新增🛡️模型安全拦截卡片类型，明确提示该轮次因网络安全防护被拦截且未完成。
+- **成果**：194个harness测试和278个Python测试全部通过，安全拦截场景可正确显示专属卡片。
 ### [#10587](https://github.com/Vispie-AI/VisPie_backend/pull/10587) fix(infra-amy): measure the worker PVC without ConfigMap volumes
 - **日期**：2026-10-21 | **状态**：✅ 已合并
 - **问题**：Infra Amy worker 的 PVC 容量度量被 ConfigMap 卷污染，导致存储用量统计不准确。
@@ -1820,6 +1849,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#11480](https://github.com/Vispie-AI/VisPie_backend/pull/11480) feat(infra-amy): show each failure on the Grafana timeline
+- **日期**：2026-11-02 | **状态**：✅ 已合并
+- **问题**：Grafana滚动小时失败曲线无法区分和显示每个独立请求的具体失败情况。
+- **修复**：在现有趋势图上叠加每个失败请求的原始时间戳散点，附时间、原因和追踪标签。
+- **成果**：28个监控测试通过，四个独立失败请求在Grafana时间轴上可清晰区分展示。
 ### [#11429](https://github.com/Vispie-AI/VisPie_backend/pull/11429) feat(infra-amy): bound task storage and expose cleanup trends
 - **日期**：2026-10-31 | **状态**：🔀 待合并
 - **问题**：已完成任务目录在全局活跃轮次围栏后持续累积，历史清理缺乏字节总量度量，磁盘压力难以预测。
