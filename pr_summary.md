@@ -1,12 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-02 | 共 571 个 PR（已合并 503 · 关闭未合并 22 · 待合并 44）
-> 最后更新：2026-11-02
+> 统计周期：2026-04-11 ~ 2026-11-03 | 共 573 个 PR（已合并 504 · 关闭未合并 22 · 待合并 45）
+> 最后更新：2026-11-03
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#11666](https://github.com/Vispie-AI/VisPie_backend/pull/11666) fix(infra-amy): annotate the second verified historical quota failure
+- **日期**：2026-11-03 | **状态**：🔀 待合并
+- **问题**：Infra Amy历史上第二个`internal_failure`收据缺少具体的Codex用量限额失败标注。
+- **修复**：用精确的trace `56675fca...` 和时间戳 `2026-11-03T16:49:07Z` 将该历史收据补标为Codex用量耗尽错误。
+- **成果**：历史故障原因清晰可追溯，失败记录的准确性进一步提升。
+
+### [#11651](https://github.com/Vispie-AI/VisPie_backend/pull/11651) fix(infra-amy): show concrete failure causes in Lark and Grafana
+- **日期**：2026-11-03 | **状态**：✅ 已合并
+- **问题**：Infra Amy将Codex用量限额失败上报为通用错误，Lark和Grafana无法显示具体故障原因。
+- **修复**：保留`model_usage_limit`等终端错误分类贯穿harness、卡片投递和请求收据，确保故障原因精确透传。
+- **成果**：Codex用量耗尽及安全拒绝等故障在Lark和Grafana中均可显示具体原因，含精确时间戳的历史事件注释。
 
 ### [#11543](https://github.com/Vispie-AI/VisPie_backend/pull/11543) fix(taplot-admin): find staff workspaces in credit top-up search
 - **日期**：2026-11-02 | **状态**：✅ 已合并
