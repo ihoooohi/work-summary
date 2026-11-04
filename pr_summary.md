@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-03 | 共 573 个 PR（已合并 504 · 关闭未合并 22 · 待合并 45）
-> 最后更新：2026-11-03
+> 统计周期：2026-04-11 ~ 2026-11-04 | 共 576 个 PR（已合并 506 · 关闭未合并 22 · 待合并 46）
+> 最后更新：2026-11-04
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#11719](https://github.com/Vispie-AI/VisPie_backend/pull/11719) fix(grafana): keep quota failure time and cause visible
+- **日期**：2026-11-04 | **状态**：🔀 待合并
+- **问题**：Grafana 配额事件表字段顺序将重置/账户字段排在故障时间和原因之前，半宽布局导致重要列被隐藏。
+- **修复**：将配额趋势图和事件表拆分为各自的全宽行，并应用时间/原因/剩余/重置优先的显式字段排序。
+- **成果**：故障时间和原因成为首列，配额信息一目了然，表格和趋势图各占全宽展示，呈现更清晰。
+
+### [#11715](https://github.com/Vispie-AI/VisPie_backend/pull/11715) fix(infra-amy): preserve incumbent Door imports and qualify quota delivery
+- **日期**：2026-11-04 | **状态**：✅ 已合并
+- **问题**：配额 Door 叠加层将现有 lark_bot.py 替换为依赖固定基础镜像中缺少组件的新模块，导致 Uvicorn 启动失败。
+- **修复**：仅将四处配额传输变更应用到固定的现有 bridge 文件，保留其原有导入结构和行为。
+- **成果**：ASGI 完整导入成功，22 项请求归属/进度测试和真实交付循环/卡片/回执配额 fixture 全部通过。
 ### [#11666](https://github.com/Vispie-AI/VisPie_backend/pull/11666) fix(infra-amy): annotate the second verified historical quota failure
 - **日期**：2026-11-03 | **状态**：🔀 待合并
 - **问题**：Infra Amy历史上第二个`internal_failure`收据缺少具体的Codex用量限额失败标注。
@@ -1861,6 +1872,11 @@
 
 ## 二、新功能开发（feat:）
 
+### [#11700](https://github.com/Vispie-AI/VisPie_backend/pull/11700) feat(infra-amy): Codex allowance snapshots and guarded automatic reset
+- **日期**：2026-11-04 | **状态**：✅ 已合并
+- **问题**：Infra Amy 在遇到 Codex 配额耗尽错误时无法保留发生故障时刻的可用额度快照。
+- **修复**：在 Hand 中添加账户绑定的额度/重置采样，将历史快照注入 Lark 请求回执卡片，并增加 Grafana 配额面板。
+- **成果**：确认配额耗尽的请求可触发一次有幂等日志保障的自动重置，历史与当前观测数据在监控中明确区分。
 ### [#11480](https://github.com/Vispie-AI/VisPie_backend/pull/11480) feat(infra-amy): show each failure on the Grafana timeline
 - **日期**：2026-11-02 | **状态**：✅ 已合并
 - **问题**：Grafana滚动小时失败曲线无法区分和显示每个独立请求的具体失败情况。
