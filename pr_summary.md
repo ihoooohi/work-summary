@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-04 | 共 576 个 PR（已合并 506 · 关闭未合并 22 · 待合并 46）
-> 最后更新：2026-11-04
+> 统计周期：2026-04-11 ~ 2026-11-05 | 共 577 个 PR（已合并 507 · 关闭未合并 22 · 待合并 46）
+> 最后更新：2026-11-05
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#11941](https://github.com/Vispie-AI/VisPie_backend/pull/11941) fix(infra-amy): read merged Lark forwards and refresh progress cards
+- **日期**：2026-11-05 | **状态**：✅ 已合并
+- **问题**：Lark 合并转发消息的读取逻辑过滤了转发父消息，子消息附件丢失资源归属，进度卡去重键忽略已用时间导致卡片无法刷新。
+- **修复**：修正合并转发读取和附件归属逻辑，使进度卡每10秒刷新已用时间，终态更新反复失败时回退为幂等回复。
+- **成果**：合并转发及其图片/视频/文档附件可被正确识别处理，进度卡在请求期间实时更新，311项传输测试和4项媒体能力测试全部通过。
 
 ### [#11719](https://github.com/Vispie-AI/VisPie_backend/pull/11719) fix(grafana): keep quota failure time and cause visible
 - **日期**：2026-11-04 | **状态**：🔀 待合并
