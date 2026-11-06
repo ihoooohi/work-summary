@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-05 | 共 577 个 PR（已合并 507 · 关闭未合并 22 · 待合并 46）
-> 最后更新：2026-11-05
+> 统计周期：2026-04-11 ~ 2026-11-06 | 共 580 个 PR（已合并 509 · 关闭未合并 22 · 待合并 47）
+> 最后更新：2026-11-06
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#12104](https://github.com/Vispie-AI/VisPie_backend/pull/12104) fix(infra-amy): expose session scheduling tools
+- **日期**：2026-11-06 | **状态**：✅ 已合并
+- **问题**：Infra Amy 的 full 预设缺少调度工具，R-007 会话无法创建一次性定时任务。
+- **修复**：在 full 预设中挂载已安装的 DSH 调度工具，并通过 profile 测试验证覆盖。
+- **成果**：Infra Amy 恢复调度能力，profile 测试 12 项全部通过，已合并。
 
 ### [#11941](https://github.com/Vispie-AI/VisPie_backend/pull/11941) fix(infra-amy): read merged Lark forwards and refresh progress cards
 - **日期**：2026-11-05 | **状态**：✅ 已合并
@@ -1877,6 +1883,18 @@
 ---
 
 ## 二、新功能开发（feat:）
+
+### [#12108](https://github.com/Vispie-AI/VisPie_backend/pull/12108) feat(devbox): enable scoped GitHub access for Zuocan AI
+- **日期**：2026-11-06 | **状态**：🔀 待合并
+- **问题**：Zuocan AI devbox 缺少仓库凭证，无法推送分支或创建 PR。
+- **修复**：将专属 GitHub App 注册到现有 token broker，CLI 在请求合并前校验 Amy 审批状态。
+- **成果**：broker 测试和语法检查通过，等待签名密钥交付后即可正式上线。
+
+### [#12103](https://github.com/Vispie-AI/VisPie_backend/pull/12103) feat(devbox): make Zuocan AI Lark DMs event-driven
+- **日期**：2026-11-06 | **状态**：✅ 已合并
+- **问题**：Zuocan AI Lark 应用需通过 WebSocket 桥接附加到 devbox，实现事件驱动的私信处理。
+- **修复**：通过 George 风格的 WebSocket 桥和 slot-0 DSH 将 Lark 应用附加至 owner devbox，仅接受已验证的 owner DM。
+- **成果**：314 个 Python 测试、9 个 Node 测试、ruff 及 shell 语法检查全部通过，已合并。
 
 ### [#11700](https://github.com/Vispie-AI/VisPie_backend/pull/11700) feat(infra-amy): Codex allowance snapshots and guarded automatic reset
 - **日期**：2026-11-04 | **状态**：✅ 已合并
