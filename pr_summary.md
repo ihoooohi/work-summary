@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-06 | 共 580 个 PR（已合并 509 · 关闭未合并 22 · 待合并 47）
-> 最后更新：2026-11-06
+> 统计周期：2026-04-11 ~ 2026-11-07 | 共 583 个 PR（已合并 512 · 关闭未合并 22 · 待合并 47）
+> 最后更新：2026-11-07
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2895,6 +2895,23 @@
 
 ## 三、文档建设（docs:）
 
+### [#12225](https://github.com/Vispie-AI/VisPie_backend/pull/12225) Complete cloud story source package and paired-link delivery
+- **日期**：2026-11-07 | **状态**：✅ 已合并
+- **问题**：云故事交付无法上传原始 ZIP 文件，且索引行仅支持写入单条来源链接，不满足源资料合同要求。
+- **修复**：新增可选原始 ZIP 附件与 Door 哈希校验绑定，并允许新索引行携带两条独立来源标签及幂等令牌。
+- **成果**：635 个节点套件测试全部通过，28 个文档/索引/源包专项测试通过，云故事交付链路趋于完整。
+
+### [#12216](https://github.com/Vispie-AI/VisPie_backend/pull/12216) Use the qualified cloud document lane for unattended stories
+- **日期**：2026-11-07 | **状态**：✅ 已合并
+- **问题**：云故事工人在无人值守模式下无法复用已通过资质验证的文档通道进行稿件交付。
+- **修复**：引入 `--story-lane` 选项，让无人值守交付复用经验证的云门身份与文档授权，默认传输保持不变。
+- **成果**：628 个 Infra Amy 测试全部通过，无人值守云故事文档交付能力正式就绪。
+
+### [#12164](https://github.com/Vispie-AI/VisPie_backend/pull/12164) Add cloud manuscript readback and append-only index receipts
+- **日期**：2026-11-07 | **状态**：✅ 已合并
+- **问题**：云故事任务发布稿件后，缺少全文验证及六列目录自动注册能力，需人工中继完成。
+- **修复**：新增分页回读与 NFC/去空白哈希校验，支持仅追加的 Chapters/Choices 行写入及幂等重试检测。
+- **成果**：625 个 Infra Amy 测试全部通过，云文档发布的可靠性与可审计性显著提升。
 ### [#11428](https://github.com/Vispie-AI/VisPie_backend/pull/11428) infra: prepare isolated R007 workspace without touching operations
 - **日期**：2026-10-31 | **状态**：🔀 待合并
 - **问题**：R007 导出与文件处理共享 Infra Amy 运营 Hand 及持久磁盘，缺乏独立隔离的工作区。
