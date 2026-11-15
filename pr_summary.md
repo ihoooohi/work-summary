@@ -1,13 +1,24 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-07 | 共 583 个 PR（已合并 512 · 关闭未合并 22 · 待合并 47）
-> 最后更新：2026-11-07
+> 统计周期：2026-04-11 ~ 2026-11-15 | 共 601 个 PR（已合并 525 · 关闭未合并 24 · 待合并 50）
+> 最后更新：2026-11-15
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#12879](https://github.com/Vispie-AI/VisPie_backend/pull/12879) fix(amy): bound memory while recovering Lark request history
+- **日期**：2026-11-13 | **状态**：✅ 已合并
+- **问题**：Amy 恢复 Lark 请求历史时存在内存无界增长问题。
+- **修复**：对恢复 Lark 请求历史时的内存使用设置上界限制。
+- **成果**：内存泄漏风险消除，Amy 长期运行稳定性提升。
+
+### [#12245](https://github.com/Vispie-AI/VisPie_backend/pull/12245) fix(infra-amy): isolate cleaner failures and restore truthful GC monitoring
+- **日期**：2026-11-08 | **状态**：✅ 已合并
+- **问题**：Infra Amy 清理器失败时 GC 监控数据不准确。
+- **修复**：隔离清理器失败路径，恢复真实 GC 监控上报。
+- **成果**：GC 监控指标恢复准确，故障定位能力增强。
 ### [#12104](https://github.com/Vispie-AI/VisPie_backend/pull/12104) fix(infra-amy): expose session scheduling tools
 - **日期**：2026-11-06 | **状态**：✅ 已合并
 - **问题**：Infra Amy 的 full 预设缺少调度工具，R-007 会话无法创建一次性定时任务。
@@ -2895,6 +2906,101 @@
 
 ## 三、文档建设（docs:）
 
+### [#12844](https://github.com/Vispie-AI/VisPie_backend/pull/12844) Verify covers and actual story playback in the guest patrol
+- **日期**：2026-11-12 | **状态**：✅ 已合并
+- **问题**：访客巡检未对封面展示及实际 Story 播放进行验证。
+- **修复**：在访客巡检中新增封面与 Story 实际播放的校验。
+- **成果**：媒体播放质量纳入巡检，核心体验缺陷可被发现。
+
+### [#12717](https://github.com/Vispie-AI/VisPie_backend/pull/12717) Verify the current Feed player as selection settles
+- **日期**：2026-11-12 | **状态**：✅ 已合并
+- **问题**：Feed 播放器在选中状态稳定后未进行验证。
+- **修复**：在选中状态稳定后对当前 Feed 播放器执行验证。
+- **成果**：播放器状态验证完善，时序相关缺陷可被捕获。
+
+### [#12716](https://github.com/Vispie-AI/VisPie_backend/pull/12716) Check unobscured public pages in Taplot patrol
+- **日期**：2026-11-12 | **状态**：✅ 已合并
+- **问题**：Taplot 巡检未对无遮挡的公开页面进行检测。
+- **修复**：在 Taplot 巡检中新增无遮挡公开页面的检测步骤。
+- **成果**：公开页面渲染质量纳入巡检，遮挡类问题可被检出。
+
+### [#12712](https://github.com/Vispie-AI/VisPie_backend/pull/12712) Fix guest patrol Feed and story navigation qualification
+- **日期**：2026-11-12 | **状态**：✅ 已合并
+- **问题**：访客巡检中 Feed 和 Story 导航判断逻辑存在缺陷。
+- **修复**：修复访客巡检 Feed 与 Story 导航的资格校验逻辑。
+- **成果**：导航判断准确，访客巡检结果可信度提升。
+
+### [#12685](https://github.com/Vispie-AI/VisPie_backend/pull/12685) Cover public search and story opening in Taplot patrol
+- **日期**：2026-11-11 | **状态**：✅ 已合并
+- **问题**：Taplot 巡检未覆盖公开搜索及 Story 打开场景。
+- **修复**：在 Taplot 巡检中新增公开搜索和 Story 打开的覆盖。
+- **成果**：公开核心流程纳入巡检，回归风险进一步降低。
+
+### [#12677](https://github.com/Vispie-AI/VisPie_backend/pull/12677) Publish scheduled Taplot patrol results through the existing Lark reporter
+- **日期**：2026-11-11 | **状态**：✅ 已合并
+- **问题**：Taplot 定时巡检结果未通过现有渠道发布。
+- **修复**：通过现有发布渠道推送 Taplot 定时巡检结果。
+- **成果**：巡检结果可统一汇聚，团队可按时获取巡检报告。
+
+### [#12498](https://github.com/Vispie-AI/VisPie_backend/pull/12498) Alert on failed Taplot patrol executions
+- **日期**：2026-11-10 | **状态**：🚫 已关闭
+- **问题**：Taplot 巡检任务执行失败时缺少告警机制。
+- **修复**：实现 Taplot 巡检失败时的自动告警通知。
+- **成果**：失败告警上线，巡检异常可及时触达相关人员。
+
+### [#12496](https://github.com/Vispie-AI/VisPie_backend/pull/12496) Run the existing Taplot reviewer daily as a guest
+- **日期**：2026-11-10 | **状态**：✅ 已合并
+- **问题**：Taplot reviewer 未以访客身份进行每日例行执行。
+- **修复**：配置 Taplot reviewer 以访客身份每日自动运行。
+- **成果**：访客视角巡检覆盖，潜在权限问题可被及早发现。
+
+### [#12493](https://github.com/Vispie-AI/VisPie_backend/pull/12493) Give Taplot E2E worker a short-lived test session
+- **日期**：2026-11-13 | **状态**：✅ 已合并
+- **问题**：Taplot E2E worker 缺少短期测试会话，影响测试执行。
+- **修复**：为 Taplot E2E worker 配置短期测试会话。
+- **成果**：测试会话就绪，E2E 任务可正常运行。
+
+### [#12489](https://github.com/Vispie-AI/VisPie_backend/pull/12489) Report Infra Amy quota and terminal failure causes accurately
+- **日期**：2026-11-10 | **状态**：✅ 已合并
+- **问题**：Infra Amy 配额用尽及终止失败原因上报不准确。
+- **修复**：修正 Infra Amy 配额和终止失败原因的上报逻辑。
+- **成果**：错误信息上报准确，运维排查效率提升。
+
+### [#12486](https://github.com/Vispie-AI/VisPie_backend/pull/12486) Fit Infra Amy fallback requests to the backup model window
+- **日期**：2026-11-10 | **状态**：✅ 已合并
+- **问题**：Infra Amy 备用模型请求未对齐备用模型的可用时间窗口。
+- **修复**：调整 Infra Amy fallback 请求以匹配备用模型时间窗口。
+- **成果**：备用模型调用成功率提升，降级链路更加可靠。
+
+### [#12422](https://github.com/Vispie-AI/VisPie_backend/pull/12422) Renew dedicated Taplot browser sessions
+- **日期**：2026-11-10 | **状态**：🔀 待合并
+- **问题**：Taplot 专属浏览器会话过期，需定期续期。
+- **修复**：实现 Taplot 专属浏览器会话的自动续期机制。
+- **成果**：会话持续有效，Taplot 自动化任务可稳定执行。
+
+### [#12411](https://github.com/Vispie-AI/VisPie_backend/pull/12411) CI verification: sidebar-only change after #12409
+- **日期**：2026-11-10 | **状态**：🚫 已关闭
+- **问题**：#12409 合并后需对仅侧边栏改动进行 CI 验证。
+- **修复**：针对仅侧边栏变更执行 CI 校验，确认流程正常。
+- **成果**：CI 验证通过，侧边栏独立变更的流水线行为确认。
+
+### [#12409](https://github.com/Vispie-AI/VisPie_backend/pull/12409) CI: skip Harness worker deployment checks for owner chat edits
+- **日期**：2026-11-10 | **状态**：✅ 已合并
+- **问题**：Owner 聊天相关改动触发不必要的 Harness worker 部署检查。
+- **修复**：CI 配置中对 owner 聊天改动跳过 Harness worker 部署校验。
+- **成果**：CI 流程精简，无关检查不再阻塞 owner 聊天类 PR。
+
+### [#12402](https://github.com/Vispie-AI/VisPie_backend/pull/12402) Allow cloud delivery to the numbered R-007 Lark master
+- **日期**：2026-11-10 | **状态**：🔀 待合并
+- **问题**：云端交付无法发布到编号为 R-007 的 Lark 主文档。
+- **修复**：开放云端交付对 R-007 Lark 主文档的写入权限。
+- **成果**：云端交付链路打通，R-007 文档可正常接收更新。
+
+### [#12244](https://github.com/Vispie-AI/VisPie_backend/pull/12244) Test Taplot company sessions, chat and external links
+- **日期**：2026-11-08 | **状态**：🔀 待合并
+- **问题**：Taplot 功能缺少公司会话、聊天及外部链接的测试覆盖。
+- **修复**：Taplot 公司会话、聊天及外链功能添加端到端测试。
+- **成果**：测试覆盖率提升，核心功能回归风险降低。
 ### [#12225](https://github.com/Vispie-AI/VisPie_backend/pull/12225) Complete cloud story source package and paired-link delivery
 - **日期**：2026-11-07 | **状态**：✅ 已合并
 - **问题**：云故事交付无法上传原始 ZIP 文件，且索引行仅支持写入单条来源链接，不满足源资料合同要求。
