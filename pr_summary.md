@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-15 | 共 601 个 PR（已合并 525 · 关闭未合并 24 · 待合并 50）
-> 最后更新：2026-11-15
+> 统计周期：2026-04-11 ~ 2026-11-16 | 共 603 个 PR（已合并 525 · 关闭未合并 25 · 待合并 51）
+> 最后更新：2026-11-16
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2906,6 +2906,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#13421](https://github.com/Vispie-AI/VisPie_backend/pull/13421) ci: use ubuntu-slim for Taplot and Devbox PR scope and gates
+- **日期**：2026-11-16 | **状态**：🚫 已关闭
+- **问题**：Taplot 和 Devbox PR 工作流的 scope 计算及 gate 任务使用昂贵的标准 runner，GitHub Actions 费用偏高。
+- **修复**：将受影响的 7 个 job 迁移至 ubuntu-slim runner，保留原有触发器、检查名称、依赖关系和 gate 断言不变。
+- **成果**：每分钟费用从 $0.006 降至 $0.002，CI runner 费用降低约 67%，PR 关闭未合并。
+
+### [#13419](https://github.com/Vispie-AI/VisPie_backend/pull/13419) docs(taplot-mobile): regress account needs OS Admin Login on the runner instance
+- **日期**：2026-11-16 | **状态**：🔀 待合并
+- **问题**：taplot-android-release.yml 回归测试因服务账号缺少实例级 osAdminLogin 权限，SSH 连接持续被拒绝，v1.1.0–v1.1.2 均以 skip_regression 跳过。
+- **修复**：为回归服务账号在 taplot-regress-runner 实例上直接添加无条件 roles/compute.osAdminLogin 绑定，并在 README 中记录为前置条件。
+- **成果**：Policy Troubleshooter 确认权限从 UNKNOWN_CONDITIONAL 变为 GRANTED，为后续完整回归测试扫清权限障碍。
 ### [#12844](https://github.com/Vispie-AI/VisPie_backend/pull/12844) Verify covers and actual story playback in the guest patrol
 - **日期**：2026-11-12 | **状态**：✅ 已合并
 - **问题**：访客巡检未对封面展示及实际 Story 播放进行验证。
