@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-16 | 共 603 个 PR（已合并 525 · 关闭未合并 25 · 待合并 51）
-> 最后更新：2026-11-16
+> 统计周期：2026-04-11 ~ 2026-11-17 | 共 607 个 PR（已合并 529 · 关闭未合并 25 · 待合并 51）
+> 最后更新：2026-11-17
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2906,6 +2906,29 @@
 
 ## 三、文档建设（docs:）
 
+### [#13601](https://github.com/Vispie-AI/VisPie_backend/pull/13601) Publish one Taplot mobile playtest document per day
+- **日期**：2026-11-17 | **状态**：✅ 已合并
+- **问题**：Taplot 移动端每日巡检结果缺少按北京日期独立的飞书文档，历史报告难以按日期查阅。
+- **修复**：由机主 Devbox 负责创建当日独立飞书文档，测试主机记录批次完成并移除握手块；支持重放不重复发布。
+- **成果**：实现按日期独立归档的巡检报告文档，全部 60 个测试通过，历史批次可溯源查看。
+
+### [#13577](https://github.com/Vispie-AI/VisPie_backend/pull/13577) Add the store-1 Android App case to Taplot daily playtest
+- **日期**：2026-11-17 | **状态**：✅ 已合并
+- **问题**：Taplot 每日巡检未覆盖 Android 原生 App 在真机前台冷启动播放的验证场景。
+- **修复**：在 store-1 设备上新增 Android App 冷启动巡检阶段，检查《Do Not Check Out》能否正常播到第一道题。
+- **成果**：Android App 巡检结果与截图自动写入台账并归入飞书日报，全部 57 个测试通过，三端覆盖完成。
+
+### [#13431](https://github.com/Vispie-AI/VisPie_backend/pull/13431) Publish Taplot mobile playtest daily reports to Lark
+- **日期**：2026-11-17 | **状态**：✅ 已合并
+- **问题**：Taplot 手机网页、Android App 和 iOS App 三端巡检结果分散，缺少统一的每日飞书日报汇总。
+- **修复**：新增每日自动发布飞书日报，将三端覆盖情况、疑似问题、未完成执行和证据链接整合到同一份报告中。
+- **成果**：巡检负责人可在飞书查看统一日报，重放同一日期仅保留一份，全部 46 个测试通过。
+
+### [#13426](https://github.com/Vispie-AI/VisPie_backend/pull/13426) Add Taplot iPhone App cases to the daily playtest
+- **日期**：2026-11-17 | **状态**：✅ 已合并
+- **问题**：George Devbox 每日巡检未覆盖 Device Farm 真机 iPhone 上 Taplot iOS App 的核心功能验证。
+- **修复**：新增 iOS App 巡检阶段，验证搜索、暂停恢复、剧情分支选择及低电量模式下的正常运行，结果写入飞书台账。
+- **成果**：iOS App 巡检与截图自动归档，39 个测试全部通过，低电量模式完成后设置自动恢复。
 ### [#13421](https://github.com/Vispie-AI/VisPie_backend/pull/13421) ci: use ubuntu-slim for Taplot and Devbox PR scope and gates
 - **日期**：2026-11-16 | **状态**：🚫 已关闭
 - **问题**：Taplot 和 Devbox PR 工作流的 scope 计算及 gate 任务使用昂贵的标准 runner，GitHub Actions 费用偏高。
