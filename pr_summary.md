@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-17 | 共 607 个 PR（已合并 529 · 关闭未合并 25 · 待合并 51）
-> 最后更新：2026-11-17
+> 统计周期：2026-04-11 ~ 2026-11-18 | 共 609 个 PR（已合并 531 · 关闭未合并 25 · 待合并 51）
+> 最后更新：2026-11-18
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2906,6 +2906,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#13631](https://github.com/Vispie-AI/VisPie_backend/pull/13631) test(taplot): recognize both iOS scrubber layouts in the patrol
+- **日期**：2026-11-18 | **状态**：✅ 已合并
+- **问题**：iOS 巡检进度条读取器无法识别播放器嵌入展开剧集信息时的全屏与浮窗两种布局。
+- **修复**：通过截图几何兼容两种布局，并在缩略图不可读时回退到无障碍时钟作为测量依据。
+- **成果**：iPhone App 巡检支持全屏和浮窗两种播放器布局，各阶段截图均用一致的百分比单位记录。
+
+### [#13624](https://github.com/Vispie-AI/VisPie_backend/pull/13624) test(taplot): check timeline rewind in the daily mobile patrol
+- **日期**：2026-11-18 | **状态**：✅ 已合并
+- **问题**：每日手机巡检缺少对进度条回退续播的覆盖，无法自动验证拖回时间轴后能否继续正常播放。
+- **修复**：新增回退续播用例，覆盖手机 Chromium、Android App 和 iOS App，并将前中后三张截图存入证据台账。
+- **成果**：日报新增进度条回退检查项，巡检结果和截图链接自动写入对应日期的 Lark 文档。
 ### [#13601](https://github.com/Vispie-AI/VisPie_backend/pull/13601) Publish one Taplot mobile playtest document per day
 - **日期**：2026-11-17 | **状态**：✅ 已合并
 - **问题**：Taplot 移动端每日巡检结果缺少按北京日期独立的飞书文档，历史报告难以按日期查阅。
