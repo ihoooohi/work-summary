@@ -1,13 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-18 | 共 609 个 PR（已合并 531 · 关闭未合并 25 · 待合并 51）
-> 最后更新：2026-11-18
+> 统计周期：2026-04-11 ~ 2026-11-19 | 共 614 个 PR（已合并 534 · 关闭未合并 25 · 待合并 53）
+> 最后更新：2026-11-19
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
 
+### [#13894](https://github.com/Vispie-AI/VisPie_backend/pull/13894) fix(playtest): retry on another iPhone when Safari is unreachable on this one
+- **日期**：2026-11-19 | **状态**：✅ 已合并
+- **问题**：Device Farm 两台特定 iPhone 15 的 Safari 无法连接 Web Inspector，每批最多 8 部剧被记为未完成。
+- **修复**：遇到 Safari 不可达时自动结束当前会话并切换到另一台设备重跑，最多连续换机两次。
+- **成果**：排除问题设备的干扰，summary.json 新增 safari_unreachable_phones 字段便于追踪。
 ### [#12879](https://github.com/Vispie-AI/VisPie_backend/pull/12879) fix(amy): bound memory while recovering Lark request history
 - **日期**：2026-11-13 | **状态**：✅ 已合并
 - **问题**：Amy 恢复 Lark 请求历史时存在内存无界增长问题。
@@ -1895,6 +1900,17 @@
 
 ## 二、新功能开发（feat:）
 
+### [#13875](https://github.com/Vispie-AI/VisPie_backend/pull/13875) feat(playtest): wider coverage, and only failures that hold are reported
+- **日期**：2026-11-19 | **状态**：✅ 已合并
+- **问题**：单次失败即标红导致误报率高，且清单覆盖的用户场景有限。
+- **修复**：新增失败自动重跑机制，仅两次均失败才标红；扩展 4 个检查项，每天轮换测试新上架剧目和全站七分之一剧目。
+- **成果**：清单增至 17 项，误报减少，覆盖范围延伸至付费点和集尾场景。
+
+### [#13862](https://github.com/Vispie-AI/VisPie_backend/pull/13862) feat(playtest): daily patrol plays like a person and reports one acceptance checklist
+- **日期**：2026-11-19 | **状态**：✅ 已合并
+- **问题**：每日 Taplot 手机巡检缺乏统一验收标准，无法自动判断玩家核心流程是否通过。
+- **修复**：新增 checklist.mjs 定义 13 个检查项，手机网页默认主动操作（长按、连点、免费选项优先），自动采集首页推荐剧。
+- **成果**：巡检结果以 ✅/❌/⏳ 三态清单呈现，每个失败项附现场截图链接，可读性大幅提升。
 ### [#12108](https://github.com/Vispie-AI/VisPie_backend/pull/12108) feat(devbox): enable scoped GitHub access for Zuocan AI
 - **日期**：2026-11-06 | **状态**：🔀 待合并
 - **问题**：Zuocan AI devbox 缺少仓库凭证，无法推送分支或创建 PR。
@@ -2906,6 +2922,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#14095](https://github.com/Vispie-AI/VisPie_backend/pull/14095) docs(devbox): record devbox-zuocan as e2-standard-8
+- **日期**：2026-11-19 | **状态**：🔀 待合并
+- **问题**：devbox-zuocan 机型记录未更新，不反映实例已扩容的实际规格。
+- **修复**：更新 Devbox 名册，将 devbox-zuocan 记录为 e2-standard-8，与 devbox-george 保持一致。
+- **成果**：文档与实际配置一致，8 核 31GB 可满足 Taplot 三浏览器并行巡检需求，避免伪失败误报。
+
+### [#13948](https://github.com/Vispie-AI/VisPie_backend/pull/13948) Qualify Taplot patrol on the owner's Devbox
+- **日期**：2026-11-19 | **状态**：🔀 待合并
+- **问题**：Taplot 巡检任务需在指定 Devbox 上使用专属 GKE 和 Device Farm 权限进行资质验证。
+- **修复**：新增 owner-access/run-qualification.sh，配置 GKE 联合认证和独立 Device Farm 角色，限定资源访问范围。
+- **成果**：devbox-zuocan 完成三端巡检资质验证，并发布含失败截图的独立 Lark 报告。
 ### [#13631](https://github.com/Vispie-AI/VisPie_backend/pull/13631) test(taplot): recognize both iOS scrubber layouts in the patrol
 - **日期**：2026-11-18 | **状态**：✅ 已合并
 - **问题**：iOS 巡检进度条读取器无法识别播放器嵌入展开剧集信息时的全屏与浮窗两种布局。
