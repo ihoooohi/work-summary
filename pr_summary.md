@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-19 | 共 614 个 PR（已合并 534 · 关闭未合并 25 · 待合并 53）
-> 最后更新：2026-11-19
+> 统计周期：2026-04-11 ~ 2026-11-20 | 共 616 个 PR（已合并 536 · 关闭未合并 25 · 待合并 53）
+> 最后更新：2026-11-20
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2922,6 +2922,17 @@
 
 ## 三、文档建设（docs:）
 
+### [#14333](https://github.com/Vispie-AI/VisPie_backend/pull/14333) Tell the patrol group what a deploy-started patrol found
+- **日期**：2026-11-20 | **状态**：✅ 已合并
+- **问题**：部署触发的巡检结果只写入了主机日志，团队无法在 Lark 群里实时看到。
+- **修复**：新增 `notice.py`，在每次巡检结束后构建并发送摘要消息到巡检群，支持幂等去重。
+- **成果**：团队可在 Lark 群实时收到每次部署后的巡检报告，已通过 14 个单元测试验证。
+
+### [#14331](https://github.com/Vispie-AI/VisPie_backend/pull/14331) Start the Taplot patrol from a deploy
+- **日期**：2026-11-20 | **状态**：✅ 已合并
+- **问题**：Taplot 部署成功后只能等待定时调度，无法立即对当次构建执行巡检。
+- **修复**：在 staging 与 prod 的部署 workflow 中添加 `notify-patrol` 任务，通过 Pub/Sub 在部署后触发巡检脚本。
+- **成果**：巡检现在随每次 Taplot 部署自动启动，实测 5 个剧本全部通过，首帧时间 1.7–2.6 秒。
 ### [#14095](https://github.com/Vispie-AI/VisPie_backend/pull/14095) docs(devbox): record devbox-zuocan as e2-standard-8
 - **日期**：2026-11-19 | **状态**：🔀 待合并
 - **问题**：devbox-zuocan 机型记录未更新，不反映实例已扩容的实际规格。
