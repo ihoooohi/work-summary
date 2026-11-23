@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-20 | 共 616 个 PR（已合并 536 · 关闭未合并 25 · 待合并 53）
-> 最后更新：2026-11-20
+> 统计周期：2026-04-11 ~ 2026-11-23 | 共 617 个 PR（已合并 537 · 关闭未合并 25 · 待合并 53）
+> 最后更新：2026-11-23
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2921,6 +2921,12 @@
 ---
 
 ## 三、文档建设（docs:）
+
+### [#14551](https://github.com/Vispie-AI/VisPie_backend/pull/14551) Stop false alarms from the deploy-started Taplot patrol
+- **日期**：2026-11-22 | **状态**：✅ 已合并
+- **问题**：部署后巡检误报剧目失败。
+- **修复**：各环境用自身 catalog 选剧，媒体错误仅计本剧，交互改坐标点击。
+- **成果**：Staging/Prod 均通过，虚假告警清零。
 
 ### [#14333](https://github.com/Vispie-AI/VisPie_backend/pull/14333) Tell the patrol group what a deploy-started patrol found
 - **日期**：2026-11-20 | **状态**：✅ 已合并
