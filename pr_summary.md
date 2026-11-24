@@ -1,7 +1,7 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-23 | 共 617 个 PR（已合并 537 · 关闭未合并 25 · 待合并 53）
-> 最后更新：2026-11-23
+> 统计周期：2026-04-11 ~ 2026-11-24 | 共 618 个 PR（已合并 538 · 关闭未合并 25 · 待合并 53）
+> 最后更新：2026-11-24
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
@@ -2922,6 +2922,11 @@
 
 ## 三、文档建设（docs:）
 
+### [#14710](https://github.com/Vispie-AI/VisPie_backend/pull/14710) One card a day for the deploy-started Taplot patrols, and only for product changes
+- **日期**：2026-11-24 | **状态**：✅ 已合并
+- **问题**：Taplot 部署巡检每次触发都发一张 Lark 卡片，两天半内累计 43 条消息，绝大多数显示无异常，严重干扰群组信息。
+- **修复**：新增每日单卡机制，同一天的巡检结果追加到同一张卡片；仅在发现问题且非重复时单独告警；并对部署工作流增加路径过滤，仅针对影响用户的代码变更触发巡检。
+- **成果**：巡检消息量从每次部署一条降为每天一张汇总卡片，信噪比显著提升，真正有问题时仍及时告警。
 ### [#14551](https://github.com/Vispie-AI/VisPie_backend/pull/14551) Stop false alarms from the deploy-started Taplot patrol
 - **日期**：2026-11-22 | **状态**：✅ 已合并
 - **问题**：部署后巡检误报剧目失败。
