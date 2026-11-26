@@ -1,12 +1,18 @@
 # 工作成果总结
 
-> 统计周期：2026-04-11 ~ 2026-11-24 | 共 618 个 PR（已合并 538 · 关闭未合并 25 · 待合并 53）
-> 最后更新：2026-11-24
+> 统计周期：2026-04-11 ~ 2026-11-26 | 共 619 个 PR（已合并 539 · 关闭未合并 25 · 待合并 53）
+> 最后更新：2026-11-26
 > 作者：@ihoooohi · 仓库：Vispie-AI/VisPie_backend
 
 ---
 
 ## 一、Bug 修复（fix:）
+
+### [#14974](https://github.com/Vispie-AI/VisPie_backend/pull/14974) fix(amy): preserve Lark quoted card content and identity
+- **日期**：2026-11-26 | **状态**：✅ 已合并
+- **问题**：回复 Lark Card 2.0 折叠面板时 Amy 丢失引用内容。
+- **修复**：读取折叠 Markdown 并优先卡片正文，传父级 ID 给 DSH。
+- **成果**：新增回归测试覆盖，Amy 343 + DSH 213 个测试全通过。
 
 ### [#13894](https://github.com/Vispie-AI/VisPie_backend/pull/13894) fix(playtest): retry on another iPhone when Safari is unreachable on this one
 - **日期**：2026-11-19 | **状态**：✅ 已合并
